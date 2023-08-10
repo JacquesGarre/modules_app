@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Field;
 use App\Form\FieldType;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
 
 class FieldController extends AbstractController
 {
@@ -18,7 +19,7 @@ class FieldController extends AbstractController
     }
 
     #[Route('/administration/fields/add', name: 'app_field_add')]
-    public function add(Request $request): Response
+    public function add(EntityManagerInterface $em, Request $request): Response
     {        
         
         $field = new Field();
@@ -40,9 +41,10 @@ class FieldController extends AbstractController
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                
+                $em->persist($field);
+                $em->flush();
                 return $this->json([
-                    'success' => 'blablabla'
+                    'success' => $field->getId()
                 ]);
 
             } else {

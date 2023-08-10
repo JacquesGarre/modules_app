@@ -37,10 +37,11 @@ export default class extends Controller {
                 that.submitBtnTarget.innerHTML = that.submitLabelValue
             } else {
                 that.submitBtnTarget.innerHTML = 'Saved <i class="fas fa-check"></i>'
+                that.dispatch("closemodal")
             }
         })
         .catch(function (response) {
-            that.errorsTarget.innerHTML = "An error happened..."
+            console.log(response)
             that.submitBtnTarget.innerHTML = that.submitLabelValue
         });
     }

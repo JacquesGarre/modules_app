@@ -21,4 +21,9 @@ export default class extends Controller {
         });
     }
 
+    close() {
+        const modal = new Modal(document.getElementById('modal'))
+        modal.hide()
+    }
+
 }
