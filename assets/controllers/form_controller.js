@@ -18,7 +18,7 @@ export default class extends Controller {
         $(that.formTarget).find('.invalid-feedback').remove()
         $(that.formTarget).find('.field-invalid').removeClass('field-invalid')
 
-        that.submitBtnTarget.innerHTML = "Please wait...";
+        that.submitBtnTarget.innerHTML = "Saving...";
         axios({
             method: "post",
             url: this.urlValue,

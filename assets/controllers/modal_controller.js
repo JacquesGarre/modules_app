@@ -14,15 +14,14 @@ export default class extends Controller {
         axios
         .get(this.urlValue)
         .then((response) => {
-            const modalElement = $('#modal')
-            modalElement.find('.modal-dialog').html(response.data);
-            const modal = new Modal(modalElement)
+            $('#modal').find('.modal-dialog').html(response.data);
+            const modal = Modal.getInstance('#modal');
             modal.show()
         });
     }
 
     close() {
-        const modal = new Modal(document.getElementById('modal'))
+        const modal = Modal.getInstance('#modal');
         modal.hide()
     }
 

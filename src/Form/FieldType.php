@@ -33,7 +33,7 @@ class FieldType extends AbstractType
             ->add('name', TextType::class, [
                 'constraints' => [
                     new NotBlank(),
-                    new Regex('/[A-Za-z0-9_]*/')
+                    new Regex('/^[A-Za-z0-9_]*$/')
                 ],
             ])
             ->add('value')
