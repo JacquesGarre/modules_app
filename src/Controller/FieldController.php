@@ -24,9 +24,9 @@ class FieldController extends AbstractController
     public function add(ModalFormService $modal, Request $request): Response
     {        
         return $modal->show(
-            'Create a new field',
-            'field',
-            'app_field_add',
+            $title = 'Create a new field',
+            $class = 'field',
+            $route = 'app_field_add',
             $request
         );
     }
