@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class FieldType extends AbstractType
@@ -31,7 +32,8 @@ class FieldType extends AbstractType
             ])
             ->add('name', TextType::class, [
                 'constraints' => [
-                    new NotBlank()
+                    new NotBlank(),
+                    new Regex('/[A-Za-z0-9_]*/')
                 ],
             ])
             ->add('value')
