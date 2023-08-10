@@ -5,6 +5,7 @@
 - npm install
 - composer install
 - npm run watch
+- php bin/console doctrine:migrations:migrate
 - symfony serve -d
 
 
