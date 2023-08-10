@@ -3,16 +3,21 @@ import axios from 'axios';
 
 export default class extends Controller {
 
-    static targets = [ "submitBtn", "errors" ]
+    static targets = [ "form", "submitBtn" ]
 
     static values = {
+        name: String,
         url: String,
         submitLabel: String
     }
 
     submit() {
-        const formData = new FormData(this.element);
         const that = this;
+        const formData = new FormData(that.formTarget);
+
+        $(that.formTarget).find('.invalid-feedback').remove()
+        $(that.formTarget).find('.field-invalid').removeClass('field-invalid')
+
         that.submitBtnTarget.innerHTML = "Please wait...";
         axios({
             method: "post",
@@ -21,8 +26,14 @@ export default class extends Controller {
             headers: { "Content-Type": "multipart/form-data" },
         })
         .then(function (response) {
-            if(response.data.error !== undefined){
-                that.errorsTarget.innerHTML = response.data.error
+            if(response.data.errors !== undefined){
+                for(const fieldID in response.data.errors){
+                    const fieldErrors = response.data.errors[fieldID].join(', ')
+                    $(that.formTarget)
+                    .find('#'+that.nameValue + '_' + fieldID)
+                    .addClass('field-invalid')
+                    .after(`<div class="invalid-feedback d-block">`+fieldErrors+`</div>`)
+                }
                 that.submitBtnTarget.innerHTML = that.submitLabelValue
             } else {
                 that.submitBtnTarget.innerHTML = 'Saved <i class="fas fa-check"></i>'
