@@ -4,7 +4,6 @@
 - npm install
 - composer install
 - npm run watch
-- symfony 
 - symfony serve -d
 
 
