@@ -2,7 +2,9 @@
 {% block modalTitle %}Create a new field{% endblock %}
 {% block modalBody %}
 
-	<form data-controller="form" data-form-url-value="{{ path('app_field_add') }}" data-form-submit-label-value="Submit">
+    {{ form(form) }}
+
+	<!-- <form data-controller="form" data-form-url-value="{{ path('app_field_add') }}" data-form-submit-label-value="Submit">
 		<div class="mb-3">
       <label for="type" class="form-label">Type</label>
 			<select class="form-select" id="type" name="type">
@@ -15,6 +17,6 @@
 		</div>
 		<button type="button" class="btn btn-primary" data-action="form#submit" data-form-target="submitBtn">Submit</button>
     <div data-form-target="errors" class="text-danger"></div>
-	</form>
+	</form> -->
 
 {% endblock %}

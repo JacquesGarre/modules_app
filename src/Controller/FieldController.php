@@ -5,6 +5,8 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Field;
+use App\Form\FieldType;
 
 class FieldController extends AbstractController
 {
@@ -34,8 +36,15 @@ class FieldController extends AbstractController
             
         }
 
+        $field = new Field();
+        $form = $this->createForm(FieldType::class, $field);
+
         // Render add form
-        return $this->render('fields/add.html.twig');
+        return $this->render('fields/add.html.twig',
+            [
+                'form' => $form
+            ]
+        );
     }
 
 }
