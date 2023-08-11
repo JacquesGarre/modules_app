@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\ModalFormService;
 use Symfony\Component\HttpFoundation\Request;
+use App\Repository\ModuleRepository;
 
 class ModuleController extends AbstractController
 {
@@ -20,4 +21,19 @@ class ModuleController extends AbstractController
             $request
         );
     }
+
+    #[Route('/administration/modules/{id}/edit', name: 'app_module_edit')]
+    public function edit(ModalFormService $modal, Request $request, int $id, ModuleRepository $moduleRepository): Response
+    {   
+
+        $module = $moduleRepository->findOneBy(['id' => $id]);
+        return $modal->show(
+            $title = 'Edit module '.$module->getLabelPlural(),
+            $class = 'module',
+            $route = 'app_module_edit',
+            $request,
+            $module
+        );
+    }
+
 }

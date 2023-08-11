@@ -19,3 +19,4 @@ require('bootstrap');
 import { Modal } from 'bootstrap';
 
 const modal = new Modal('#modal');
+

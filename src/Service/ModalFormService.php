@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Exception;
 
@@ -30,15 +31,16 @@ class ModalFormService
         string $title,
         string $class,
         string $route,
-        $request
+        $request,
+        $existingEntity = null     
     )
     {
         $entityClass = 'App\\Entity\\'.ucfirst($class);
-        $entity = new $entityClass();
+        $entity = $existingEntity ?: new $entityClass();
 
         $form = $this->getForm($class, $route, $entity);
 
-        // If form has been submitted
+        // If creation
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);
             return $this->handlePostRequest($form, $entity);
@@ -56,20 +58,29 @@ class ModalFormService
 
     private function getForm(string $class, string $route, $entity){
 
+        $params = [];
+        if($entity && !empty($entity->getId())){
+            $params['id'] = $entity->getId();
+        }
+
         $typeClass = 'App\\Form\\' . ucfirst($class).'Type'::class;
-        return $this->formFactory->create(
+        $form = $this->formFactory->create(
             $typeClass, 
             $entity,
-            [
+            [   
                 'attr' => [
+                    'data-form-method-value' => 'post',
                     'data-form-name-value' => $class,
                     'data-form-target' => 'form',
                     'data-controller' => 'form',
-                    'data-form-url-value' => $this->router->generate($route),
+                    'data-form-url-value' => $this->router->generate($route, $params),
                     'data-form-submit-label-value' => 'Save'
                 ]
             ]
         );
+
+
+        return $form;
     }
 
     private function handlePostRequest($form, $entity){
@@ -100,7 +111,7 @@ class ModalFormService
     
         // Fields
         foreach ($form as $child) {
-            if (!$child->isValid()) {
+            if ($child->isSubmitted() && !$child->isValid()) {
                 foreach ($child->getErrors() as $error) {
                     $errors[$child->getName()][] = $error->getMessage();
                 }

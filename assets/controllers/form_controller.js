@@ -8,7 +8,8 @@ export default class extends Controller {
     static values = {
         name: String,
         url: String,
-        submitLabel: String
+        submitLabel: String,
+        method: String
     }
 
     submit() {
@@ -20,7 +21,7 @@ export default class extends Controller {
 
         that.submitBtnTarget.innerHTML = "Saving...";
         axios({
-            method: "post",
+            method: this.methodValue,
             url: this.urlValue,
             data: formData,
             headers: { "Content-Type": "multipart/form-data" },
