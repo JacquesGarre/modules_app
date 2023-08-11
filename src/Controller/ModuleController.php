@@ -28,10 +28,8 @@ class ModuleController extends AbstractController
     {   
 
         $module = $moduleRepository->findOneBy(['id' => $id]);
-
         $params = [];
         $params['id'] = $module->getId();
-    
         return $modal->show(
             $title = 'Edit module '.$module->getLabelPlural(),
             $class = 'module',
@@ -47,10 +45,8 @@ class ModuleController extends AbstractController
     public function delete(ModalFormService $modal, Request $request, int $id, ModuleRepository $moduleRepository): Response
     {
         $module = $moduleRepository->findOneBy(['id' => $id]);
-
         $params = [];
         $params['id'] = $module->getId();
-
         return $modal->show(
             $title = 'Delete module '.$module->getLabelPlural(),
             $class = 'module',
@@ -72,11 +68,10 @@ class ModuleController extends AbstractController
     ): Response
     {
         $module = $moduleRepository->findOneBy(['id' => $id]);
-        $fields = $fieldRepository->findAll();
+        $fields = $fieldRepository->findBy(['module' => $module]);
 
         $params = [];
         $params['id'] = $module->getId();
-
         $form = $modal->getForm('module', 'app_module_show', $module, 'POST', $params);
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);

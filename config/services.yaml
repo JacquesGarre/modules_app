@@ -34,3 +34,14 @@ services:
                 name: 'doctrine.orm.entity_listener'
                 event: 'preRemove'
                 entity: 'App\Entity\Module'
+
+    App\EventListener\FieldEventListener:
+        tags:
+            -
+                name: 'doctrine.orm.entity_listener'
+                event: 'prePersist'
+                entity: 'App\Entity\Field'
+            -
+                name: 'doctrine.orm.entity_listener'
+                event: 'preRemove'
+                entity: 'App\Entity\Field'
