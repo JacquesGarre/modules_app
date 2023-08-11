@@ -19,7 +19,7 @@ export default class extends Controller {
         $(that.formTarget).find('.invalid-feedback').remove()
         $(that.formTarget).find('.field-invalid').removeClass('field-invalid')
 
-        that.submitBtnTarget.innerHTML = "Saving...";
+        that.submitBtnTarget.innerHTML = "Submitting...";
         axios({
             method: this.methodValue,
             url: this.urlValue,
@@ -46,7 +46,7 @@ export default class extends Controller {
 
                 that.submitBtnTarget.innerHTML = that.submitLabelValue
             } else {
-                that.submitBtnTarget.innerHTML = 'Saved <i class="fas fa-check"></i>'
+                that.submitBtnTarget.innerHTML = 'Submitted <i class="fas fa-check"></i>'
                 that.dispatch("closemodal")
             }
         })

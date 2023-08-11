@@ -33,13 +33,14 @@ class ModalFormService
         string $route,
         $request,
         $existingEntity = null, 
-        $method = 'POST'   
+        $method = 'POST',
+        $routeParams = []
     )
     {
         $entityClass = 'App\\Entity\\'.ucfirst($class);
         $entity = $existingEntity ?: new $entityClass();
 
-        $form = $this->getForm($class, $route, $entity, $method);
+        $form = $this->getForm($class, $route, $entity, $method, $routeParams);
 
         // If creation/update
         if ($request->isMethod('POST')) {
@@ -64,13 +65,7 @@ class ModalFormService
         return new Response($html);
     }
 
-    private function getForm(string $class, string $route, $entity, $method){
-
-        $params = [];
-        if($entity && !empty($entity->getId())){
-            $params['id'] = $entity->getId();
-        }
-
+    public function getForm(string $class, string $route, $entity, $method, $routeParams = []){
         $typeClass = 'App\\Form\\' . ucfirst($class).'Type'::class;
         $form = $this->formFactory->create(
             $typeClass, 
@@ -82,7 +77,7 @@ class ModalFormService
                     'data-form-name-value' => $class,
                     'data-form-target' => 'form',
                     'data-controller' => 'form',
-                    'data-form-url-value' => $this->router->generate($route, $params),
+                    'data-form-url-value' => $this->router->generate($route, $routeParams),
                     'data-form-submit-label-value' => 'Save'
                 ]
             ]
@@ -135,7 +130,7 @@ class ModalFormService
 
     }
 
-    private function handlePostRequest($form, $entity){
+    public function handlePostRequest($form, $entity){
 
         
         $errors = [];

@@ -7,18 +7,65 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service\ModalFormService;
 use Symfony\Component\HttpFoundation\Request;
+use App\Repository\FieldRepository;
+use App\Repository\ModuleRepository;
+use App\Entity\Field;
 
 class FieldController extends AbstractController
 {
 
-    #[Route('/administration/fields/add', name: 'app_field_add')]
-    public function add(ModalFormService $modal, Request $request): Response
+    #[Route('/administration/fields/add/{moduleId}', name: 'app_field_add')]
+    public function add(int $moduleId, ModalFormService $modal, Request $request, ModuleRepository $moduleRepository): Response
     {
+        $module = $moduleRepository->findOneBy(['id' => $moduleId]);
+        $field = new Field();
+        $field->setModule($module);
+
+        $params = [
+            'moduleId' => $moduleId
+        ];
+
         return $modal->show(
             $title = 'Create a new field',
             $class = 'field',
             $route = 'app_field_add',
-            $request
+            $request,
+            $field,
+            'POST',
+            $params
+        );
+    }
+
+    #[Route('/administration/fields/{id}/edit', name: 'app_field_edit')]
+    public function edit(ModalFormService $modal, Request $request, int $id, FieldRepository $fieldRepository): Response
+    {
+        $field = $fieldRepository->findOneBy(['id' => $id]);
+        $params = ['id' => $id];
+
+        return $modal->show(
+            $title = 'Edit field '.$field->getLabel(),
+            $class = 'field',
+            $route = 'app_field_edit',
+            $request,
+            $field,
+            'POST',
+            $params
+        );
+    }
+
+    #[Route('/administration/fields/{id}/delete', name: 'app_field_delete')]
+    public function delete(ModalFormService $modal, Request $request, int $id, FieldRepository $fieldRepository): Response
+    {
+        $field = $fieldRepository->findOneBy(['id' => $id]);
+        $params = ['id' => $id];
+        return $modal->show(
+            $title = 'Delete  field '.$field->getLabel(),
+            $class = 'field',
+            $route = 'app_field_delete',
+            $request,
+            $field,
+            $method = 'DELETE',
+            $params
         );
     }
 

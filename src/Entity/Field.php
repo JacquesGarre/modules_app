@@ -34,6 +34,10 @@ class Field
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $value = null;
 
+    #[ORM\ManyToOne(inversedBy: 'fields')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Module $module = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -119,6 +123,18 @@ class Field
     public function setValue(?string $value): static
     {
         $this->value = $value;
+
+        return $this;
+    }
+
+    public function getModule(): ?Module
+    {
+        return $this->module;
+    }
+
+    public function setModule(?Module $module): static
+    {
+        $this->module = $module;
 
         return $this;
     }

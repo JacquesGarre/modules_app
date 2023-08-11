@@ -9,7 +9,7 @@ use App\Repository\ModuleRepository;
 
 class AdminController extends AbstractController
 {
-    #[Route('/administration', name: 'app_admin')]
+    #[Route('/administration', name: 'app_administration')]
     public function index(ModuleRepository $moduleRepository): Response
     {
         $modules = $moduleRepository->findAll();

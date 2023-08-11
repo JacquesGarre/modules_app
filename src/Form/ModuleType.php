@@ -17,7 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 class ModuleType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
-    {   
+    {
 
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
@@ -51,7 +51,7 @@ class ModuleType extends AbstractType
                         ]);
                     }
 
-                    $form->add('Save', ButtonType::class, [
+                    $form->add('Submit', ButtonType::class, [
                         'attr' => [
                             'class' => 'btn-primary float-end',
                             'data-action' => 'form#submit',
@@ -66,7 +66,7 @@ class ModuleType extends AbstractType
                         ->add('labelPlural', HiddenType::class)
                         ->add('labelSingular', HiddenType::class)
                         ->add('sqlTable', HiddenType::class)
-                        ->add('Delete', ButtonType::class, [
+                        ->add('Submit', ButtonType::class, [
                             'attr' => [
                                 'class' => 'btn-danger float-end',
                                 'data-action' => 'form#submit',

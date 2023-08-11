@@ -15,7 +15,10 @@
         
     </head>
     <body>
-        {% block body %}{% endblock %}
         {% include 'includes/_modal.html.twig' %}
+        <div class="container mt-5">
+            {% block body %}{% endblock %}
+            
+        </div>
     </body>
 </html>

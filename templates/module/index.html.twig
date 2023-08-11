@@ -16,6 +16,10 @@
         {% for module in modules %}
             <tr data-id="{{ module.id }}">
                 <td>
+                    <a class="btn btn-sm btn-success"
+                        href="{{ path('app_module_show', {'id': module.id }) }}">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
                     <a class="btn btn-sm btn-primary"
                         data-controller="modal"
                         data-action="modal#open"
