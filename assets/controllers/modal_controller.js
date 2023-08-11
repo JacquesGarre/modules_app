@@ -15,13 +15,13 @@ export default class extends Controller {
         .get(this.urlValue)
         .then((response) => {
             $('#modal').find('.modal-dialog').html(response.data);
-            const modal = Modal.getInstance('#modal');
+            let modal = Modal.getOrCreateInstance('#modal');
             modal.show()
         });
     }
 
     close() {
-        const modal = Modal.getInstance('#modal');
+        const modal = Modal.getOrCreateInstance('#modal');
         modal.hide()
     }
 
