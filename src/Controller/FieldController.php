@@ -26,7 +26,7 @@ class FieldController extends AbstractController
         ];
 
         return $modal->show(
-            $title = 'Create a new field',
+            $title = 'Create a new attribute for '.$module->getLabelSingular(),
             $class = 'field',
             $route = 'app_field_add',
             $request,
@@ -43,7 +43,7 @@ class FieldController extends AbstractController
         $params = ['id' => $id];
 
         return $modal->show(
-            $title = 'Edit field '.$field->getLabel(),
+            $title = 'Edit attribute '.$field->getLabel(),
             $class = 'field',
             $route = 'app_field_edit',
             $request,
@@ -59,7 +59,7 @@ class FieldController extends AbstractController
         $field = $fieldRepository->findOneBy(['id' => $id]);
         $params = ['id' => $id];
         return $modal->show(
-            $title = 'Delete  field '.$field->getLabel(),
+            $title = 'Delete attribute '.$field->getLabel(),
             $class = 'field',
             $route = 'app_field_delete',
             $request,

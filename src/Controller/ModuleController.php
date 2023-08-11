@@ -16,7 +16,7 @@ class ModuleController extends AbstractController
     public function add(ModalFormService $modal, Request $request): Response
     {
         return $modal->show(
-            $title = 'Create a new module',
+            $title = 'Create a new entity',
             $class = 'module',
             $route = 'app_module_add',
             $request
@@ -31,7 +31,7 @@ class ModuleController extends AbstractController
         $params = [];
         $params['id'] = $module->getId();
         return $modal->show(
-            $title = 'Edit module '.$module->getLabelPlural(),
+            $title = 'Edit entity '.$module->getLabelSingular(),
             $class = 'module',
             $route = 'app_module_edit',
             $request,
@@ -48,7 +48,7 @@ class ModuleController extends AbstractController
         $params = [];
         $params['id'] = $module->getId();
         return $modal->show(
-            $title = 'Delete module '.$module->getLabelPlural(),
+            $title = 'Delete entity '.$module->getLabelSingular(),
             $class = 'module',
             $route = 'app_module_delete',
             $request,

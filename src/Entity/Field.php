@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FieldRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FieldRepository::class)]
@@ -37,6 +39,25 @@ class Field
     #[ORM\ManyToOne(inversedBy: 'fields')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Module $module = null;
+
+    #[ORM\ManyToMany(targetEntity: Listing::class, inversedBy: 'fields')]
+    private Collection $listings;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $foreignTable = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $multiple = null;
+
+    public function __construct()
+    {
+        $this->listings = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getLabel();
+    }
 
     public function getId(): ?int
     {
@@ -138,4 +159,53 @@ class Field
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Listing>
+     */
+    public function getListings(): Collection
+    {
+        return $this->listings;
+    }
+
+    public function addListing(Listing $listing): static
+    {
+        if (!$this->listings->contains($listing)) {
+            $this->listings->add($listing);
+        }
+
+        return $this;
+    }
+
+    public function removeListing(Listing $listing): static
+    {
+        $this->listings->removeElement($listing);
+
+        return $this;
+    }
+
+    public function getForeignTable(): ?string
+    {
+        return $this->foreignTable;
+    }
+
+    public function setForeignTable(?string $foreignTable): static
+    {
+        $this->foreignTable = $foreignTable;
+
+        return $this;
+    }
+
+    public function isMultiple(): ?bool
+    {
+        return $this->multiple;
+    }
+
+    public function setMultiple(?bool $multiple): static
+    {
+        $this->multiple = $multiple;
+
+        return $this;
+    }
+
 }

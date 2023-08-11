@@ -13,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Field;
+use App\Repository\FieldRepository;
 
 class ModuleType extends AbstractType
 {
@@ -30,18 +33,18 @@ class ModuleType extends AbstractType
                 if($method !== 'DELETE'){
 
                     $form
+                        ->add('labelSingular', TextType::class, [
+                            'constraints' => [
+                                new NotBlank()
+                            ],
+                        ])
                         ->add('labelPlural', TextType::class, [
                             'constraints' => [
                                 new NotBlank()
                             ],
                         ])
-                        ->add('labelSingular', TextType::class, [
-                            'constraints' => [
-                                new NotBlank()
-                            ],
-                        ]);
-
-                    
+                        ->add('pattern', TextType::class);
+                        
                     if (!$module || null === $module->getId()) {
                         $form->add('sqlTable', TextType::class, [
                             'constraints' => [
@@ -51,13 +54,14 @@ class ModuleType extends AbstractType
                         ]);
                     }
 
-                    $form->add('Submit', ButtonType::class, [
-                        'attr' => [
-                            'class' => 'btn-primary float-end',
-                            'data-action' => 'form#submit',
-                            'data-form-target' => 'submitBtn'
-                        ],
-                    ]);
+                        $form
+                            ->add('Submit', ButtonType::class, [
+                                'attr' => [
+                                    'class' => 'btn-primary float-end',
+                                    'data-action' => 'form#submit',
+                                    'data-form-target' => 'submitBtn'
+                                ],
+                            ]);
 
 
                 } else {

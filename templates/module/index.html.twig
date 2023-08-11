@@ -1,9 +1,9 @@
-<h2>
-    Modules
+<h3>
+    Entities
     <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_module_add') }}">
-        New module
+        New entity
     </button>
-</h2>    
+</h3>    
 <table id="modules-table" class="table table-striped">
     <thead>
         <tr>
@@ -34,7 +34,7 @@
                         <i class="fa-solid fa-trash"></i>
                     </a>
                 </td>
-                <td>{{ module.labelPlural }}</td>
+                <td>{{ module.labelSingular }}</td>
                 <td>{{ module.sqlTable }}</td>
             </tr>
         {% endfor %}

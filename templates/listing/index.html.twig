@@ -1,0 +1,49 @@
+<h2>
+    Listings
+    <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_listing_add') }}">
+        New listing
+    </button>
+</h2>    
+<table id="listing-table" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Actions</th>
+            <th>List</th>
+            <th>Label</th>
+            <th>Value</th>
+            <th>Color</th>
+            <th>Background</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for listing in listings %}
+            <tr data-id="{{ listing.id }}">
+                <td>
+                    <a class="btn btn-sm btn-primary"
+                        data-controller="modal"
+                        data-action="modal#open"
+                        data-modal-url-value="{{ path('app_listing_edit', {'id': listing.id }) }}">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a class="btn btn-sm btn-danger"
+                        data-controller="modal"
+                        data-action="modal#open"
+                        data-modal-url-value="{{ path('app_listing_delete', {'id': listing.id }) }}"
+                    >
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </td>
+                <td>{{ listing.list }}</td>
+                <td>
+                    <span class="badge badge-pill {{ listing.colorClass }} {{ listing.bgClass }}">
+                        {{ listing.label }}
+                    </span>
+                </td>
+                <td>{{ listing.value }}</td>
+                <td>{{ listing.colorClass }}</td>
+                <td>{{ listing.bgClass }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+

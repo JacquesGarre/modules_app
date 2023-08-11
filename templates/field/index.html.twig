@@ -1,9 +1,9 @@
-<h2>
-    Fields
+<h3>
+    Attributes
     <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_field_add', {'moduleId': module.id }) }}">
-        New field
+        New attribute
     </button>
-</h2>    
+</h3>    
 <table id="fields-table" class="table table-striped">
     <thead>
         <tr>
@@ -15,6 +15,7 @@
             <th>Required</th>
             <th>Disabled</th>
             <th>Readonly</th>
+            <th>Multiple</th>
         </tr>
     </thead>
     <tbody>
@@ -42,6 +43,7 @@
                 <td>{{ field.required }}</td>
                 <td>{{ field.disabled }}</td>
                 <td>{{ field.readonly }}</td>
+                <td>{{ field.multiple }}</td>
             </tr>
         {% endfor %}
     </tbody>

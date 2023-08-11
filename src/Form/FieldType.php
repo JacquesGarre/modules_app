@@ -14,9 +14,40 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Listing;
+use App\Repository\ListingRepository;
+use App\Repository\ModuleRepository;
 
 class FieldType extends AbstractType
 {
+    public function __construct(
+        private ListingRepository $listingRepository,
+        private ModuleRepository $moduleRepository
+    )
+    {
+        $this->listingRepository = $listingRepository;
+        $this->moduleRepository = $moduleRepository;
+    }
+
+    private function getTables()
+    {
+        $elements = $this->moduleRepository->getTables();
+        $listIDS = array_map(function($element){
+            return $element['sqlTable'];
+        }, $elements);
+        return ['...' => ''] + array_combine($listIDS, $listIDS);
+    }
+
+    private function getLists()
+    {
+        $elements = $this->listingRepository->getListIDS();
+        $listIDS = array_map(function($element){
+            return $element['list'];
+        }, $elements);
+        return ['...' => ''] + array_combine($listIDS, $listIDS);
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         
@@ -32,7 +63,9 @@ class FieldType extends AbstractType
                     $form
                         ->add('type', ChoiceType::class, [
                             'choices'  => [
-                                'Text' => 'text'
+                                'Text' => 'text',
+                                'Listing' => 'listing',
+                                'Table' => 'foreignTable'
                             ],
                             'constraints' => [
                                 new NotBlank()
@@ -49,10 +82,27 @@ class FieldType extends AbstractType
                                 new Regex('/^[A-Za-z0-9_]*$/')
                             ],
                         ])
+                        ->add('foreignTable', ChoiceType::class, array(
+                            'label' => 'Table',
+                            'choices' => $this->getTables()
+                        ))
+                        ->add('list', ChoiceType::class, array(
+                            'label' => 'List',
+                            'mapped' => false,
+                            'choices' => $this->getLists()
+                        ))
+                        ->add('listings', EntityType::class, array(
+                            'label' => 'Elements',
+                            'class'     => Listing::class,
+                            'expanded'  => true,
+                            'multiple'  => true,
+                        ))
+
                         ->add('value')
                         ->add('required')
                         ->add('disabled')
                         ->add('readonly')
+                        ->add('multiple')
                         ->add('Submit', ButtonType::class, [
                             'attr' => [
                                 'class' => 'btn-primary float-end',

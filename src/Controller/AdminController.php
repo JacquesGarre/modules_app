@@ -6,16 +6,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ModuleRepository;
+use App\Repository\ListingRepository;
 
 class AdminController extends AbstractController
 {
     #[Route('/administration', name: 'app_administration')]
-    public function index(ModuleRepository $moduleRepository): Response
+    public function index(
+        ModuleRepository $moduleRepository,
+        ListingRepository $listingRepository
+    ): Response
     {
         $modules = $moduleRepository->findAll();
-
+        $listings = $listingRepository->findAll();
         return $this->render('admin/index.html.twig', [
             'modules' => $modules,
+            'listings' => $listings
         ]);
     }
 }

@@ -27,9 +27,16 @@ class Module
     #[ORM\OneToMany(mappedBy: 'module', targetEntity: Field::class, orphanRemoval: true)]
     private Collection $fields;
 
+    #[ORM\OneToMany(mappedBy: 'patternModule', targetEntity: Field::class)]
+    private Collection $patternFields;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pattern = null;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
+        $this->patternFields = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,6 +106,48 @@ class Module
                 $field->setModule(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Field>
+     */
+    public function getPatternFields(): Collection
+    {
+        return $this->patternFields;
+    }
+
+    public function addPatternField(Field $patternField): static
+    {
+        if (!$this->patternFields->contains($patternField)) {
+            $this->patternFields->add($patternField);
+            $patternField->setPatternModule($this);
+        }
+
+        return $this;
+    }
+
+    public function removePatternField(Field $patternField): static
+    {
+        if ($this->patternFields->removeElement($patternField)) {
+            // set the owning side to null (unless already changed)
+            if ($patternField->getPatternModule() === $this) {
+                $patternField->setPatternModule(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPattern(): ?string
+    {
+        return $this->pattern;
+    }
+
+    public function setPattern(?string $pattern): static
+    {
+        $this->pattern = $pattern;
 
         return $this;
     }
