@@ -33,10 +33,19 @@ class Module
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $pattern = null;
 
+    #[ORM\OneToMany(mappedBy: 'module', targetEntity: Form::class, orphanRemoval: true)]
+    private Collection $forms;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
         $this->patternFields = new ArrayCollection();
+        $this->forms = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->getLabelSingular();
     }
 
     public function getId(): ?int
@@ -148,6 +157,36 @@ class Module
     public function setPattern(?string $pattern): static
     {
         $this->pattern = $pattern;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Form>
+     */
+    public function getForms(): Collection
+    {
+        return $this->forms;
+    }
+
+    public function addForm(Form $form): static
+    {
+        if (!$this->forms->contains($form)) {
+            $this->forms->add($form);
+            $form->setModule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeForm(Form $form): static
+    {
+        if ($this->forms->removeElement($form)) {
+            // set the owning side to null (unless already changed)
+            if ($form->getModule() === $this) {
+                $form->setModule(null);
+            }
+        }
 
         return $this;
     }

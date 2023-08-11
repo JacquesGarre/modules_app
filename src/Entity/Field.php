@@ -49,9 +49,13 @@ class Field
     #[ORM\Column(nullable: true)]
     private ?bool $multiple = null;
 
+    #[ORM\ManyToMany(targetEntity: Form::class, mappedBy: 'fields')]
+    private Collection $forms;
+
     public function __construct()
     {
         $this->listings = new ArrayCollection();
+        $this->forms = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -204,6 +208,33 @@ class Field
     public function setMultiple(?bool $multiple): static
     {
         $this->multiple = $multiple;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Form>
+     */
+    public function getForms(): Collection
+    {
+        return $this->forms;
+    }
+
+    public function addForm(Form $form): static
+    {
+        if (!$this->forms->contains($form)) {
+            $this->forms->add($form);
+            $form->addField($this);
+        }
+
+        return $this;
+    }
+
+    public function removeForm(Form $form): static
+    {
+        if ($this->forms->removeElement($form)) {
+            $form->removeField($this);
+        }
 
         return $this;
     }

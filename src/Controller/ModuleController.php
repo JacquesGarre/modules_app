@@ -9,6 +9,7 @@ use App\Service\ModalFormService;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\ModuleRepository;
 use App\Repository\FieldRepository;
+use App\Repository\FormRepository;
 
 class ModuleController extends AbstractController
 {
@@ -64,11 +65,13 @@ class ModuleController extends AbstractController
         ModalFormService $modal,
         Request $request,
         ModuleRepository $moduleRepository,
-        FieldRepository $fieldRepository
+        FieldRepository $fieldRepository,
+        FormRepository $formRepository
     ): Response
     {
         $module = $moduleRepository->findOneBy(['id' => $id]);
         $fields = $fieldRepository->findBy(['module' => $module]);
+        $forms = $formRepository->findBy(['module' => $module]);
 
         $params = [];
         $params['id'] = $module->getId();
@@ -81,7 +84,8 @@ class ModuleController extends AbstractController
         return $this->render('module/show.html.twig', [
             'module' => $module,
             'form' => $form,
-            'fields' => $fields
+            'fields' => $fields,
+            'forms' => $forms,
         ]);
     }
 
