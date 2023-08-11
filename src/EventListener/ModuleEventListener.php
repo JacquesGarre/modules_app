@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\Entity\Module;
 use Doctrine\ORM\Event\PrePersistEventArgs;
+use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Exception;
 
 class ModuleEventListener
@@ -31,4 +32,19 @@ class ModuleEventListener
         $stmt->execute();
 
     }
+
+    public function preRemove(Module $module, PreRemoveEventArgs $args): void
+    {
+        $conn = $args->getObjectManager()->getConnection();
+
+        $table = $module->getSqlTable();
+
+        // Test if table doesn't exist already
+        $sql = "DROP TABLE `$table`";
+        $stmt = $conn->prepare($sql);
+        $stmt->executeQuery();
+
+
+    }
+
 }

@@ -32,19 +32,27 @@ class ModalFormService
         string $class,
         string $route,
         $request,
-        $existingEntity = null     
+        $existingEntity = null, 
+        $method = 'POST'   
     )
     {
         $entityClass = 'App\\Entity\\'.ucfirst($class);
         $entity = $existingEntity ?: new $entityClass();
 
-        $form = $this->getForm($class, $route, $entity);
+        $form = $this->getForm($class, $route, $entity, $method);
 
-        // If creation
+        // If creation/update
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);
             return $this->handlePostRequest($form, $entity);
         }
+
+        // If delete
+        if ($request->isMethod('DELETE')) {
+            $form->handleRequest($request);
+            return $this->handleDeleteRequest($form, $entity);
+        }
+        
 
         // Render add form
         $html = $this->twig->render('form_modal.html.twig',
@@ -56,7 +64,7 @@ class ModalFormService
         return new Response($html);
     }
 
-    private function getForm(string $class, string $route, $entity){
+    private function getForm(string $class, string $route, $entity, $method){
 
         $params = [];
         if($entity && !empty($entity->getId())){
@@ -68,6 +76,7 @@ class ModalFormService
             $typeClass, 
             $entity,
             [   
+                'method' => $method,
                 'attr' => [
                     'data-form-method-value' => 'post',
                     'data-form-name-value' => $class,
@@ -81,6 +90,49 @@ class ModalFormService
 
 
         return $form;
+    }
+
+    private function handleDeleteRequest($form, $entity){
+
+        $errors = [];
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try {
+                $this->em->remove($entity);
+                $this->em->flush();
+            } catch(Exception $e) {
+                $errors[$form->getName()][] = $e->getMessage();
+                return new Response(json_encode([
+                    'errors' => $errors
+                ]));
+            }
+
+            return new Response(json_encode([
+                'success' => 'Entity deleted'
+            ]));
+
+        } 
+
+        // Global
+        foreach ($form->getErrors() as $error) {
+            $errors[$form->getName()][] = $error->getMessage();
+        }
+    
+        // Fields
+        foreach ($form as $child) {
+            if ($child->isSubmitted() && !$child->isValid()) {
+                foreach ($child->getErrors() as $error) {
+                    $errors[$child->getName()][] = $error->getMessage();
+                }
+            }
+        }
+
+
+        return new Response(json_encode([
+            'errors' => $errors
+        ]));
+
     }
 
     private function handlePostRequest($form, $entity){

@@ -36,4 +36,19 @@ class ModuleController extends AbstractController
         );
     }
 
+    #[Route('/administration/modules/{id}/delete', name: 'app_module_delete')]
+    public function delete(ModalFormService $modal, Request $request, int $id, ModuleRepository $moduleRepository): Response
+    {   
+
+        $module = $moduleRepository->findOneBy(['id' => $id]);
+        return $modal->show(
+            $title = 'Delete module '.$module->getLabelPlural(),
+            $class = 'module',
+            $route = 'app_module_delete',
+            $request,
+            $module,
+            $method = 'DELETE'
+        );
+    }
+
 }

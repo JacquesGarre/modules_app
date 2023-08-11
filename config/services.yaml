@@ -27,7 +27,10 @@ services:
     App\EventListener\ModuleEventListener:
         tags:
             -
-                # these are the options required to define the entity listener
                 name: 'doctrine.orm.entity_listener'
                 event: 'prePersist'
+                entity: 'App\Entity\Module'
+            -
+                name: 'doctrine.orm.entity_listener'
+                event: 'preRemove'
                 entity: 'App\Entity\Module'
