@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration | {{ parent() }}{% endblock %}
+
+{% block body %}
+
+    <h1>Fields</h1>
+    <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_field_add') }}">
+        Create new field
+    </button>
+
+    <h1>Modules</h1>
+    <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_module_add') }}">
+        Create new module
+    </button>
+    
+{% endblock %}

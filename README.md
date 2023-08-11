@@ -4,8 +4,9 @@
 - change DATABASE_URL in .env
 - npm install
 - composer install
-- npm run watch
 - php bin/console doctrine:migrations:migrate
+- npm run watch
 - symfony serve -d
+
 
 

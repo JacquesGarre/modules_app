@@ -8,18 +8,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Service\ModalFormService;
 use Symfony\Component\HttpFoundation\Request;
 
-class FieldController extends AbstractController
+class ModuleController extends AbstractController
 {
-
-    #[Route('/administration/fields/add', name: 'app_field_add')]
+    #[Route('/administration/modules/add', name: 'app_module_add')]
     public function add(ModalFormService $modal, Request $request): Response
     {
         return $modal->show(
-            $title = 'Create a new field',
-            $class = 'field',
-            $route = 'app_field_add',
+            $title = 'Create a new module',
+            $class = 'module',
+            $route = 'app_module_add',
             $request
         );
     }
-
 }

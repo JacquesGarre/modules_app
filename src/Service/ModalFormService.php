@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
+use Exception;
 
 class ModalFormService
 {
@@ -65,23 +66,32 @@ class ModalFormService
                     'data-form-target' => 'form',
                     'data-controller' => 'form',
                     'data-form-url-value' => $this->router->generate($route),
-                    'data-form-submit-label-value' => 'Submit'
+                    'data-form-submit-label-value' => 'Save'
                 ]
             ]
         );
     }
 
     private function handlePostRequest($form, $entity){
+
         
+        $errors = [];
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->em->persist($entity);
-            $this->em->flush();
+            try {
+                $this->em->persist($entity);
+                $this->em->flush();
+            } catch(Exception $e) {
+                $errors[$form->getName()][] = $e->getMessage();
+                return new Response(json_encode([
+                    'errors' => $errors
+                ]));
+            }
+
             return new Response(json_encode([
                 'success' => $entity->getId()
             ]));
         } 
-
-        $errors = [];
 
         // Global
         foreach ($form->getErrors() as $error) {

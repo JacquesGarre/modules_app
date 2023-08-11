@@ -27,6 +27,14 @@ export default class extends Controller {
         })
         .then(function (response) {
             if(response.data.errors !== undefined){
+
+                // Erros on form
+                if(that.nameValue in response.data.errors){
+                    const formErrors = response.data.errors[that.nameValue].join(', ')
+                    $(that.formTarget).append(`<div class="invalid-feedback d-block">`+formErrors+`</div>`)
+                }
+
+                // Errors on fields
                 for(const fieldID in response.data.errors){
                     const fieldErrors = response.data.errors[fieldID].join(', ')
                     $(that.formTarget)
@@ -34,6 +42,7 @@ export default class extends Controller {
                     .addClass('field-invalid')
                     .after(`<div class="invalid-feedback d-block">`+fieldErrors+`</div>`)
                 }
+
                 that.submitBtnTarget.innerHTML = that.submitLabelValue
             } else {
                 that.submitBtnTarget.innerHTML = 'Saved <i class="fas fa-check"></i>'
