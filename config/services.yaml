@@ -24,6 +24,14 @@ services:
     # please note that last definitions always *replace* previous ones
     App\Service\ModalFormService:
 
+    App\Doctrine\TableListener:
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }
+        
+    App\Doctrine\FormListener:
+        tags:
+            - { name: doctrine.orm.entity_listener, lazy: true }
+
     App\EventListener\ModuleEventListener:
         tags:
             -

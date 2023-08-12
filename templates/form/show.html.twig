@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Administration | Form {{ formEntity.title }} | {{ parent() }}{% endblock %}
+{% block title %}Administration | Form {{ form.title }} | {{ parent() }}{% endblock %}
 
 {% block body %}
     
@@ -8,11 +8,9 @@
         href="{{ path('app_administration') }}">
         <i class="fa-solid fa-chevron-left"></i> Back
     </a>
-    <h3>{{ formEntity.title }}</h3>    
+    <h3>{{ form.title }}</h3>    
     <div class="row">
-        {{ form(form) }}
+        {% include 'form/form.html.twig' %}
     </div>
-
-
 
 {% endblock %}

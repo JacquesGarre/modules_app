@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration | Page {{ page.title }} | {{ parent() }}{% endblock %}
+
+{% block body %}
+    
+    <a class="btn btn-sm btn-primary mb-5"
+        href="{{ path('app_administration') }}">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </a>
+    <h3>Page {{ page.title }}</h3>    
+    <div class="row">
+        {{ form(form) }}
+    </div>
+    <hr class="mt-5 mb-5">
+    <h3 class="mb-5">Layout</h3>  
+    <div class="page-builder">
+
+        {% for children in page.htmlelements %}
+            {% if children.parent is empty %}
+                {% include 'page/html_element_preview.html.twig' %}
+            {% endif %}
+        {% endfor %}
+
+        <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add', {'pageId': page.id}) }}">
+            <i class="fas fa-plus me-3"></i>New HTML element
+        </button>
+
+    </div>
+
+{% endblock %}

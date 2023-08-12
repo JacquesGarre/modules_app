@@ -1,0 +1,43 @@
+<h3>
+    Pages
+    <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_page_add') }}">
+        New page
+    </button>
+</h3>    
+<table id="page-table" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Actions</th>
+            <th>Title</th>
+            <th>Uri</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for page in pages %}
+            <tr data-id="{{ page.id }}">
+                <td>
+                    <a class="btn btn-sm btn-success"
+                        href="{{ path('app_page_show', {'id': page.id }) }}">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                    <a class="btn btn-sm btn-primary"
+                        data-controller="modal"
+                        data-action="modal#open"
+                        data-modal-url-value="{{ path('app_page_edit', {'id': page.id }) }}">
+                        <i class="fa-solid fa-pen"></i>
+                    </a>
+                    <a class="btn btn-sm btn-danger"
+                        data-controller="modal"
+                        data-action="modal#open"
+                        data-modal-url-value="{{ path('app_page_delete', {'id': page.id }) }}"
+                    >
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
+                </td>
+                <td>{{ page.title }}</td>
+                <td>{{ page.uri }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+

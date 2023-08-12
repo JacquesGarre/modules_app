@@ -78,51 +78,10 @@ class FormController extends AbstractController
         FormRepository $formRepository
     ): Response
     {
-        $formEntity = $formRepository->findOneBy(['id' => $id]);
-        $entity = new stdClass();
-        $form = $this->getForm($formEntity, $entity);
+        $form = $formRepository->findOneBy(['id' => $id]);
         return $this->render('form/show.html.twig', [
-            'formEntity' => $formEntity,
             'form' => $form
         ]);
-    }
-
-
-    public function getForm(Form $formEntity, stdClass $entity)
-    {
-        $form = $this->createFormBuilder($entity, [
-            'action' => '/'.$formEntity->getAction(),
-            'method' => 'POST',
-        ]);
-        foreach($formEntity->getFields() as $field){
-            $entity->{$field->getName()} = null;
-            switch($field->getType()){
-                case 'text':
-                    $form->add($field->getName(), TextType::class, [
-                        'empty_data' => $field->getValue(),
-                        'disabled' => $field->isDisabled(),
-                        'required' => $field->isRequired(),
-                    ]);
-                break;
-                case 'listing':
-                    $form->add($field->getName(), ChoiceType::class, [
-                        'empty_data' => $field->getValue(),
-                        'disabled' => $field->isDisabled(),
-                        'required' => $field->isRequired(),
-                        'choices' => ['...' => ''] + $field->getChoices(),
-                    ]);
-                break;
-            }
-        }
-        switch($formEntity->getAction()){
-            case 'add':
-                $form->add('save', ButtonType::class, ['label' => 'Create '.$formEntity->getModule()->getLabelSingular()]);
-            break;
-            case 'edit':
-                $form->add('save', ButtonType::class, ['label' => 'Update '.$formEntity->getModule()->getLabelSingular()]);
-            break;
-        }
-        return $form->getForm();
     }
 
 }

@@ -72,21 +72,12 @@ class TableController extends AbstractController
     #[Route('/administration/tables/{id}', name: 'app_table_show')]
     public function show(
         int $id,
-        TableRepository $tableRepository,
-        DataService $dataService
+        TableRepository $tableRepository
     ): Response
     {
         $table = $tableRepository->findOneBy(['id' => $id]);
-        $columns = array_map(function($column){
-            return $column->getName();
-        }, $table->getColumns()->toArray());
-        $data = $dataService->get(
-            $table->getModule()->getSqlTable(),
-            $columns
-        );
         return $this->render('table/show.html.twig', [
-            'table' => $table,
-            'data' => $data
+            'table' => $table
         ]);
     }
 

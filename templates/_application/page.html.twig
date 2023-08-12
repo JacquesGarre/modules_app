@@ -1,0 +1,11 @@
+{% extends 'application_base.html.twig' %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block body %}
+    {% for children in page.htmlelements %}
+        {% if children.parent is empty %}
+            {% include 'page/html_element_view.html.twig' %}
+        {% endif %}
+    {% endfor %}
+{% endblock %}

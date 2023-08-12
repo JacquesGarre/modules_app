@@ -7,8 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Doctrine\TableListener;
 
 #[ORM\Entity(repositoryClass: TableRepository::class)]
+#[ORM\EntityListeners([TableListener::class])]
 #[ORM\Table(name: '`table`')]
 class Table
 {
@@ -30,9 +32,20 @@ class Table
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $inlineActions = null;
 
+    #[ORM\OneToMany(mappedBy: 'ModuleTable', targetEntity: HtmlElement::class)]
+    private Collection $htmlElements;
+
+    private $data = [];
+
     public function __construct()
     {
         $this->columns = new ArrayCollection();
+        $this->htmlElements = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->title;
     }
 
     public function getId(): ?int
@@ -59,6 +72,15 @@ class Table
     {
         return $this->columns;
     }
+
+    public function getColumnsNames(): array
+    {
+        return array_map(function($column){
+            return $column->getName();
+        }, $this->getColumns()->toArray());
+    }
+
+
 
     public function addColumn(Field $column): static
     {
@@ -98,4 +120,45 @@ class Table
         $this->inlineActions = json_encode($inlineActions);
         return $this;
     }
+
+    /**
+     * @return Collection<int, HtmlElement>
+     */
+    public function getHtmlElements(): Collection
+    {
+        return $this->htmlElements;
+    }
+
+    public function addHtmlElement(HtmlElement $htmlElement): static
+    {
+        if (!$this->htmlElements->contains($htmlElement)) {
+            $this->htmlElements->add($htmlElement);
+            $htmlElement->setModuleTable($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHtmlElement(HtmlElement $htmlElement): static
+    {
+        if ($this->htmlElements->removeElement($htmlElement)) {
+            // set the owning side to null (unless already changed)
+            if ($htmlElement->getModuleTable() === $this) {
+                $htmlElement->setModuleTable(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function setData(array $data)
+    {
+        $this->data = $data;
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
+    }
+
 }

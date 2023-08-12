@@ -6,8 +6,9 @@ use App\Repository\FormRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use App\Doctrine\FormListener;
 #[ORM\Entity(repositoryClass: FormRepository::class)]
+#[ORM\EntityListeners([FormListener::class])]
 class Form
 {
     #[ORM\Id]
@@ -28,9 +29,20 @@ class Form
     #[ORM\JoinColumn(nullable: false)]
     private ?Module $module = null;
 
+    #[ORM\OneToMany(mappedBy: 'ModuleForm', targetEntity: HtmlElement::class)]
+    private Collection $htmlElements;
+
+    private $html;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
+        $this->htmlElements = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->title;
     }
 
     public function getId(): ?int
@@ -97,4 +109,45 @@ class Form
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, HtmlElement>
+     */
+    public function getHtmlElements(): Collection
+    {
+        return $this->htmlElements;
+    }
+
+    public function addHtmlElement(HtmlElement $htmlElement): static
+    {
+        if (!$this->htmlElements->contains($htmlElement)) {
+            $this->htmlElements->add($htmlElement);
+            $htmlElement->setModuleForm($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHtmlElement(HtmlElement $htmlElement): static
+    {
+        if ($this->htmlElements->removeElement($htmlElement)) {
+            // set the owning side to null (unless already changed)
+            if ($htmlElement->getModuleForm() === $this) {
+                $htmlElement->setModuleForm(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function setHtml($html)
+    {
+        $this->html = $html;
+    }
+
+    public function getHtml()
+    {
+        return $this->html;
+    }
+
 }
