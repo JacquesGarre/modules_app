@@ -10,6 +10,12 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\FormRepository;
 use App\Repository\ModuleRepository;
 use App\Entity\Form;
+use stdClass;
+use App\Service\FormBuilderService;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+
 class FormController extends AbstractController
 {
     #[Route('/administration/forms/add/{moduleId}', name: 'app_form_add')]
@@ -70,24 +76,42 @@ class FormController extends AbstractController
     #[Route('/administration/forms/{id}', name: 'app_form_show')]
     public function show(
         int $id,
-        ModalFormService $modal,
-        Request $request,
-        FormRepository $formRepository
+        FormRepository $formRepository,
+        ModuleRepository $moduleRepository,
+        FormBuilderService $formBuilder
     ): Response
     {
-        $formEntity = $formRepository->findOneBy(['id' => $id]);
 
-        $params = [];
-        $params['id'] = $formEntity->getId();
-        $form = $modal->getForm('form', 'app_form_show', $formEntity, 'POST', $params);
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            return $modal->handlePostRequest($form, $formEntity);
+        $formEntity = $formRepository->findOneBy(['id' => $id]);
+   
+        $entity = new stdClass();
+        $form = $this->createFormBuilder($entity);
+        foreach($formEntity->getFields() as $field){
+            $entity->{$field->getName()} = null;
+            switch($field->getType()){
+                case 'text':
+                    $form->add($field->getName(), TextType::class);
+                break;
+                case 'listing':
+                    $form->add($field->getName(), ChoiceType::class);
+                break;
+            }
+        }
+        switch($formEntity->getAction()){
+            case 'add':
+                $form->add('save', ButtonType::class, ['label' => 'Create '.$formEntity->getModule()->getLabelSingular()]);
+            break;
+            case 'edit':
+                $form->add('save', ButtonType::class, ['label' => 'Update '.$formEntity->getModule()->getLabelSingular()]);
+            break;
         }
 
+
         return $this->render('form/show.html.twig', [
-            'formEntity' => $formEntity
+            'formEntity' => $formEntity,
+            'form' => $form->getForm()
         ]);
+
     }
 
 }

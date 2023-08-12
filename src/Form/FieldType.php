@@ -65,7 +65,7 @@ class FieldType extends AbstractType
                             'choices'  => [
                                 'Text' => 'text',
                                 'Listing' => 'listing',
-                                'Table' => 'foreignTable'
+                                // 'Table' => 'foreignTable'
                             ],
                             'constraints' => [
                                 new NotBlank()
