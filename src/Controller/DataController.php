@@ -43,12 +43,4 @@ class DataController extends AbstractController
         dd($module);
     }
 
-    #[Route('/{table}/{id}', name: 'app_data_show')]
-    public function show(ModalFormService $modal, Request $request, string $table, int $id, ModuleRepository $moduleRepository): Response
-    {
-        $module = $moduleRepository->findOneBy(['sqlTable' => $table]);
-        return $this->render('data/show.html.twig', [
-      
-        ]);
-    }
 }
