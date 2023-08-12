@@ -32,7 +32,7 @@ class Table
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $inlineActions = null;
 
-    #[ORM\OneToMany(mappedBy: 'ModuleTable', targetEntity: HtmlElement::class)]
+    #[ORM\OneToMany(mappedBy: 'ModuleTable', targetEntity: HtmlElement::class, orphanRemoval: true)]
     private Collection $htmlElements;
 
     private $data = [];

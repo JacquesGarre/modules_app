@@ -29,7 +29,7 @@ class Form
     #[ORM\JoinColumn(nullable: false)]
     private ?Module $module = null;
 
-    #[ORM\OneToMany(mappedBy: 'ModuleForm', targetEntity: HtmlElement::class)]
+    #[ORM\OneToMany(mappedBy: 'ModuleForm', targetEntity: HtmlElement::class, orphanRemoval: true)]
     private Collection $htmlElements;
 
     private $html;

@@ -11,6 +11,15 @@ use App\Repository\ListingRepository;
 
 class ListingController extends AbstractController
 {
+    #[Route('/administration/listings', name: 'app_listing_index')]
+    public function index(ListingRepository $listingRepository): Response
+    {
+        $listings = $listingRepository->findAll();
+        return $this->render('listing/_table.html.twig', [
+            'listings' => $listings,
+        ]);
+    }
+
     #[Route('/administration/listings/add', name: 'app_listing_add')]
     public function add(ModalFormService $modal, Request $request): Response
     {

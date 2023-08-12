@@ -15,6 +15,15 @@ use App\Repository\TableRepository;
 
 class ModuleController extends AbstractController
 {
+    #[Route('/administration/modules', name: 'app_module_index')]
+    public function index(ModuleRepository $moduleRepository): Response
+    {
+        $modules = $moduleRepository->findAll();
+        return $this->render('module/_table.html.twig', [
+            'modules' => $modules,
+        ]);
+    }
+
     #[Route('/administration/modules/add', name: 'app_module_add')]
     public function add(ModalFormService $modal, Request $request): Response
     {

@@ -17,6 +17,15 @@ use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 
 class FormController extends AbstractController
 {
+    #[Route('/administration/forms', name: 'app_form_index')]
+    public function index(FormRepository $formRepository): Response
+    {
+        $forms = $formRepository->findAll();
+        return $this->render('form/_table.html.twig', [
+            'forms' => $forms,
+        ]);
+    }
+
     #[Route('/administration/forms/add/{moduleId}', name: 'app_form_add')]
     public function add(int $moduleId, ModalFormService $modal, Request $request, ModuleRepository $moduleRepository): Response
     {
@@ -46,7 +55,7 @@ class FormController extends AbstractController
         $params = ['id' => $id];
 
         return $modal->show(
-            $title = 'Edit attribute '.$form->getTitle(),
+            $title = 'Edit form '.$form->getTitle(),
             $class = 'form',
             $route = 'app_form_edit',
             $request,
@@ -62,7 +71,7 @@ class FormController extends AbstractController
         $form = $formRepository->findOneBy(['id' => $id]);
         $params = ['id' => $id];
         return $modal->show(
-            $title = 'Delete attribute '.$form->getTitle(),
+            $title = 'Delete form '.$form->getTitle(),
             $class = 'form',
             $route = 'app_form_delete',
             $request,

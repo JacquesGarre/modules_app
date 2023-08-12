@@ -1,0 +1,10 @@
+
+{% for children in page.htmlelements %}
+    {% if children.parent is empty %}
+        {% include 'page/html_element_preview.html.twig' %}
+    {% endif %}
+{% endfor %}
+
+<button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add', {'pageId': page.id}) }}">
+    <i class="fas fa-plus me-3"></i>New HTML element
+</button>

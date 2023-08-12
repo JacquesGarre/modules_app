@@ -14,6 +14,16 @@ use App\Service\DataService;
 
 class TableController extends AbstractController
 {
+
+    #[Route('/administration/tables', name: 'app_table_index')]
+    public function index(TableRepository $tableRepository): Response
+    {
+        $tables = $tableRepository->findAll();
+        return $this->render('table/_table.html.twig', [
+            'tables' => $tables,
+        ]);
+    }
+
     #[Route('/administration/tables/add/{moduleId}', name: 'app_table_add')]
     public function add(int $moduleId, ModalFormService $modal, Request $request, ModuleRepository $moduleRepository): Response
     {

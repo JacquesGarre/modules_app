@@ -78,7 +78,8 @@ class ModalFormService
                     'data-form-target' => 'form',
                     'data-controller' => 'form',
                     'data-form-url-value' => $this->router->generate($route, $routeParams),
-                    'data-form-submit-label-value' => 'Save'
+                    'data-form-submit-label-value' => 'Save',
+                    'data-form-table-value' => $class
                 ]
             ]
         );

@@ -9,8 +9,10 @@ export default class extends Controller {
         name: String,
         url: String,
         submitLabel: String,
-        method: String
+        method: String,
+        table: String
     }
+
 
     submit() {
         const that = this;
@@ -47,7 +49,7 @@ export default class extends Controller {
                 that.submitBtnTarget.innerHTML = that.submitLabelValue
             } else {
                 that.submitBtnTarget.innerHTML = 'Submitted <i class="fas fa-check"></i>'
-                that.dispatch("closemodal")
+                that.dispatch("success", {detail: { content: that.tableValue }})
             }
         })
         .catch(function (response) {

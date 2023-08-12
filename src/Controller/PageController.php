@@ -13,6 +13,15 @@ use App\Entity\Page;
 
 class PageController extends AbstractController
 {
+    #[Route('/administration/pages', name: 'app_page_index')]
+    public function index(PageRepository $pageRepository): Response
+    {
+        $pages = $pageRepository->findAll();
+        return $this->render('page/_table.html.twig', [
+            'pages' => $pages,
+        ]);
+    }
+
     #[Route('/administration/pages/add', name: 'app_page_add')]
     public function add(ModalFormService $modal, Request $request): Response
     {
@@ -78,6 +87,12 @@ class PageController extends AbstractController
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);
             return $modal->handlePostRequest($form, $page);
+        }
+
+        if($request->query->get('ajax')){
+            return $this->render('page/_page_builder.html.twig', [
+                'page' => $page,
+            ]);
         }
 
         return $this->render('page/show.html.twig', [

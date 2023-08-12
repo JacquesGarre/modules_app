@@ -1,0 +1,34 @@
+<thead>
+    <tr>
+        <th>Actions</th>
+        <th>Label</th>
+        <th>Table</th>
+    </tr>
+</thead>
+<tbody>
+    {% for module in modules %}
+        <tr data-id="{{ module.id }}">
+            <td>
+                <a class="btn btn-sm btn-success"
+                    href="{{ path('app_module_show', {'id': module.id }) }}">
+                    <i class="fa-solid fa-eye"></i>
+                </a>
+                <a class="btn btn-sm btn-primary"
+                    data-controller="modal"
+                    data-action="modal#open"
+                    data-modal-url-value="{{ path('app_module_edit', {'id': module.id }) }}">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                <a class="btn btn-sm btn-danger"
+                    data-controller="modal"
+                    data-action="modal#open"
+                    data-modal-url-value="{{ path('app_module_delete', {'id': module.id }) }}"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </td>
+            <td>{{ module.labelSingular }}</td>
+            <td>{{ module.sqlTable }}</td>
+        </tr>
+    {% endfor %}
+</tbody>

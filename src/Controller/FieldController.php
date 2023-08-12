@@ -14,6 +14,15 @@ use App\Entity\Field;
 class FieldController extends AbstractController
 {
 
+    #[Route('/administration/fields', name: 'app_field_index')]
+    public function index(FieldRepository $fieldRepository): Response
+    {
+        $fields = $fieldRepository->findAll();
+        return $this->render('field/_table.html.twig', [
+            'fields' => $fields,
+        ]);
+    }
+
     #[Route('/administration/fields/add/{moduleId}', name: 'app_field_add')]
     public function add(int $moduleId, ModalFormService $modal, Request $request, ModuleRepository $moduleRepository): Response
     {

@@ -3,3 +3,33 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+app_form_index:
+    path: /administration/forms
+    controller: App\Controller\FormController::index
+    methods: GET
+
+app_field_index:
+    path: /administration/fields
+    controller: App\Controller\FieldController::index
+    methods: GET
+
+app_page_index:
+    path: /administration/pages
+    controller: App\Controller\PageController::index
+    methods: GET
+
+app_listing_index:
+    path: /administration/listings
+    controller: App\Controller\ListingController::index
+    methods: GET
+
+app_module_index:
+    path: /administration/modules
+    controller: App\Controller\ModuleController::index
+    methods: GET
+
+app_data_show:
+    path: /{table}/{id}
+    controller: App\Controller\ApplicationController::show
+    methods: GET
