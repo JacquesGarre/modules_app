@@ -172,6 +172,18 @@ class Field
         return $this->listings;
     }
 
+    public function getChoices(): array
+    {
+        $choicesID = array_map(function($listing){
+            return $listing->getId();
+        }, $this->listings->toArray());
+
+        $choicesLabels = array_map(function($listing){
+            return $listing->getLabel();
+        }, $this->listings->toArray());
+        return array_combine($choicesLabels, $choicesID);
+    }
+
     public function addListing(Listing $listing): static
     {
         if (!$this->listings->contains($listing)) {

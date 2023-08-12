@@ -101,8 +101,6 @@ class FieldType extends AbstractType
                         ->add('value')
                         ->add('required')
                         ->add('disabled')
-                        ->add('readonly')
-                        ->add('multiple')
                         ->add('Submit', ButtonType::class, [
                             'attr' => [
                                 'class' => 'btn-primary float-end',

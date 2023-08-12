@@ -11,7 +11,6 @@ use App\Repository\FormRepository;
 use App\Repository\ModuleRepository;
 use App\Entity\Form;
 use stdClass;
-use App\Service\FormBuilderService;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
@@ -76,24 +75,42 @@ class FormController extends AbstractController
     #[Route('/administration/forms/{id}', name: 'app_form_show')]
     public function show(
         int $id,
-        FormRepository $formRepository,
-        ModuleRepository $moduleRepository,
-        FormBuilderService $formBuilder
+        FormRepository $formRepository
     ): Response
     {
-
         $formEntity = $formRepository->findOneBy(['id' => $id]);
-   
         $entity = new stdClass();
-        $form = $this->createFormBuilder($entity);
+        $form = $this->getForm($formEntity, $entity);
+        return $this->render('form/show.html.twig', [
+            'formEntity' => $formEntity,
+            'form' => $form
+        ]);
+    }
+
+
+    public function getForm(Form $formEntity, stdClass $entity)
+    {
+        $form = $this->createFormBuilder($entity, [
+            'action' => '/'.$formEntity->getAction(),
+            'method' => 'POST',
+        ]);
         foreach($formEntity->getFields() as $field){
             $entity->{$field->getName()} = null;
             switch($field->getType()){
                 case 'text':
-                    $form->add($field->getName(), TextType::class);
+                    $form->add($field->getName(), TextType::class, [
+                        'empty_data' => $field->getValue(),
+                        'disabled' => $field->isDisabled(),
+                        'required' => $field->isRequired(),
+                    ]);
                 break;
                 case 'listing':
-                    $form->add($field->getName(), ChoiceType::class);
+                    $form->add($field->getName(), ChoiceType::class, [
+                        'empty_data' => $field->getValue(),
+                        'disabled' => $field->isDisabled(),
+                        'required' => $field->isRequired(),
+                        'choices' => ['...' => ''] + $field->getChoices(),
+                    ]);
                 break;
             }
         }
@@ -105,13 +122,7 @@ class FormController extends AbstractController
                 $form->add('save', ButtonType::class, ['label' => 'Update '.$formEntity->getModule()->getLabelSingular()]);
             break;
         }
-
-
-        return $this->render('form/show.html.twig', [
-            'formEntity' => $formEntity,
-            'form' => $form->getForm()
-        ]);
-
+        return $form->getForm();
     }
 
 }
