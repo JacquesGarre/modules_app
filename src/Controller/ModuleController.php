@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\ModuleRepository;
 use App\Repository\FieldRepository;
 use App\Repository\FormRepository;
+use App\Repository\TableRepository;
+
 
 class ModuleController extends AbstractController
 {
@@ -66,12 +68,14 @@ class ModuleController extends AbstractController
         Request $request,
         ModuleRepository $moduleRepository,
         FieldRepository $fieldRepository,
-        FormRepository $formRepository
+        FormRepository $formRepository,
+        TableRepository $tableRepository
     ): Response
     {
         $module = $moduleRepository->findOneBy(['id' => $id]);
         $fields = $fieldRepository->findBy(['module' => $module]);
         $forms = $formRepository->findBy(['module' => $module]);
+        $tables = $tableRepository->findBy(['module' => $module]);
 
         $params = [];
         $params['id'] = $module->getId();
@@ -86,6 +90,7 @@ class ModuleController extends AbstractController
             'form' => $form,
             'fields' => $fields,
             'forms' => $forms,
+            'tables' => $tables
         ]);
     }
 

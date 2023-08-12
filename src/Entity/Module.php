@@ -36,11 +36,15 @@ class Module
     #[ORM\OneToMany(mappedBy: 'module', targetEntity: Form::class, orphanRemoval: true)]
     private Collection $forms;
 
+    #[ORM\OneToMany(mappedBy: 'module', targetEntity: Table::class, orphanRemoval: true)]
+    private Collection $tables;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
         $this->patternFields = new ArrayCollection();
         $this->forms = new ArrayCollection();
+        $this->tables = new ArrayCollection();
     }
 
     public function __toString()
@@ -185,6 +189,36 @@ class Module
             // set the owning side to null (unless already changed)
             if ($form->getModule() === $this) {
                 $form->setModule(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Table>
+     */
+    public function getTables(): Collection
+    {
+        return $this->tables;
+    }
+
+    public function addTable(Table $table): static
+    {
+        if (!$this->tables->contains($table)) {
+            $this->tables->add($table);
+            $table->setModule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTable(Table $table): static
+    {
+        if ($this->tables->removeElement($table)) {
+            // set the owning side to null (unless already changed)
+            if ($table->getModule() === $this) {
+                $table->setModule(null);
             }
         }
 

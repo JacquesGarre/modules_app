@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration | Table {{ table.title }} | {{ parent() }}{% endblock %}
+
+{% block body %}
+    
+    <a class="btn btn-sm btn-primary mb-5"
+        href="{{ path('app_administration') }}">
+        <i class="fa-solid fa-chevron-left"></i> Back
+    </a>
+    <h3>{{ table.title }}</h3>    
+
+
+    <div class="row">
+        <table id="table" class="table table-striped">
+        <thead>
+            <tr>
+                {% for column in table.columns %}
+                    <th>{{ column.label }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </div>
+
+
+
+{% endblock %}

@@ -30,9 +30,6 @@ class Field
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column]
-    private ?bool $readonly = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $value = null;
 
@@ -52,10 +49,14 @@ class Field
     #[ORM\ManyToMany(targetEntity: Form::class, mappedBy: 'fields')]
     private Collection $forms;
 
+    #[ORM\ManyToMany(targetEntity: Table::class, mappedBy: 'columns')]
+    private Collection $tables;
+
     public function __construct()
     {
         $this->listings = new ArrayCollection();
         $this->forms = new ArrayCollection();
+        $this->tables = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -124,18 +125,6 @@ class Field
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function isReadonly(): ?bool
-    {
-        return $this->readonly;
-    }
-
-    public function setReadonly(bool $readonly): static
-    {
-        $this->readonly = $readonly;
 
         return $this;
     }
@@ -246,6 +235,33 @@ class Field
     {
         if ($this->forms->removeElement($form)) {
             $form->removeField($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Table>
+     */
+    public function getTables(): Collection
+    {
+        return $this->tables;
+    }
+
+    public function addTable(Table $table): static
+    {
+        if (!$this->tables->contains($table)) {
+            $this->tables->add($table);
+            $table->addColumn($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTable(Table $table): static
+    {
+        if ($this->tables->removeElement($table)) {
+            $table->removeColumn($this);
         }
 
         return $this;
