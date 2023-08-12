@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TableRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TableRepository::class)]
@@ -25,6 +26,9 @@ class Table
     #[ORM\ManyToOne(inversedBy: 'tables')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Module $module = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $inlineActions = null;
 
     public function __construct()
     {
@@ -81,6 +85,17 @@ class Table
     {
         $this->module = $module;
 
+        return $this;
+    }
+
+    public function getInlineActions(): ?array
+    {
+        return json_decode($this->inlineActions);
+    }
+
+    public function setInlineActions(?array $inlineActions): static
+    {
+        $this->inlineActions = json_encode($inlineActions);
         return $this;
     }
 }

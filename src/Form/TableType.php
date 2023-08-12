@@ -41,6 +41,16 @@ class TableType extends AbstractType
                             'expanded'  => true,
                             'multiple'  => true,
                         ))
+                        ->add('inlineActions', ChoiceType::class, array(
+                            'label' => 'Actions',
+                            'expanded'  => true,
+                            'multiple'  => true,
+                            'choices' => [
+                                'View' => 'view',
+                                'Edit' => 'edit',
+                                'Delete' => 'delete'
+                            ]
+                        ))
                         ->add('Submit', ButtonType::class, [
                             'attr' => [
                                 'class' => 'btn-primary float-end',

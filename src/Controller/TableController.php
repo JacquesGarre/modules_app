@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\TableRepository;
 use App\Repository\ModuleRepository;
 use App\Entity\Table;
+use App\Service\DataService;
 
 class TableController extends AbstractController
 {
@@ -71,12 +72,21 @@ class TableController extends AbstractController
     #[Route('/administration/tables/{id}', name: 'app_table_show')]
     public function show(
         int $id,
-        TableRepository $tableRepository
+        TableRepository $tableRepository,
+        DataService $dataService
     ): Response
     {
         $table = $tableRepository->findOneBy(['id' => $id]);
+        $columns = array_map(function($column){
+            return $column->getName();
+        }, $table->getColumns()->toArray());
+        $data = $dataService->get(
+            $table->getModule()->getSqlTable(),
+            $columns
+        );
         return $this->render('table/show.html.twig', [
-            'table' => $table
+            'table' => $table,
+            'data' => $data
         ]);
     }
 

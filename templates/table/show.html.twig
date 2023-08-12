@@ -15,12 +15,51 @@
         <table id="table" class="table table-striped">
         <thead>
             <tr>
+                {% if table.inlineActions is not empty %}
+                    <th>Actions</th>
+                {% endif %}
                 {% for column in table.columns %}
                     <th>{{ column.label }}</th>
                 {% endfor %}
             </tr>
         </thead>
         <tbody>
+            {% for row in data %}
+                <tr data-id="{{row.id}}">
+                    {% if table.inlineActions is not empty %}
+                        <td>
+                            {% for action in table.inlineActions %}
+                                {% if action == 'view' %}
+                                    <a class="btn btn-sm btn-success"
+                                        href="{{ path('app_data_show', {'table': table.module.sqlTable, 'id':row.id}) }}">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                {% endif %}
+                                {% if action == 'edit' %}
+                                    <a class="btn btn-sm btn-primary"
+                                        data-controller="modal"
+                                        data-action="modal#open"
+                                        data-modal-url-value="{{ path('app_data_edit', {'moduleId': table.module.id, 'id':row.id}) }}">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                {% endif %}
+                                {% if action == 'delete' %}
+                                    <a class="btn btn-sm btn-danger"
+                                        data-controller="modal"
+                                        data-action="modal#open"
+                                        data-modal-url-value="{{ path('app_data_delete', {'moduleId': table.module.id, 'id':row.id}) }}"
+                                    >
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% endif %}
+                    {% for column in table.columns %}
+                        <td>{{ row[column.name] }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
         </tbody>
     </div>
 
