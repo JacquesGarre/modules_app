@@ -18,7 +18,7 @@
 
 {% elseif children.type == 'moduleForm' %}
 
-    <div class="module-form">
+    <div class="module-form {{ children.additionnalClasses }}">
         {% set form = children.moduleForm %}
         <span class="div-info">
             Form {{ children.additionnalClasses is not empty ? '.'~ (children.additionnalClasses|replace({' ':'.'})) : '' }} {{form.title}} 
@@ -30,7 +30,7 @@
 
 {% elseif children.type == 'moduleTable' %}
 
-    <div class="module-table">
+    <div class="module-table {{ children.additionnalClasses }}">
         {% set table = children.moduleTable %}
         <span class="div-info">
             Table {{ children.additionnalClasses is not empty ? '.'~ (children.additionnalClasses|replace({' ':'.'})) : '' }} {{table.title}} 

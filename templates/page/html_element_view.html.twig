@@ -9,12 +9,16 @@
 
 {% elseif children.type == 'moduleForm' %}
 
-    {% set form = children.moduleForm %}
-    {% include 'form/form.html.twig' %}
+    <div class="{{ children.additionnalClasses }}">
+        {% set form = children.moduleForm %}
+        {% include 'form/form.html.twig' %}
+    </div>
 
 {% elseif children.type == 'moduleTable' %}
 
-    {% set table = children.moduleTable %}
-    {% include 'table/table.html.twig' %}
+    <div class="{{ children.additionnalClasses }}">
+        {% set table = children.moduleTable %}
+        {% include 'table/table.html.twig' %}
+    </div>
 
 {% endif %}

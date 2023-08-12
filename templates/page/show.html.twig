@@ -13,7 +13,10 @@
         {{ form(form) }}
     </div>
     <hr class="mt-5 mb-5">
-    <h3 class="mb-5">Layout</h3>  
+    <h3 class="mb-5">Layout<a class="ms-3 btn btn-primary"
+        href="{{ path('app_application_page', {'uri': page.uri}) }}">
+        <i class="fa-solid fa-eye"></i> Go to page
+    </a></h3>  
     <div class="page-builder">
 
         {% for children in page.htmlelements %}
