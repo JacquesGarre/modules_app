@@ -6,8 +6,10 @@ use App\Repository\FieldRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Doctrine\FieldListener;
 
 #[ORM\Entity(repositoryClass: FieldRepository::class)]
+#[ORM\EntityListeners([FieldListener::class])]
 class Field
 {
     #[ORM\Id]
@@ -37,9 +39,6 @@ class Field
     #[ORM\JoinColumn(nullable: false)]
     private ?Module $module = null;
 
-    #[ORM\ManyToMany(targetEntity: Listing::class, inversedBy: 'fields')]
-    private Collection $listings;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $foreignTable = null;
 
@@ -52,9 +51,13 @@ class Field
     #[ORM\ManyToMany(targetEntity: Table::class, mappedBy: 'columns')]
     private Collection $tables;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $list = null;
+
+    private array $choices = [];
+
     public function __construct()
     {
-        $this->listings = new ArrayCollection();
         $this->forms = new ArrayCollection();
         $this->tables = new ArrayCollection();
     }
@@ -153,42 +156,6 @@ class Field
         return $this;
     }
 
-    /**
-     * @return Collection<int, Listing>
-     */
-    public function getListings(): Collection
-    {
-        return $this->listings;
-    }
-
-    public function getChoices(): array
-    {
-        $choicesID = array_map(function($listing){
-            return $listing->getId();
-        }, $this->listings->toArray());
-
-        $choicesLabels = array_map(function($listing){
-            return $listing->getLabel();
-        }, $this->listings->toArray());
-        return array_combine($choicesLabels, $choicesID);
-    }
-
-    public function addListing(Listing $listing): static
-    {
-        if (!$this->listings->contains($listing)) {
-            $this->listings->add($listing);
-        }
-
-        return $this;
-    }
-
-    public function removeListing(Listing $listing): static
-    {
-        $this->listings->removeElement($listing);
-
-        return $this;
-    }
-
     public function getForeignTable(): ?string
     {
         return $this->foreignTable;
@@ -263,6 +230,30 @@ class Field
         if ($this->tables->removeElement($table)) {
             $table->removeColumn($this);
         }
+
+        return $this;
+    }
+
+    public function getList(): ?string
+    {
+        return $this->list;
+    }
+
+    public function setList(?string $list): static
+    {
+        $this->list = $list;
+
+        return $this;
+    }
+
+    public function getChoices(): array
+    {
+        return $this->choices;
+    }
+
+    public function setChoices(array $choices): static
+    {
+        $this->choices = $choices;
 
         return $this;
     }

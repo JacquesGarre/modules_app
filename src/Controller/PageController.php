@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\PageRepository;
 use App\Repository\ModuleRepository;
 use App\Entity\Page;
+use App\Service\FormService;
 
 class PageController extends AbstractController
 {
@@ -76,17 +77,29 @@ class PageController extends AbstractController
         int $id,
         ModalFormService $modal,
         Request $request,
-        PageRepository $pageRepository
+        PageRepository $pageRepository,
+        FormService $formService
     ): Response
     {
         $page = $pageRepository->findOneBy(['id' => $id]);
 
         $params = [];
         $params['id'] = $page->getId();
-        $form = $modal->getForm('page', 'app_page_show', $page, 'POST', $params);
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            return $modal->handlePostRequest($form, $page);
+        $form = $formService->getForm('page', 'app_page_show', $page, 'POST', $params, 'read');
+
+
+        if($request->query->get('enable')){
+            $form = $formService->getForm('page', 'app_page_show', $page, 'POST', $params,  'write');
+            return $this->render('includes/_form.html.twig', [
+                'form' => $form,
+            ]);
+        }
+
+        $form = $formService->getForm('page', 'app_page_show', $page, 'POST', $params,  'read');
+        if($request->query->get('disable')){
+            return $this->render('includes/_form.html.twig', [
+                'form' => $form,
+            ]);
         }
 
         if($request->query->get('ajax')){
@@ -95,6 +108,12 @@ class PageController extends AbstractController
             ]);
         }
 
+        if ($request->isMethod('POST')) {
+            $form = $formService->getForm('page', 'app_page_show', $page, 'POST', $params, 'write');
+            $form->handleRequest($request);
+            return $modal->handlePostRequest($form, $page);
+        }
+    
         return $this->render('page/show.html.twig', [
             'page' => $page,
             'form' => $form,

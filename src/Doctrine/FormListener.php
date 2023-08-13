@@ -43,17 +43,18 @@ class FormListener
             switch($field->getType()){
                 case 'text':
                     $form->add($field->getName(), TextType::class, [
-                        'empty_data' => $field->getValue(),
+                        'data' => $field->getValue(),
                         'disabled' => $field->isDisabled(),
                         'required' => $field->isRequired(),
                     ]);
                 break;
                 case 'listing':
                     $form->add($field->getName(), ChoiceType::class, [
-                        'empty_data' => $field->getValue(),
+                        'data' => $field->getValue(),
                         'disabled' => $field->isDisabled(),
                         'required' => $field->isRequired(),
-                        'choices' => ['...' => ''] + $field->getChoices(),
+                        'choices' => $field->getChoices(),
+                        'multiple'  => $field->isMultiple(),
                     ]);
                 break;
             }

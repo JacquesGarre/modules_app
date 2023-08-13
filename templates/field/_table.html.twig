@@ -4,9 +4,10 @@
             <th>Label</th>
             <th>Name</th>
             <th>Type</th>
-            <th>Value</th>
+            <th>Default value</th>
             <th>Required</th>
             <th>Disabled</th>
+            <th>Multiple</th>
         </tr>
     </thead>
     <tbody>
@@ -33,6 +34,7 @@
                 <td>{{ field.value }}</td>
                 <td>{{ field.required }}</td>
                 <td>{{ field.disabled }}</td>
+                <td>{{ field.multiple }}</td>
             </tr>
         {% endfor %}
     </tbody>

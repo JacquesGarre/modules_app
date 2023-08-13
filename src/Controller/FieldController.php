@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\FieldRepository;
 use App\Repository\ModuleRepository;
 use App\Entity\Field;
+use App\Service\FormService;
 
 class FieldController extends AbstractController
 {
@@ -24,7 +25,13 @@ class FieldController extends AbstractController
     }
 
     #[Route('/administration/fields/add/{moduleId}', name: 'app_field_add')]
-    public function add(int $moduleId, ModalFormService $modal, Request $request, ModuleRepository $moduleRepository): Response
+    public function add(
+        int $moduleId, 
+        ModalFormService $modal, 
+        Request $request, 
+        ModuleRepository $moduleRepository,
+        FormService $formService
+    ): Response
     {
         $module = $moduleRepository->findOneBy(['id' => $moduleId]);
         $field = new Field();
@@ -33,6 +40,21 @@ class FieldController extends AbstractController
         $params = [
             'moduleId' => $moduleId
         ];
+
+        if($request->query->get('onchange')){
+            $formValues = $request->request->all()['field'];
+            foreach ($formValues as $key => $value) {
+                $setterMethod = 'set' . ucfirst($key);
+                if (method_exists($field, $setterMethod)) {
+                    $field->{$setterMethod}($value);
+                }
+            }
+            $form = $formService->getForm('field', 'app_field_add', $field, 'POST', $params);
+            return $this->render('includes/_form.html.twig', [
+                'form' => $form,
+            ]);
+
+        }
 
         return $modal->show(
             $title = 'Create a new attribute for '.$module->getLabelSingular(),
@@ -46,10 +68,32 @@ class FieldController extends AbstractController
     }
 
     #[Route('/administration/fields/{id}/edit', name: 'app_field_edit')]
-    public function edit(ModalFormService $modal, Request $request, int $id, FieldRepository $fieldRepository): Response
+    public function edit(
+        ModalFormService $modal, 
+        Request $request, 
+        int $id, 
+        FieldRepository $fieldRepository,
+        FormService $formService
+    ): Response
     {
         $field = $fieldRepository->findOneBy(['id' => $id]);
+
         $params = ['id' => $id];
+
+        if($request->query->get('onchange')){
+            $formValues = $request->request->all()['field'];
+            foreach ($formValues as $key => $value) {
+                $setterMethod = 'set' . ucfirst($key);
+                if (method_exists($field, $setterMethod)) {
+                    $field->{$setterMethod}($value);
+                }
+            }
+            $form = $formService->getForm('field', 'app_field_edit', $field, 'POST', $params);
+            return $this->render('includes/_form.html.twig', [
+                'form' => $form,
+            ]);
+
+        }
 
         return $modal->show(
             $title = 'Edit attribute '.$field->getLabel(),

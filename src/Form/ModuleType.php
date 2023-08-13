@@ -23,7 +23,7 @@ class ModuleType extends AbstractType
     {
 
         $builder
-            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use($options): void {
 
                 $module = $event->getData();
                 $form = $event->getForm();
@@ -37,13 +37,17 @@ class ModuleType extends AbstractType
                             'constraints' => [
                                 new NotBlank()
                             ],
+                            'disabled' => $options['attr']['data-mode'] == 'read'                            
                         ])
                         ->add('labelPlural', TextType::class, [
                             'constraints' => [
                                 new NotBlank()
                             ],
+                            'disabled' => $options['attr']['data-mode'] == 'read'   
                         ])
-                        ->add('pattern', TextType::class);
+                        ->add('pattern', TextType::class,[
+                            'disabled' => $options['attr']['data-mode'] == 'read'   
+                        ]);
                         
                     if (!$module || null === $module->getId()) {
                         $form->add('sqlTable', TextType::class, [
@@ -51,17 +55,21 @@ class ModuleType extends AbstractType
                                 new NotBlank(),
                                 new Regex('/^[A-Za-z0-9_]*$/')
                             ],
+                            'disabled' => $options['attr']['data-mode'] == 'read'   
                         ]);
                     }
 
-                        $form
-                            ->add('Submit', ButtonType::class, [
-                                'attr' => [
-                                    'class' => 'btn-primary float-end',
-                                    'data-action' => 'form#submit',
-                                    'data-form-target' => 'submitBtn'
-                                ],
-                            ]);
+                    $label = $options['attr']['data-mode'] == 'read'  ? 'Edit' : 'Submit';
+                    $action = $options['attr']['data-mode'] == 'read'  ? 'form#enable' : 'form#submit';
+
+                    $form
+                        ->add($label, ButtonType::class, [
+                            'attr' => [
+                                'class' => 'btn-primary float-end',
+                                'data-action' => $action,
+                                'data-form-target' => 'submitBtn'
+                            ],
+                        ]);
 
 
                 } else {

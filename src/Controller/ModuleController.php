@@ -11,7 +11,7 @@ use App\Repository\ModuleRepository;
 use App\Repository\FieldRepository;
 use App\Repository\FormRepository;
 use App\Repository\TableRepository;
-
+use App\Service\FormService;
 
 class ModuleController extends AbstractController
 {
@@ -78,7 +78,8 @@ class ModuleController extends AbstractController
         ModuleRepository $moduleRepository,
         FieldRepository $fieldRepository,
         FormRepository $formRepository,
-        TableRepository $tableRepository
+        TableRepository $tableRepository,
+        FormService $formService
     ): Response
     {
         $module = $moduleRepository->findOneBy(['id' => $id]);
@@ -88,8 +89,23 @@ class ModuleController extends AbstractController
 
         $params = [];
         $params['id'] = $module->getId();
-        $form = $modal->getForm('module', 'app_module_show', $module, 'POST', $params);
+
+        if($request->query->get('enable')){
+            $form = $formService->getForm('module', 'app_module_show', $module, 'POST', $params, 'write');
+            return $this->render('includes/_form.html.twig', [
+                'form' => $form,
+            ]);
+        }
+
+        $form = $formService->getForm('module', 'app_module_show', $module, 'POST', $params, 'read');
+        if($request->query->get('disable')){
+            return $this->render('includes/_form.html.twig', [
+                'form' => $form,
+            ]);
+        }
+
         if ($request->isMethod('POST')) {
+            $form = $formService->getForm('module', 'app_module_show', $module, 'POST', $params, 'write');
             $form->handleRequest($request);
             return $modal->handlePostRequest($form, $module);
         }

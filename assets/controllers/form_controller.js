@@ -10,7 +10,8 @@ export default class extends Controller {
         url: String,
         submitLabel: String,
         method: String,
-        table: String
+        table: String,
+        keepMode: Boolean
     }
 
 
@@ -50,12 +51,61 @@ export default class extends Controller {
             } else {
                 that.submitBtnTarget.innerHTML = 'Submitted <i class="fas fa-check"></i>'
                 that.dispatch("success", {detail: { content: that.tableValue }})
+                
+                if(!that.keepModeValue){
+                    that.disable()
+                }
+
             }
         })
         .catch(function (response) {
             console.log(response)
             that.submitBtnTarget.innerHTML = that.submitLabelValue
         });
+    }
+
+    onchange(){
+
+        const formData = new FormData(this.formTarget);
+        let that = this;
+        axios({
+            method: 'POST',
+            url: this.urlValue+'?onchange=1',
+            data: formData,
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then(function (response) {
+            $(that.formTarget).html(response.data)
+        })
+
+    }
+
+    enable(){
+        const formData = new FormData(this.formTarget);
+        let that = this;
+        axios({
+            method: 'POST',
+            url: this.urlValue+'?enable=1',
+            data: formData,
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then(function (response) {
+            $(that.formTarget).html(response.data)
+        })
+    }
+
+    disable(){
+        const formData = new FormData(this.formTarget);
+        let that = this;
+        axios({
+            method: 'POST',
+            url: this.urlValue+'?disable=1',
+            data: formData,
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then(function (response) {
+            $(that.formTarget).html(response.data)
+        })
     }
 
 }

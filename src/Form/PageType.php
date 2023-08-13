@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Page;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -11,14 +12,14 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
-
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 class PageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
 
         $builder
-            ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
+            ->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options): void {
 
                 $module = $event->getData();
                 $form = $event->getForm();
@@ -27,13 +28,20 @@ class PageType extends AbstractType
 
                 if($method !== 'DELETE'){
                     $form
-                        ->add('title')
-                        ->add('uri');
+                        ->add('title', TextType::class, [
+                            'disabled' => $options['attr']['data-mode'] == 'read'   
+                        ])
+                        ->add('uri', TextType::class, [
+                            'disabled' => $options['attr']['data-mode'] == 'read'   
+                        ]);
+
+                    $label = $options['attr']['data-mode'] == 'read'  ? 'Edit' : 'Submit';
+                    $action = $options['attr']['data-mode'] == 'read'  ? 'form#enable' : 'form#submit';
                     $form
-                        ->add('Submit', ButtonType::class, [
+                        ->add($label, ButtonType::class, [
                             'attr' => [
                                 'class' => 'btn-primary float-end',
-                                'data-action' => 'form#submit',
+                                'data-action' => $action,
                                 'data-form-target' => 'submitBtn'
                             ],
                         ]);

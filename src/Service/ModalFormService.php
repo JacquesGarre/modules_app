@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Exception;
+use App\Service\FormService;
 
 class ModalFormService
 {
@@ -17,13 +18,15 @@ class ModalFormService
         private EntityManagerInterface $em, 
         private FormFactoryInterface $formFactory,
         private UrlGeneratorInterface $router,
-        private Environment $twig
+        private Environment $twig,
+        private FormService $formService
     )
     {
         $this->em = $em;
         $this->formFactory = $formFactory;
         $this->router = $router;
         $this->twig = $twig;
+        $this->formService = $formService; 
     }
 
 
@@ -39,21 +42,21 @@ class ModalFormService
     {
         $entityClass = 'App\\Entity\\'.ucfirst($class);
         $entity = $existingEntity ?: new $entityClass();
+        $form = $this->formService->getForm($class, $route, $entity, $method, $routeParams, 'write', true);
 
-        $form = $this->getForm($class, $route, $entity, $method, $routeParams);
+        if(empty($request->query->get('onchange'))){
+            // If creation/update
+            if ($request->isMethod('POST')) {
+                $form->handleRequest($request);
+                return $this->handlePostRequest($form, $entity);
+            }
 
-        // If creation/update
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-            return $this->handlePostRequest($form, $entity);
-        }
-
-        // If delete
-        if ($request->isMethod('DELETE')) {
-            $form->handleRequest($request);
-            return $this->handleDeleteRequest($form, $entity);
-        }
-        
+            // If delete
+            if ($request->isMethod('DELETE')) {
+                $form->handleRequest($request);
+                return $this->handleDeleteRequest($form, $entity);
+            }
+        }        
 
         // Render add form
         $html = $this->twig->render('form_modal.html.twig',
@@ -63,29 +66,6 @@ class ModalFormService
             ]
         );
         return new Response($html);
-    }
-
-    public function getForm(string $class, string $route, $entity, $method, $routeParams = []){
-        $typeClass = 'App\\Form\\' . ucfirst($class).'Type'::class;
-        $form = $this->formFactory->create(
-            $typeClass, 
-            $entity,
-            [   
-                'method' => $method,
-                'attr' => [
-                    'data-form-method-value' => 'post',
-                    'data-form-name-value' => $class,
-                    'data-form-target' => 'form',
-                    'data-controller' => 'form',
-                    'data-form-url-value' => $this->router->generate($route, $routeParams),
-                    'data-form-submit-label-value' => 'Save',
-                    'data-form-table-value' => $class
-                ]
-            ]
-        );
-
-
-        return $form;
     }
 
     private function handleDeleteRequest($form, $entity){
