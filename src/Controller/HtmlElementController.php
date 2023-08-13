@@ -11,6 +11,7 @@ use App\Repository\HtmlElementRepository;
 use App\Repository\PageRepository;
 use App\Entity\HtmlElement;
 use App\Service\FormService;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class HtmlElementController extends AbstractController
 {
@@ -26,6 +27,7 @@ class HtmlElementController extends AbstractController
     ): Response
     {
         $page = $pageRepository->findOneBy(['id' => $pageId]);
+
         $htmlelement = new HtmlElement();
         $htmlelement->setPage($page);
 
@@ -40,18 +42,18 @@ class HtmlElementController extends AbstractController
         }
 
         if($request->query->get('onchange')){
-            $formValues = $request->request->all()['htmlelement'];
-            foreach ($formValues as $key => $value) {
-                $setterMethod = 'set' . ucfirst($key);
-                if (method_exists($htmlelement, $setterMethod)) {
-                    $htmlelement->{$setterMethod}($value);
-                }
+        
+            if(!empty($request->request->all()['htmlelement'])){
+                $formValues = $request->request->all()['htmlelement'];
+                $htmlelement->setType($formValues['type']);
+                $htmlelement->setSizeClass($formValues['sizeClass']);
+                $htmlelement->setAdditionnalClasses($formValues['additionnalClasses']);
             }
+
             $form = $formService->getForm('htmlelement', 'app_htmlelement_add', $htmlelement, 'POST', $params, 'write', true);
             return $this->render('includes/_form.html.twig', [
                 'form' => $form,
             ]);
-
         }
 
         return $modal->show(

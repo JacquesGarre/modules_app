@@ -68,6 +68,7 @@ class PageType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Page::class,
+            "allow_extra_fields" => true
         ]);
     }
 }

@@ -83,6 +83,7 @@ class TableType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Table::class,
+            "allow_extra_fields" => true
         ]);
     }
 }

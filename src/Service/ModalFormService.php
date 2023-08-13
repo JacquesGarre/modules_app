@@ -43,6 +43,7 @@ class ModalFormService
         $formEntity = null
     )
     {
+
         $entityClass = 'App\\Entity\\'.ucfirst($class);
 
         if(class_exists($entityClass)){
@@ -56,6 +57,9 @@ class ModalFormService
         
         if(is_null($formEntity)){
             $form = $this->formService->getForm($class, $route, $entity, $method, $routeParams, 'write', true);
+
+            
+
         } else {
             $form = $this->formService->getEntityForm($class, $entity, $formEntity);
         }

@@ -65,12 +65,13 @@ class HtmlelementType extends AbstractType
             ]
         ])
         ->add('additionnalClasses')
-        ->add('Submit', ButtonType::class, [
-            'attr' => [
-                'class' => 'btn-primary float-end',
-                'data-action' => 'form#submit',
-                'data-form-target' => 'submitBtn'
-            ],
+        ->add('moduleForm', EntityType::class, [
+            'label' => 'Form',
+            'class'     => Form::class,
+        ])
+        ->add('moduleTable', EntityType::class, [
+            'label' => 'Table',
+            'class'     => Table::class,
         ]);
         return $form;
     }
@@ -90,18 +91,15 @@ class HtmlelementType extends AbstractType
                 'data-action' => 'change->form#onchange',
             ],
         ])
+        ->add('moduleForm', EntityType::class, [
+            'label' => 'Form',
+            'class'     => Form::class,
+        ])
         ->add('moduleTable', EntityType::class, [
             'label' => 'Table',
             'class'     => Table::class,
         ])
-        ->add('additionnalClasses')
-        ->add('Submit', ButtonType::class, [
-            'attr' => [
-                'class' => 'btn-primary float-end',
-                'data-action' => 'form#submit',
-                'data-form-target' => 'submitBtn'
-            ],
-        ]);
+        ->add('additionnalClasses');
         return $form;
     }
 
@@ -124,14 +122,11 @@ class HtmlelementType extends AbstractType
             'label' => 'Form',
             'class'     => Form::class,
         ])
-        ->add('additionnalClasses')
-        ->add('Submit', ButtonType::class, [
-            'attr' => [
-                'class' => 'btn-primary float-end',
-                'data-action' => 'form#submit',
-                'data-form-target' => 'submitBtn'
-            ],
-        ]);
+        ->add('moduleTable', EntityType::class, [
+            'label' => 'Table',
+            'class'     => Table::class,
+        ])
+        ->add('additionnalClasses');
         return $form;
     }
 
@@ -142,7 +137,7 @@ class HtmlelementType extends AbstractType
                 $form = $this->getTableElementForm($form);
             break;
             case 'moduleForm':
-                $form = $this->getFormelementForm($form);
+                $form = $this->getFormElementForm($form);
             break;
             case 'container':
             case 'row':
@@ -151,6 +146,17 @@ class HtmlelementType extends AbstractType
                 $form = $this->getDivElementForm($form);
             break;
         }
+
+        $form->add('Submit', ButtonType::class, [
+            'attr' => [
+                'class' => 'btn-primary float-end',
+                'data-action' => 'form#submit',
+                'data-form-target' => 'submitBtn'
+            ],
+        ]);
+
+
+
         return $form;
     }
 
@@ -167,6 +173,7 @@ class HtmlelementType extends AbstractType
 
                     $form = $this->getForm($form, $htmlElement);
 
+
                 } else {
                     $form
                         ->add('sizeClass', HiddenType::class)
@@ -181,6 +188,8 @@ class HtmlelementType extends AbstractType
                 }
 
             });
+
+            
     }
 
     public function configureOptions(OptionsResolver $resolver): void
