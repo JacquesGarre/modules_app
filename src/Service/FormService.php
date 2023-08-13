@@ -9,7 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Exception;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use App\Entity\Module;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class FormService
 {
@@ -46,8 +52,103 @@ class FormService
                 ]
             ]
         );
+        return $form;
+    }
 
+
+    public function getEntityForm(
+        string $class, 
+        $entity, 
+        $formEntity
+    )
+    {
+
+
+        if($formEntity->getAction() == 'add' || empty($entity->id)){
+            $action = $this->router->generate('app_data_add', [
+                'moduleId' => $formEntity->getModule()->getId()
+            ]);
+        } elseif($formEntity->getAction() == 'edit'){
+            $action = $this->router->generate('app_data_edit', [
+                'moduleId' => $formEntity->getModule()->getId(),
+                'id' => $entity->id
+            ]);
+        }
+
+        $form = $this->formFactory->createNamed(
+            $class, 
+            FormType::class,
+            $entity,
+            [   
+                'action' => $action,
+                'method' => 'POST',
+                'attr' => [
+                    'data-form-keep-mode-value' => false,
+                    'data-mode' => 'write',
+                    'data-form-method-value' => 'post',
+                    'data-form-name-value' => $class,
+                    'data-form-target' => 'form',
+                    'data-controller' => 'form',
+                    'data-form-url-value' => $action,
+                    'data-form-submit-label-value' => 'Submit',
+                    'data-form-table-value' => $class
+                ]
+            ]
+        );
+
+        foreach($formEntity->getFields() as $field){
+            if(!isset($entity->{$field->getName()})){
+                $entity->{$field->getName()} = null;
+            }
+            switch($field->getType()){
+                case 'text':
+                    $form->add($field->getName(), TextType::class, [
+                        'data' => $entity->{$field->getName()} ?? $field->getValue(),
+                        'disabled' => $field->isDisabled(),
+                        'required' => $field->isRequired(),
+                    ]);
+                break;
+                case 'listing':
+                    $entity->{$field->getName()} = !empty($entity->{$field->getName()}) ? json_decode($entity->{$field->getName()}) : [];
+                    $form->add($field->getName(), ChoiceType::class, [
+                        'data' => $entity->{$field->getName()} ?? $field->getValue(),
+                        'disabled' => $field->isDisabled(),
+                        'required' => $field->isRequired(),
+                        'choices' => $field->getChoices(),
+                        'multiple'  => $field->isMultiple(),
+                    ]);
+                break;
+            }
+        }
+        switch($formEntity->getAction()){
+            case 'add':
+                $form->add(
+                    'Submit', 
+                    ButtonType::class,
+                    [
+                        'label' => 'Create '.$formEntity->getModule()->getLabelSingular(),
+                        'attr' => [
+                            'class' => 'btn-success float-end',
+                            'data-action' => 'form#submit',
+                            'data-form-target' => 'submitBtn'
+                        ]
+                    ]
+                );
+            break;
+            case 'edit':
+                $form->add(
+                    'Submit', 
+                    ButtonType::class, 
+                    [
+                        'label' => 'Update '.$formEntity->getModule()->getLabelSingular()
+                    ]
+                );
+            break;
+        }
 
         return $form;
     }
+
+
+
 }

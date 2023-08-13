@@ -18,12 +18,21 @@ class DataService
         $this->em = $em;
     }
 
+    public function getColumnsAndValues($args)
+    {
+        $columns = [];
+        $values = [];
+        foreach($args as $key => $value){
+            $columns[] = $key;
+            $values[] = is_array($value) ? json_encode($value) : $value;
+        }
+        return [$columns, $values];
+    }
+
     public function get($table, array $selectedColumns = [], array $conditions = [], $limit = null, $page = null)
     {
         $conn = $this->em->getConnection();
-
         $selectedColumns = empty($selectedColumns) ? '*' : '`id`, `'.implode('`,`', $selectedColumns).'`';
-
         $conds = [];
         foreach($conditions as $field => $value){
             if(is_array($value)){
@@ -34,14 +43,24 @@ class DataService
                 $conds[] = $field." LIKE '".$value."'";
             }
         }
-        $where = empty($conds) ? '' : implode(' AND ', $conds);
+        $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
         $limit = empty($limit) ? '' : "LIMIT $limit";
 
         // Test if column doesn't exist already
         $sql = "SELECT $selectedColumns FROM $table $where $limit";
+ 
         $stmt = $conn->prepare($sql);
         $result = $stmt->executeQuery();
         return $result->fetchAllAssociative();
+    }
+
+    public function insert($table, $args)
+    {
+        [$columns, $values] = $this->getColumnsAndValues($args);
+        $conn = $this->em->getConnection();
+        $sql = "INSERT INTO $table (".implode(',',$columns).") VALUES ('".implode("','",$values)."')";
+        $stmt = $conn->prepare($sql);
+        $stmt->executeQuery();
     }
 
 }

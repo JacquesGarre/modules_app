@@ -16,12 +16,12 @@
             <td>
                 {% for action in table.inlineActions %}
                 {% if action == 'view' %}
-                <a class="btn btn-sm btn-success" href="{{ path('app_data_show', {'table': table.module.sqlTable, 'id':row.id}) }}">
+                <a class="btn btn-sm btn-success" href="{{ path('app_application_show_entity', {'table': table.module.sqlTable, 'id':row.id}) }}">
                     <i class="fa-solid fa-eye"></i>
                 </a>
                 {% endif %}
                 {% if action == 'edit' %}
-                <a class="btn btn-sm btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_data_edit', {'moduleId': table.module.id, 'id':row.id}) }}">
+                <a class="btn btn-sm btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_application_edit_entity', {'table': table.module.sqlTable, 'id':row.id}) }}">
                     <i class="fa-solid fa-pen"></i>
                 </a>
                 {% endif %}

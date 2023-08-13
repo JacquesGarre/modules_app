@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Exception;
 use App\Service\FormService;
+use Doctrine\ORM\Mapping\Entity;
+use stdClass;
 
 class ModalFormService
 {
@@ -37,12 +39,27 @@ class ModalFormService
         $request,
         $existingEntity = null, 
         $method = 'POST',
-        $routeParams = []
+        $routeParams = [],
+        $formEntity = null
     )
     {
         $entityClass = 'App\\Entity\\'.ucfirst($class);
-        $entity = $existingEntity ?: new $entityClass();
-        $form = $this->formService->getForm($class, $route, $entity, $method, $routeParams, 'write', true);
+
+        if(class_exists($entityClass)){
+            $entity = $existingEntity ?: new $entityClass();
+        } else {
+            $entity = new stdClass();
+            foreach($existingEntity as $key => $value){
+                $entity->{$key} = $value;
+            }
+        }
+        
+        if(is_null($formEntity)){
+            $form = $this->formService->getForm($class, $route, $entity, $method, $routeParams, 'write', true);
+        } else {
+            $form = $this->formService->getEntityForm($class, $entity, $formEntity);
+        }
+
 
         if(empty($request->query->get('onchange'))){
             // If creation/update

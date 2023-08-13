@@ -32,7 +32,7 @@ class FieldListener
             $list = $fieldEntity->getList();
             $choices = $this->listingRepository->findBy(['list' => $list]);
             $choicesID = array_map(function($listing){
-                return $listing->getId();
+                return $listing->getValue();
             }, $choices);
             $choicesLabels = array_map(function($listing){
                 return $listing->getLabel();
