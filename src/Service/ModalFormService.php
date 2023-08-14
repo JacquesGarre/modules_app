@@ -61,6 +61,7 @@ class ModalFormService
         } else {
             $form = $this->formService->getEntityForm($class, $entity, $formEntity);
         }
+        
 
 
         if(empty($request->query->get('onchange'))){

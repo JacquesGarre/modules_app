@@ -19,11 +19,12 @@ use App\Repository\ModuleRepository;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use App\Entity\Table;
 use App\Entity\Form;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 class HtmlelementType extends AbstractType
 {
     public function getDivElementForm($form)
-    {        
+    {
         $form
         ->add('type', ChoiceType::class, [
             'choices'  => [
@@ -64,15 +65,16 @@ class HtmlelementType extends AbstractType
                 ]
             ]
         ])
-        ->add('additionnalClasses')
-        ->add('moduleForm', EntityType::class, [
-            'label' => 'Form',
-            'class'     => Form::class,
-        ])
-        ->add('moduleTable', EntityType::class, [
-            'label' => 'Table',
-            'class'     => Table::class,
-        ]);
+        ->add('additionnalClasses');
+        // ->add('moduleTable', EntityType::class, [
+        //     'placeholder' => '...',
+        //     'label' => 'Table',
+        //     'class'     => Table::class,
+        //     'constraints' => [
+        //         new NotBlank(),
+        //         new NotNull()
+        //     ]
+        // ]);
         return $form;
     }
 
@@ -91,13 +93,14 @@ class HtmlelementType extends AbstractType
                 'data-action' => 'change->form#onchange',
             ],
         ])
-        ->add('moduleForm', EntityType::class, [
-            'label' => 'Form',
-            'class'     => Form::class,
-        ])
         ->add('moduleTable', EntityType::class, [
+            'placeholder' => '...',
             'label' => 'Table',
             'class'     => Table::class,
+            'constraints' => [
+                new NotBlank(),
+                new NotNull()
+            ]
         ])
         ->add('additionnalClasses');
         return $form;
@@ -125,6 +128,10 @@ class HtmlelementType extends AbstractType
         ->add('moduleTable', EntityType::class, [
             'label' => 'Table',
             'class'     => Table::class,
+            'constraints' => [
+                new NotBlank(),
+                new NotNull()
+            ]
         ])
         ->add('additionnalClasses');
         return $form;
@@ -162,16 +169,53 @@ class HtmlelementType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->add('type', ChoiceType::class, [
+            'choices'  => [
+                'Container' => 'container',
+                'Row' => 'row',
+                'Column' => 'col',
+                'Table' => 'moduleTable',
+                'Form' => 'moduleForm'
+            ],
+            'attr' => [
+                'data-action' => 'change->form#onchange',
+            ],
+        ]);
+
+
         $builder
-            ->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event): void {
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+
                 $htmlElement = $event->getData();
+
+                dump($htmlElement);
+
                 $form = $event->getForm();
+
 
                 $method = $event->getForm()->getConfig()->getMethod();
                 
                 if($method !== 'DELETE'){
 
-                    $form = $this->getForm($form, $htmlElement);
+                    //$form = $this->getForm($form, $htmlElement);
+
+  
+
+                    if($htmlElement['type'] == 'moduleTable'){
+                        $form->add('ModuleTable', EntityType::class, [
+                            'label' => 'Table',
+                            'class'     => Table::class,
+    
+                        ]);
+                    }
+
+                    $form->add('Submit', ButtonType::class, [
+                        'attr' => [
+                            'class' => 'btn-primary float-end',
+                            'data-action' => 'form#submit',
+                            'data-form-target' => 'submitBtn'
+                        ],
+                    ]);
 
 
                 } else {
@@ -188,8 +232,7 @@ class HtmlelementType extends AbstractType
                 }
 
             });
-
-            
+   
     }
 
     public function configureOptions(OptionsResolver $resolver): void

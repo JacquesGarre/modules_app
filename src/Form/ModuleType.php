@@ -32,6 +32,7 @@ class ModuleType extends AbstractType
 
                 if($method !== 'DELETE'){
 
+
                     $form
                         ->add('labelSingular', TextType::class, [
                             'constraints' => [
