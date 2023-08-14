@@ -48,6 +48,7 @@ class ModalFormService
 
         if(class_exists($entityClass)){
             $entity = $existingEntity ?: new $entityClass();
+
         } else {
             $entity = new stdClass();
             foreach($existingEntity as $key => $value){
@@ -57,9 +58,6 @@ class ModalFormService
         
         if(is_null($formEntity)){
             $form = $this->formService->getForm($class, $route, $entity, $method, $routeParams, 'write', true);
-
-            
-
         } else {
             $form = $this->formService->getEntityForm($class, $entity, $formEntity);
         }
@@ -99,6 +97,10 @@ class ModalFormService
                 $this->em->remove($entity);
                 $this->em->flush();
             } catch(Exception $e) {
+                if(!array_key_exists($form->getName(), $errors)){
+                    $errors[$form->getName()] = [];
+                }
+
                 $errors[$form->getName()][] = $e->getMessage();
                 return new Response(json_encode([
                     'errors' => $errors
@@ -113,6 +115,9 @@ class ModalFormService
 
         // Global
         foreach ($form->getErrors() as $error) {
+            if(!array_key_exists($form->getName(), $errors)){
+                $errors[$form->getName()] = [];
+            }
             $errors[$form->getName()][] = $error->getMessage();
         }
     
@@ -120,6 +125,9 @@ class ModalFormService
         foreach ($form as $child) {
             if ($child->isSubmitted() && !$child->isValid()) {
                 foreach ($child->getErrors() as $error) {
+                    if(!array_key_exists($child->getName(), $errors)){
+                        $errors[$child->getName()] = [];
+                    }
                     $errors[$child->getName()][] = $error->getMessage();
                 }
             }

@@ -97,21 +97,37 @@ class FormService
         );
 
         foreach($formEntity->getFields() as $field){
-            if(!isset($entity->{$field->getName()})){
-                $entity->{$field->getName()} = null;
-            }
+
             switch($field->getType()){
                 case 'text':
+                    
+                    // default value
+                    if(!isset($entity->{$field->getName()})){
+                        $entity->{$field->getName()} = $field->getValue() ?? null;
+                    }
+
                     $form->add($field->getName(), TextType::class, [
-                        'data' => $entity->{$field->getName()} ?? $field->getValue(),
+                        'data' => $entity->{$field->getName()},
                         'disabled' => $field->isDisabled(),
                         'required' => $field->isRequired(),
                     ]);
                 break;
                 case 'listing':
-                    $entity->{$field->getName()} = !empty($entity->{$field->getName()}) ? json_decode($entity->{$field->getName()}) : [];
+                  
+
+                    // default value
+                    if(!isset($entity->{$field->getName()})){
+
+                        if($field->isMultiple()){
+                            $entity->{$field->getName()} = "[".$field->getValue()."]" ?? "[]";
+                        } else {
+                            $entity->{$field->getName()} = $field->getValue() ?? null;
+                        }
+
+                    }
+
                     $form->add($field->getName(), ChoiceType::class, [
-                        'data' => $entity->{$field->getName()} ?? $field->getValue(),
+                        'data' => $entity->{$field->getName()},
                         'disabled' => $field->isDisabled(),
                         'required' => $field->isRequired(),
                         'choices' => $field->getChoices(),

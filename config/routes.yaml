@@ -29,7 +29,7 @@ app_module_index:
     controller: App\Controller\ModuleController::index
     methods: GET
 
-app_data_show:
+app_application_show_entity:
     path: /{table}/{id}
     controller: App\Controller\ApplicationController::show
     methods: GET

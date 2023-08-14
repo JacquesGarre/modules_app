@@ -30,12 +30,9 @@ class Listing
     #[ORM\Column(length: 255)]
     private ?string $list = null;
 
-    #[ORM\ManyToMany(targetEntity: Field::class, mappedBy: 'listings')]
-    private Collection $fields;
-
     public function __construct()
     {
-        $this->fields = new ArrayCollection();
+
     }
 
     public function __toString(): string
@@ -108,30 +105,4 @@ class Listing
         return $this;
     }
 
-    /**
-     * @return Collection<int, Field>
-     */
-    public function getFields(): Collection
-    {
-        return $this->fields;
-    }
-
-    public function addField(Field $field): static
-    {
-        if (!$this->fields->contains($field)) {
-            $this->fields->add($field);
-            $field->addListing($this);
-        }
-
-        return $this;
-    }
-
-    public function removeField(Field $field): static
-    {
-        if ($this->fields->removeElement($field)) {
-            $field->removeListing($this);
-        }
-
-        return $this;
-    }
 }

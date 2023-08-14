@@ -45,6 +45,7 @@ class ListingType extends AbstractType
                             ],
                         ])
                         ->add('colorClass', ChoiceType::class, [
+                            'label' => 'Text color',
                             'choices'  => [
                                 'Dark' => 'text-dark',
                                 'White' => 'text-white',
@@ -62,6 +63,7 @@ class ListingType extends AbstractType
                             ],
                         ])
                         ->add('bgClass', ChoiceType::class, [
+                            'label' => 'Background color',
                             'choices'  => [
                                 'Transparent' => '',
                                 'White' => 'bg-white',

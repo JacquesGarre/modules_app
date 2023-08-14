@@ -21,12 +21,11 @@ class Page
     #[ORM\Column(length: 255)]
     private ?string $uri = null;
 
-    #[ORM\OneToMany(mappedBy: 'Page', targetEntity: HtmlElement::class)]
+    #[ORM\OneToMany(mappedBy: 'Page', targetEntity: HtmlElement::class, orphanRemoval: true)]
     private Collection $htmlElements;
 
     public function __construct()
     {
-        $this->containers = new ArrayCollection();
         $this->htmlElements = new ArrayCollection();
     }
 
