@@ -55,7 +55,10 @@ class DataController extends AbstractController
     public function delete(ModalFormService $modal, Request $request, int $moduleId, int $id, ModuleRepository $moduleRepository): Response
     {
         $module = $moduleRepository->findOneBy(['id' => $moduleId]);
-        dd($module);
+        $this->dataService->delete($module->getSqlTable(), $id);
+        return new Response(json_encode([
+            'success' => $module->getLabelSingular().' deleted'
+        ]));
     }
 
 }

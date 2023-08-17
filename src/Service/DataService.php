@@ -54,11 +54,28 @@ class DataService
         return $result->fetchAllAssociative();
     }
 
+    public function getOneBy($table, array $selectedColumns = [], array $conditions = [])
+    {
+        $results = $this->get($table, $selectedColumns, $conditions);
+        if(!empty($results)){
+            return $results[0];
+        }
+        return false;
+    }
+
     public function insert($table, $args)
     {
         [$columns, $values] = $this->getColumnsAndValues($args);
         $conn = $this->em->getConnection();
         $sql = "INSERT INTO $table (".implode(',',$columns).") VALUES ('".implode("','",$values)."')";
+        $stmt = $conn->prepare($sql);
+        $stmt->executeQuery();
+    }
+
+    public function delete($table, $id)
+    {
+        $conn = $this->em->getConnection();
+        $sql = "DELETE FROM $table WHERE `id` = $id";
         $stmt = $conn->prepare($sql);
         $stmt->executeQuery();
     }

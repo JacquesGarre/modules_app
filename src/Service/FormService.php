@@ -34,7 +34,47 @@ class FormService
     
     public function getForm(string $class, string $route, $entity, $method, $routeParams = [], $mode = 'write', $keepMode = false){
         $typeClass = 'App\\Form\\' . ucfirst($class).'Type'::class;
-        $form = $this->formFactory->create(
+
+        if(!class_exists($typeClass)){
+            $form = $this->formFactory->createNamed(
+                $class, 
+                FormType::class,
+                $entity,
+                [   
+                    'action' => $this->router->generate($route, $routeParams),
+                    'method' => 'POST',
+                    'attr' => [
+                        'data-form-keep-mode-value' => $keepMode,
+                        'data-mode' => $mode,
+                        'data-form-method-value' => 'post',
+                        'data-form-name-value' => $class,
+                        'data-form-target' => 'form',
+                        'data-controller' => 'form',
+                        'data-form-url-value' => $this->router->generate($route, $routeParams),
+                        'data-form-submit-label-value' => 'Submit',
+                        'data-form-table-value' => $class
+                    ]
+                ]
+            );
+            $form->add(
+                'Submit', 
+                ButtonType::class,
+                [
+                    'label' => 'Submit',
+                    'attr' => [
+                        'class' => 'btn-danger float-end',
+                        'data-action' => 'form#submit',
+                        'data-form-target' => 'submitBtn'
+                    ]
+                ]
+            );
+            return $form;
+        }
+
+
+
+
+        return $this->formFactory->create(
             $typeClass, 
             $entity,
             [   
@@ -52,7 +92,7 @@ class FormService
                 ]
             ]
         );
-        return $form;
+
     }
 
 

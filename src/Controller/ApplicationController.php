@@ -93,4 +93,34 @@ class ApplicationController extends AbstractController
             $formEntity
         );
     }
+
+    #[Route('/{table}/delete/{id}', name: 'app_application_delete_entity')]
+    public function delete(
+        ModalFormService $modal,
+        Request $request,
+        string $table,
+        int $id,
+        ModuleRepository $moduleRepository,
+        DataService $dataService,
+        FormRepository $formRepository
+    ): Response
+    {
+        $module = $moduleRepository->findOneBy(['sqlTable' => $table]);
+        $entity = $dataService->getOneBy($table, [], ['id' => $id]);
+        $params = [
+            'moduleId' => $module->getId(),
+            'id' => $id
+        ];
+
+        return $modal->show(
+            $title = 'Delete '.$module->getLabelSingular(),
+            $class = $table,
+            $route = 'app_data_delete',
+            $request,
+            $entity,
+            'POST',
+            $params
+        );
+    }
+
 }
