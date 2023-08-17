@@ -17,10 +17,10 @@ class HtmlElementController extends AbstractController
 {
     #[Route('/administration/htmlelements/add/{pageId}/{parentId?}', name: 'app_htmlelement_add')]
     public function add(
-        int $pageId, 
-        ModalFormService $modal, 
-        Request $request, 
-        PageRepository $pageRepository, 
+        int $pageId,
+        ModalFormService $modal,
+        Request $request,
+        PageRepository $pageRepository,
         HtmlElementRepository $htmlElementRepository,
         FormService $formService,
         $parentId = null,
@@ -43,21 +43,9 @@ class HtmlElementController extends AbstractController
 
         if($request->query->get('onchange')){
         
-            // if(!empty($request->request->all()['htmlelement'])){
-            //     $formValues = $request->request->all()['htmlelement'];
-            //     if(!empty($formValues['type'])){
-            //         $htmlelement->setType($formValues['type']);
-            //     }
-            //     if(!empty($formValues['sizeClass'])){
-            //         $htmlelement->setSizeClass($formValues['sizeClass']);
-            //     }
-            //     if(!empty($formValues['additionnalClasses'])){
-            //         $htmlelement->setAdditionnalClasses($formValues['additionnalClasses']);
-            //     }
-            // }
-
             $form = $formService->getForm('htmlelement', 'app_htmlelement_add', $htmlelement, 'POST', $params, 'write', true);
             $form->handleRequest($request);
+      
             return $this->render('includes/_form.html.twig', [
                 'form' => $form,
             ]);

@@ -67,6 +67,9 @@ export default class extends Controller {
     onchange(){
 
         const formData = new FormData(this.formTarget);
+
+        console.log(formData)
+
         let that = this;
         axios({
             method: 'POST',
@@ -76,7 +79,7 @@ export default class extends Controller {
         })
         .then(function (response) {
             $(that.formTarget).html(response.data)
-        })
+        }).catch(err => { console.log("erreeer",err.response) });
 
     }
 
