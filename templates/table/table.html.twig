@@ -46,9 +46,10 @@
                             {% endfor %}
                         </td>
                     {% else %}
+                        {% set value = row[column.name]|json_decode()[0] %}
                         <td>
-                            <span class="badge badge-pill {{ column.selectOptions[row[column.name]]['colorClass'] }} {{ column.selectOptions[row[column.name]]['bgClass'] }}">
-                                {{ column.selectOptions[row[column.name]]['label'] }}
+                            <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
+                                {{ column.selectOptions[value]['label'] }}
                             </span>
                         </td>
                     {% endif %}
