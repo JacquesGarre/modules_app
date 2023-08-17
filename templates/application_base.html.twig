@@ -15,7 +15,9 @@
         
     </head>
     <body>
-        {% include 'includes/_modal.html.twig' %}
-        {% block body %}{% endblock %}
+        <div data-controller="table layout" data-action="form:success->table#reload form:success->layout#reload">
+            {% include 'includes/_modal.html.twig' %}
+            {% block body %}{% endblock %}
+        </div>
     </body>
 </html>

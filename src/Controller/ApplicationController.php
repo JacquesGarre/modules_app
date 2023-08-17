@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\FieldRepository;
 use App\Entity\Field;
 use App\Repository\FormRepository;
+use App\Repository\TableRepository;
 use App\Service\DataService;
 use Exception;
 
@@ -121,6 +122,18 @@ class ApplicationController extends AbstractController
             'POST',
             $params
         );
+    }
+
+    #[Route('/table_reload/{id}', name: 'app_application_table_reload')]
+    public function tableReload(
+        int $id,
+        TableRepository $tableRepository
+    ): Response
+    {
+        $table = $tableRepository->findOneBy(['id' => $id]);
+        return $this->render('_application/components/_table.html.twig', [
+            'table' => $table
+        ]);
     }
 
 }
