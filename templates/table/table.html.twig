@@ -34,7 +34,25 @@
             </td>
             {% endif %}
             {% for column in table.columns %}
-            <td>{{ row[column.name] }}</td>
+                {% if column.type == 'text' %}
+                    <td>{{ row[column.name] }}</td>
+                {% elseif column.type == 'listing' %}
+                    {% if column.multiple %}
+                        <td>
+                            {% for value in row[column.name]|json_decode() %}
+                                <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
+                                    {{ column.selectOptions[value]['label'] }}
+                                </span>
+                            {% endfor %}
+                        </td>
+                    {% else %}
+                        <td>
+                            <span class="badge badge-pill {{ column.selectOptions[row[column.name]]['colorClass'] }} {{ column.selectOptions[row[column.name]]['bgClass'] }}">
+                                {{ column.selectOptions[row[column.name]]['label'] }}
+                            </span>
+                        </td>
+                    {% endif %}
+                {% endif %}
             {% endfor %}
         </tr>
         {% endfor %}

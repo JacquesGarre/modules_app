@@ -29,6 +29,7 @@ class FieldListener
     {
         // Set list to field is field type == listing
         if($fieldEntity->getType() == 'listing'){
+
             $list = $fieldEntity->getList();
             $choices = $this->listingRepository->findBy(['list' => $list]);
             $choicesID = array_map(function($listing){
@@ -38,6 +39,19 @@ class FieldListener
                 return $listing->getLabel();
             }, $choices);
             $fieldEntity->setChoices(['...' => ''] + array_combine($choicesLabels, $choicesID));
+
+            $options = [];
+            foreach($choices as $choice){
+                $options[$choice->getValue()] = [
+                    'value' => $choice->getValue(),
+                    'label' => $choice->getLabel(),
+                    'colorClass' => $choice->getColorClass(),
+                    'bgClass' => $choice->getBgClass()
+                ];
+            }
+            $fieldEntity->setSelectOptions($options);
+
+
         }
 
 

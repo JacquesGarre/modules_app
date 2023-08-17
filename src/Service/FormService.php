@@ -119,7 +119,7 @@ class FormService
                     if(!isset($entity->{$field->getName()})){
 
                         if($field->isMultiple()){
-                            $entity->{$field->getName()} = "[".$field->getValue()."]" ?? "[]";
+                            $entity->{$field->getName()} = !is_array($field->getValue()) ? [$field->getValue()] : [];
                         } else {
                             $entity->{$field->getName()} = $field->getValue() ?? null;
                         }

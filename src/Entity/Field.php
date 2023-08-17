@@ -55,6 +55,8 @@ class Field
     private ?string $list = null;
 
     private array $choices = [];
+    
+    private array $selectOptions = [];
 
     public function __construct()
     {
@@ -254,6 +256,18 @@ class Field
     public function setChoices(array $choices): static
     {
         $this->choices = $choices;
+
+        return $this;
+    }
+
+    public function getSelectOptions(): array
+    {
+        return $this->selectOptions;
+    }
+
+    public function setSelectOptions(array $selectOptions): static
+    {
+        $this->selectOptions = $selectOptions;
 
         return $this;
     }
