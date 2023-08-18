@@ -5,7 +5,7 @@ controllers:
     type: attribute
 
 app_form_index:
-    path: /administration/forms/{moduleId}
+    path: /administration/{moduleId}/forms
     controller: App\Controller\FormController::index
     methods: GET
 

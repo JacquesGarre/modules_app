@@ -17,7 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 
 class FormController extends AbstractController
 {
-    #[Route('/administration/forms/{moduleId}', name: 'app_form_index')]
+    #[Route('/administration/{moduleId}/forms', name: 'app_form_index')]
     public function index(int $moduleId, FormRepository $formRepository, ModuleRepository $moduleRepository): Response
     {
         $module = $moduleRepository->findOneBy(['id' => $moduleId]);
@@ -27,7 +27,7 @@ class FormController extends AbstractController
         ]);
     }
 
-    #[Route('/administration/forms/add/{moduleId}', name: 'app_form_add')]
+    #[Route('/administration/{moduleId}/forms/add', name: 'app_form_add')]
     public function add(int $moduleId, ModalFormService $modal, Request $request, ModuleRepository $moduleRepository): Response
     {
         $module = $moduleRepository->findOneBy(['id' => $moduleId]);
