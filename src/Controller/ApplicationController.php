@@ -29,12 +29,10 @@ class ApplicationController extends AbstractController
     ): Response
     {
         $page = $pageRepository->findOneBy(['uri' => $uri]);
-
         $entity = false;
         if(!empty($id)){
             $entity = $dataService->getOneBy($page->getModule()->getSqlTable(), [], ['id' => $id]);
         }
-
         return $this->render('_application/page.html.twig', [
             'page' => $page,
             'entity' => $entity
