@@ -3,28 +3,11 @@
 {% block title %}Administration | Page {{ page.title }} | {{ parent() }}{% endblock %}
 
 {% block body %}
-    
+
     <a class="btn btn-sm btn-primary mb-5"
         href="{{ path('app_administration') }}">
         <i class="fa-solid fa-chevron-left"></i> Back
     </a>
     <h3>Page {{ page.title }}</h3>    
-    <div class="row">
-        {{ form(form) }}
-    </div>
-    <hr class="mt-5 mb-5">
-    <h3 class="mb-5">Layout<a class="ms-3 btn btn-primary"
-        href="{{ path('app_application_page', {'uri': page.uri}) }}">
-        <i class="fa-solid fa-eye"></i> Go to page
-    </a></h3>  
-    <div 
-        class="page-builder"
-        data-controller="layout"
-        data-url="{{ path('app_page_show', {'id':page.id}) }}"
-        data-action="modal:success->layout#reload"
-        data-table="htmlelement"
-    >
-        {% include 'page/_page_builder.html.twig' %}
-    </div>
-
+    {% include 'page/_page_edit.html.twig' %}
 {% endblock %}

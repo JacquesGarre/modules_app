@@ -1,0 +1,22 @@
+<div class="row">
+    {{ form(form) }}
+</div>
+<hr class="mt-5 mb-5">
+<h3 class="mb-5">Layout
+    {% if page is not empty %}
+        <a class="ms-3 btn btn-primary" href="{{ path('app_application_page', {'uri': page.uri}) }}">
+            <i class="fa-solid fa-eye"></i> Go to page
+        </a>
+    {% endif %}
+</h3>  
+{% if page is not empty %}
+    <div 
+        class="page-builder"
+        data-controller="layout"
+        data-url="{{ path('app_page_show', {'id':page.id}) }}"
+        data-action="modal:success->layout#reload"
+        data-table="htmlelement"
+    >
+        {% include 'page/_page_builder.html.twig' %}
+    </div>
+{% endif %}

@@ -25,5 +25,21 @@
         {% include 'table/index.html.twig' %}
     </div>
     <hr class="mt-5 mb-5">
+    <div class="row">
+        {% set page = module.page %}
+        {% set form = pageForm %}
+        <h3>
+            View {{ module.labelSingular }}
+            {% if page is empty %}
+                <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_page_add') }}">
+                    New view
+                </button>
+            {% endif %}
+        </h3>   
+        {% if page %}
+            {% include 'page/_page_edit.html.twig' %}
+        {% endif %}
+    </div>
+    <hr class="mt-5 mb-5">
 
 {% endblock %}

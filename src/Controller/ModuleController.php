@@ -110,12 +110,32 @@ class ModuleController extends AbstractController
             return $modal->handlePostRequest($form, $module);
         }
 
+        // Page builder
+        $page = $module->getPage();
+        $pageForm = false;
+        if(!empty($page)){
+            $params = [];
+            $params['id'] = $page->getId();
+    
+            $pageForm = $formService->getForm('page', 'app_page_show', $page, 'POST', $params, 'read');
+            if($request->query->get('enable') == 1){
+                $pageForm = $formService->getForm('page', 'app_page_show', $page, 'POST', $params, 'write');
+            }
+            if($request->query->get('enable') == 1 || $request->query->get('disable') == 1){
+                return $this->render('form/form.html.twig', [
+                    'form' => $pageForm
+                ]);
+            }
+        }
+
+
         return $this->render('module/show.html.twig', [
             'module' => $module,
             'form' => $form,
             'fields' => $fields,
             'forms' => $forms,
-            'tables' => $tables
+            'tables' => $tables,
+            'pageForm' => $pageForm
         ]);
     }
 
