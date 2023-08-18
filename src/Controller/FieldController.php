@@ -15,10 +15,11 @@ use App\Service\FormService;
 class FieldController extends AbstractController
 {
 
-    #[Route('/administration/fields', name: 'app_field_index')]
-    public function index(FieldRepository $fieldRepository): Response
-    {
-        $fields = $fieldRepository->findAll();
+    #[Route('/administration/fields/{moduleId}', name: 'app_field_index')]
+    public function index(int $moduleId, FieldRepository $fieldRepository, ModuleRepository $moduleRepository): Response
+    {   
+        $module = $moduleRepository->findOneBy(['id' => $moduleId]);
+        $fields = $fieldRepository->findBy(['module' => $module]);
         return $this->render('field/_table.html.twig', [
             'fields' => $fields,
         ]);

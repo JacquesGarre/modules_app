@@ -1,1 +1,5 @@
-{{ form(form.html) }}
+{% if form.html is defined %}
+    {{ form(form.html) }}
+{% else %}
+    {{ form(form) }}
+{% endif %}

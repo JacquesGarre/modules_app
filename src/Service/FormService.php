@@ -129,7 +129,9 @@ class FormService
                     'data-form-name-value' => $class,
                     'data-form-target' => 'form',
                     'data-controller' => 'form',
-                    'data-form-url-value' => $action,
+                    'data-form-url-value' => $this->router->generate('app_application_form_reload', [
+                        'id' => $formEntity->getId()
+                    ]), // TO CHANGE
                     'data-form-submit-label-value' => 'Submit',
                     'data-form-table-value' => $class
                 ]

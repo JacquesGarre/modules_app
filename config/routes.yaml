@@ -10,7 +10,7 @@ app_form_index:
     methods: GET
 
 app_field_index:
-    path: /administration/fields
+    path: /administration/fields/{moduleId}
     controller: App\Controller\FieldController::index
     methods: GET
 

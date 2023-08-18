@@ -86,7 +86,17 @@ class PageController extends AbstractController
         $params = [];
         $params['id'] = $page->getId();
 
-        $form = $formService->getForm('page', 'app_page_show', $page, 'POST', $params,  'write');
+
+        $form = $formService->getForm('page', 'app_page_show', $page, 'POST', $params, 'read');
+        if($request->query->get('enable') == 1){
+            $form = $formService->getForm('page', 'app_page_show', $page, 'POST', $params, 'write');
+        }
+        if($request->query->get('enable') == 1 || $request->query->get('disable') == 1){
+            return $this->render('form/form.html.twig', [
+                'form' => $form
+            ]);
+        }
+        
         
         if($request->query->get('ajax')){
             return $this->render('page/_page_builder.html.twig', [
@@ -95,6 +105,7 @@ class PageController extends AbstractController
         }
         
         if ($request->isMethod('POST')) {
+            $form = $formService->getForm('page', 'app_page_show', $page, 'POST', $params, 'write');
             $form->handleRequest($request);
             return $modal->handlePostRequest($form, $page);
         }

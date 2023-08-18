@@ -22,10 +22,13 @@ export default class extends Controller {
         $(that.formTarget).find('.invalid-feedback').remove()
         $(that.formTarget).find('.field-invalid').removeClass('field-invalid')
 
+        let url = $(that.formTarget).attr('action') !== undefined ? $(that.formTarget).attr('action') : this.urlValue;
+
+
         that.submitBtnTarget.innerHTML = "Submitting...";
         axios({
             method: this.methodValue,
-            url: this.urlValue,
+            url: url,
             data: formData,
             headers: { "Content-Type": "multipart/form-data" },
         })

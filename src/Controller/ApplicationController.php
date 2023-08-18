@@ -15,8 +15,9 @@ use App\Entity\Field;
 use App\Repository\FormRepository;
 use App\Repository\TableRepository;
 use App\Service\DataService;
+use App\Service\FormService;
 use Exception;
-
+use stdClass;
 class ApplicationController extends AbstractController
 {
     #[Route('/{uri}', name: 'app_application_page')]
@@ -133,6 +134,27 @@ class ApplicationController extends AbstractController
         $table = $tableRepository->findOneBy(['id' => $id]);
         return $this->render('_application/components/_table.html.twig', [
             'table' => $table
+        ]);
+    }
+
+    #[Route('/form_reload/{id}', name: 'app_application_form_reload')]
+    public function formReload(
+        int $id,
+        FormRepository $formRepository,
+        FormService $formService
+    ): Response
+    {
+        $formEntity = $formRepository->findOneBy(['id' => $id]);
+        $entity = new stdClass();
+        $form = $formService->getEntityForm(
+            $formEntity->getModule()->getSqlTable(),
+            $entity,
+            $formEntity
+        );
+        $formEntity->setHtml($form->createView());
+
+        return $this->render('form/form.html.twig', [
+            'form' => $formEntity
         ]);
     }
 

@@ -7,7 +7,7 @@
 <table id="fields-table" 
     class="table table-striped"
     data-controller="table"
-    data-url="{{ path('app_field_index') }}"
+    data-url="{{ path('app_field_index', {'moduleId': module.id }) }}"
     data-action="modal:success->table#reload"
     data-table="field">
     {% include 'field/_table.html.twig' %}
