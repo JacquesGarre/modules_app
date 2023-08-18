@@ -24,6 +24,9 @@ class Page
     #[ORM\OneToMany(mappedBy: 'Page', targetEntity: HtmlElement::class, orphanRemoval: true)]
     private Collection $htmlElements;
 
+    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'])]
+    private ?Module $module = null;
+
     public function __construct()
     {
         $this->htmlElements = new ArrayCollection();
@@ -84,6 +87,18 @@ class Page
                 $htmlElement->setPage(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getModule(): ?Module
+    {
+        return $this->module;
+    }
+
+    public function setModule(?Module $module): static
+    {
+        $this->module = $module;
 
         return $this;
     }

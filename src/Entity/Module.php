@@ -39,6 +39,9 @@ class Module
     #[ORM\OneToMany(mappedBy: 'module', targetEntity: Table::class, orphanRemoval: true)]
     private Collection $tables;
 
+    #[ORM\OneToOne(mappedBy: 'module', cascade: ['persist', 'remove'])]
+    private ?Page $page = null;
+
     public function __construct()
     {
         $this->fields = new ArrayCollection();
@@ -221,6 +224,28 @@ class Module
                 $table->setModule(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPage(): ?Page
+    {
+        return $this->page;
+    }
+
+    public function setPage(?Page $page): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($page === null && $this->page !== null) {
+            $this->page->setModule(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($page !== null && $page->getModule() !== $this) {
+            $page->setModule($this);
+        }
+
+        $this->page = $page;
 
         return $this;
     }
