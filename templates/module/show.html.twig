@@ -29,10 +29,10 @@
         {% set page = module.page %}
         {% set form = pageForm %}
         <h3>
-            View {{ module.labelSingular }}
+            Page {{ module.labelSingular }}
             {% if page is empty %}
-                <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_page_add') }}">
-                    New view
+                <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_page_for_module_add', {'moduleId': module.id}) }}">
+                    New page
                 </button>
             {% endif %}
         </h3>   

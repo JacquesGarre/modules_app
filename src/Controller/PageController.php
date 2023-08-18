@@ -23,13 +23,31 @@ class PageController extends AbstractController
         ]);
     }
 
+    #[Route('/administration/{moduleId}/pages/add', name: 'app_page_for_module_add')]
+    public function addForModule(int $moduleId, ModalFormService $modal, Request $request, ModuleRepository $moduleRepository): Response
+    {   
+        $module = $moduleRepository->findOneBy(['id' => $moduleId]);
+        $page = new Page();
+        $page->setModule($module);
+        $params = [];
+        return $modal->show(
+            $title = 'Create the page for a single '.$module->getLabelSingular(),
+            $class = 'page',
+            $route = 'app_page_add',
+            $request,
+            $page,
+            'POST',
+            $params
+        );
+    }
+
     #[Route('/administration/pages/add', name: 'app_page_add')]
     public function add(ModalFormService $modal, Request $request): Response
     {
         $page = new Page();
         $params = [];
         return $modal->show(
-            $title = 'Create a new page for ',
+            $title = 'Create a new page',
             $class = 'page',
             $route = 'app_page_add',
             $request,
