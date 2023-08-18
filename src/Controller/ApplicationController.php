@@ -20,15 +20,24 @@ use Exception;
 use stdClass;
 class ApplicationController extends AbstractController
 {
-    #[Route('/{uri}', name: 'app_application_page')]
+    #[Route('/{uri}/{id?}', name: 'app_application_page')]
     public function index(
         string $uri,
-        PageRepository $pageRepository
+        $id = null,
+        PageRepository $pageRepository,
+        DataService $dataService
     ): Response
     {
         $page = $pageRepository->findOneBy(['uri' => $uri]);
+
+        $entity = false;
+        if(!empty($id)){
+            $entity = $dataService->getOneBy($page->getModule()->getSqlTable(), [], ['id' => $id]);
+        }
+
         return $this->render('_application/page.html.twig', [
-            'page' => $page
+            'page' => $page,
+            'entity' => $entity
         ]);
     }
 

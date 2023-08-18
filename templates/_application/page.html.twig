@@ -3,7 +3,11 @@
 {% block title %}{{ page.title }}{% endblock %}
 
 {% block body %}
-    {% for children in page.htmlelements %}
+
+    <h1>TEST</h1>
+
+    {% for children in page.htmlElements %}
+        <h1>{{ children.id }}</h1>
         {% if children.parent is empty %}
             {% include 'page/html_element_view.html.twig' %}
         {% endif %}
