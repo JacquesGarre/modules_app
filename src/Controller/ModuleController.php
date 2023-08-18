@@ -12,6 +12,7 @@ use App\Repository\FieldRepository;
 use App\Repository\FormRepository;
 use App\Repository\TableRepository;
 use App\Service\FormService;
+use App\Entity\Module;
 
 class ModuleController extends AbstractController
 {
@@ -72,7 +73,7 @@ class ModuleController extends AbstractController
 
     #[Route('/administration/modules/{id}', name: 'app_module_show')]
     public function show(
-        int $id,
+        Module $module,
         ModalFormService $modal,
         Request $request,
         ModuleRepository $moduleRepository,
@@ -82,7 +83,7 @@ class ModuleController extends AbstractController
         FormService $formService
     ): Response
     {
-        $module = $moduleRepository->findOneBy(['id' => $id]);
+
         $fields = $fieldRepository->findBy(['module' => $module]);
         $forms = $formRepository->findBy(['module' => $module]);
         $tables = $tableRepository->findBy(['module' => $module]);

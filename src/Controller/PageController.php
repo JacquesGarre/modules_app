@@ -29,11 +29,13 @@ class PageController extends AbstractController
         $module = $moduleRepository->findOneBy(['id' => $moduleId]);
         $page = new Page();
         $page->setModule($module);
-        $params = [];
+        $params = [
+            'moduleId' => $moduleId
+        ];
         return $modal->show(
             $title = 'Create the page for a single '.$module->getLabelSingular(),
             $class = 'page',
-            $route = 'app_page_add',
+            $route = 'app_page_for_module_add',
             $request,
             $page,
             'POST',

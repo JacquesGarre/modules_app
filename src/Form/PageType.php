@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\PercentType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 class PageType extends AbstractType
 {
@@ -21,7 +22,8 @@ class PageType extends AbstractType
         $builder
             ->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options): void {
 
-                $module = $event->getData();
+                $page = $event->getData();
+
                 $form = $event->getForm();
 
                 $method = $event->getForm()->getConfig()->getMethod();
@@ -30,10 +32,22 @@ class PageType extends AbstractType
                     $form
                         ->add('title', TextType::class, [
                             'disabled' => $options['attr']['data-mode'] == 'read'   
-                        ])
-                        ->add('uri', TextType::class, [
+                        ]);
+                    
+                    if($page->getModule()){
+                        $form->add('uri', TextType::class, [
+                            'label' => '/{id}',
+                            'disabled' => $options['attr']['data-mode'] == 'read', 
+                            'row_attr' => [
+                                'class' => 'input-group',
+                            ],  
+                        ]);
+                    } else {
+                        $form->add('uri', TextType::class, [
                             'disabled' => $options['attr']['data-mode'] == 'read'   
                         ]);
+                    }
+
 
                     $label = $options['attr']['data-mode'] == 'read'  ? 'Edit' : 'Submit';
                     $action = $options['attr']['data-mode'] == 'read'  ? 'form#enable' : 'form#submit';
