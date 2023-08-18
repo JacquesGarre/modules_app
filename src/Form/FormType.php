@@ -37,6 +37,7 @@ class FormType extends AbstractType
                         ]
                     ))
                     ->add('fields', EntityType::class, [
+                        'expanded'      => true,
                         'class'         => Field::class,
                         'query_builder' => function (FieldRepository $repository) use($field) {
                 

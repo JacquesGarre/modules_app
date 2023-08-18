@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Repository\FieldRepository;
 
 class TableType extends AbstractType
 {
@@ -23,7 +24,7 @@ class TableType extends AbstractType
     {
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
-                $field = $event->getData();
+                $table = $event->getData();
                 $form = $event->getForm();
 
                 $method = $event->getForm()->getConfig()->getMethod();
@@ -35,12 +36,18 @@ class TableType extends AbstractType
                                 new NotBlank()
                             ],
                         ])
-                        ->add('columns', EntityType::class, array(
-                            'label' => 'Columns',
-                            'class'     => Field::class,
-                            'expanded'  => true,
-                            'multiple'  => true,
-                        ))
+                        ->add('columns', EntityType::class, [
+                            'label'         => 'Columns',
+                            'expanded'      => true,
+                            'class'         => Field::class,
+                            'query_builder' => function (FieldRepository $repository) use($table) {
+                                return $repository
+                                    ->createQueryBuilder('f')
+                                    ->where('f.module = :moduleId')
+                                    ->setParameter('moduleId', $table->getModule()->getId());
+                            },
+                            'multiple' => true
+                        ])
                         ->add('inlineActions', ChoiceType::class, array(
                             'label' => 'Actions',
                             'expanded'  => true,
