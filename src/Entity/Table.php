@@ -9,11 +9,13 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Doctrine\TableListener;
 use App\Validator\TableCanBeEditable;
+use App\Validator\TableHasOneColumn;
 
 #[ORM\Entity(repositoryClass: TableRepository::class)]
 #[ORM\EntityListeners([TableListener::class])]
 #[ORM\Table(name: '`table`')]
 #[TableCanBeEditable]
+#[TableHasOneColumn]
 class Table
 {
     #[ORM\Id]
