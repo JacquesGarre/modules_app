@@ -8,10 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Doctrine\TableListener;
+use App\Validator\TableCanBeEditable;
 
 #[ORM\Entity(repositoryClass: TableRepository::class)]
 #[ORM\EntityListeners([TableListener::class])]
 #[ORM\Table(name: '`table`')]
+#[TableCanBeEditable]
 class Table
 {
     #[ORM\Id]

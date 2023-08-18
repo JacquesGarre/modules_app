@@ -63,7 +63,6 @@ class TableType extends AbstractType
 
                     $form
                     ->add('title', HiddenType::class)
-                    ->add('columns', HiddenType::class)
                     ->add('Submit', ButtonType::class, [
                         'attr' => [
                             'class' => 'btn-danger float-end',
