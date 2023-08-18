@@ -8,7 +8,7 @@
     id="form-table" 
     class="table table-striped"
     data-controller="table"
-    data-url="{{ path('app_form_index') }}"
+    data-url="{{ path('app_form_index', {'moduleId': module.id }) }}"
     data-action="modal:success->table#reload"
     data-table="form"
 >

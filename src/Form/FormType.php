@@ -3,6 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Form;
+use App\Repository\FieldRepository;
+use Doctrine\ORM\Mapping\Entity;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -11,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use App\Entity\Field;
 
 class FormType extends AbstractType
 {
@@ -32,7 +36,17 @@ class FormType extends AbstractType
                             'Edit' => 'edit'
                         ]
                     ))
-                    ->add('fields')
+                    ->add('fields', EntityType::class, [
+                        'class'         => Field::class,
+                        'query_builder' => function (FieldRepository $repository) use($field) {
+                
+                            return $repository
+                                ->createQueryBuilder('f')
+                                ->where('f.module = :moduleId')
+                                ->setParameter('moduleId', $field->getModule()->getId());
+                        },
+                        'multiple' => true
+                    ])
                     ->add('Submit', ButtonType::class, [
                         'attr' => [
                             'class' => 'btn-primary float-end',

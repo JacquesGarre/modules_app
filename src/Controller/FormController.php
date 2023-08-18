@@ -17,10 +17,11 @@ use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 
 class FormController extends AbstractController
 {
-    #[Route('/administration/forms', name: 'app_form_index')]
-    public function index(FormRepository $formRepository): Response
+    #[Route('/administration/forms/{moduleId}', name: 'app_form_index')]
+    public function index(int $moduleId, FormRepository $formRepository, ModuleRepository $moduleRepository): Response
     {
-        $forms = $formRepository->findAll();
+        $module = $moduleRepository->findOneBy(['id' => $moduleId]);
+        $forms = $formRepository->findBy(['module' => $module]);
         return $this->render('form/_table.html.twig', [
             'forms' => $forms,
         ]);
