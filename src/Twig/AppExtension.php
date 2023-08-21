@@ -15,8 +15,12 @@ class AppExtension extends AbstractExtension
         ];
     }
 
-    public function jsonDecode(string $json): array
-    {
+    public function jsonDecode(string $json = null): array
+    {   
+        if(empty($json)){
+            return [];
+        }
+
         try {
             $array = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         } catch (Exception $e) {

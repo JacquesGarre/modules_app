@@ -12,7 +12,7 @@ class PageEventListener
 
     public function prePersist(Page $page): void
     {
-        if(!empty($page->getModule())){
+        if(!empty($page->getModule()) && strpos($page->getUri(), '/{id}') === false){
             $page->setUri($page->getUri().'/{id}');
         }
     }

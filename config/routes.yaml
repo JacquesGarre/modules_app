@@ -34,6 +34,11 @@ app_module_index:
     controller: App\Controller\ModuleController::index
     methods: GET
 
+app_module_show:
+    path: /administration/modules/{id}
+    controller: App\Controller\ModuleController::show
+    methods: GET
+
 app_application_page:
     path: /{uri}/{id?}
     controller: App\Controller\ApplicationController::index

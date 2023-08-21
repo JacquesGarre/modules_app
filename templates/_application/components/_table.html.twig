@@ -15,7 +15,7 @@
         <td>
             {% for action in table.inlineActions %}
             {% if action == 'view' %}
-            <a class="btn btn-sm btn-success" href="{{ path('app_application_page', {'uri': table.module.page.uri, 'id':row.id}) }}">
+            <a class="btn btn-sm btn-success" href="{{ path('app_application_page', {'uri': table.module.page.uri|replace({'/{id}': ''}), 'id':row.id}) }}">
                 <i class="fa-solid fa-eye"></i>
             </a>
             {% endif %}
@@ -47,11 +47,14 @@
                         {% endfor %}
                     </td>
                 {% else %}
-                    {% set value = row[column.name]|json_decode()[0] %}
+                    {% set values = row[column.name]|json_decode() %}
+                    {% set value = values|length > 0 ? values[0] : '' %}
                     <td>
-                        <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
-                            {{ column.selectOptions[value]['label'] }}
-                        </span>
+                        {% if value in column.selectOptions|keys %}
+                            <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
+                                {{ column.selectOptions[value]['label'] }}
+                            </span>
+                        {% endif %}
                     </td>
                 {% endif %}
             {% endif %}

@@ -36,11 +36,7 @@ class PageType extends AbstractType
                     
                     if($page->getModule()){
                         $form->add('uri', TextType::class, [
-                            'label' => '/{id}',
-                            'disabled' => $options['attr']['data-mode'] == 'read', 
-                            'row_attr' => [
-                                'class' => 'input-group',
-                            ],  
+                            'disabled' => $options['attr']['data-mode'] == 'read',
                         ]);
                     } else {
                         $form->add('uri', TextType::class, [
