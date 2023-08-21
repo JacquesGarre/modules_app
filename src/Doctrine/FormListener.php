@@ -14,25 +14,56 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use App\Repository\PageRepository;
 
 class FormListener
-{
+{ 
+    private $request;
+
     public function __construct(
         private DataService $dataService,
         private FormFactoryInterface $formFactory,
         private UrlGeneratorInterface $router,
-        private FormService $formService
+        private FormService $formService,
+        RequestStack $requestStack,
+        private PageRepository $pageRepository
     )
     {
         $this->dataService = $dataService;
         $this->formFactory = $formFactory;
         $this->router = $router;
         $this->formService = $formService;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->pageRepository = $pageRepository;
     }
 
     public function postLoad(Form $formEntity)
     {
         $entity = new stdClass();
+
+
+        if($this->request->attributes->get('_controller') == 'App\Controller\ApplicationController::index'){
+            $uri = $this->request->attributes->get('uri');
+            $id = $this->request->attributes->get('id');
+            $page = $this->pageRepository->findOneBy(['uri' => $uri]);
+            $module = $page->getModule();
+            
+            $data = $this->dataService->getOneBy(
+                $module->getSqlTable(),
+                [],
+                ['id' => $id]
+            );
+
+            if(!empty($data)){
+                foreach($data as $fieldID => $value){
+                    $entity->{$fieldID} = $value;
+                }
+            }
+
+        }
+
+
         $form = $this->formService->getEntityForm(
             $formEntity->getModule()->getSqlTable(), 
             $entity, 

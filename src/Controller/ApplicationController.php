@@ -25,7 +25,7 @@ class ApplicationController extends AbstractController
         string $uri,
         $id = null,
         PageRepository $pageRepository,
-        DataService $dataService
+        DataService $dataService,
     ): Response
     {
         $page = $pageRepository->findOneBy(['uri' => $uri]);
