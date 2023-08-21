@@ -4,6 +4,11 @@ controllers:
         namespace: App\Controller
     type: attribute
 
+app_application_form_reload:
+    path: /form_reload/{id}
+    controller: App\Controller\ApplicationController::formReload
+    methods: POST
+
 app_form_index:
     path: /administration/{moduleId}/forms
     controller: App\Controller\FormController::index
@@ -29,7 +34,7 @@ app_module_index:
     controller: App\Controller\ModuleController::index
     methods: GET
 
-app_application_show_entity:
-    path: /{table}/{id}
-    controller: App\Controller\ApplicationController::show
-    methods: GET
+app_application_page:
+    path: /{uri}/{id?}
+    controller: App\Controller\ApplicationController::index
+    methods: [GET, POST]

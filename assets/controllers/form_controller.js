@@ -18,12 +18,10 @@ export default class extends Controller {
     submit() {
         const that = this;
         const formData = new FormData(that.formTarget);
-
         $(that.formTarget).find('.invalid-feedback').remove()
         $(that.formTarget).find('.field-invalid').removeClass('field-invalid')
 
         let url = $(that.formTarget).attr('action') !== undefined ? $(that.formTarget).attr('action') : this.urlValue;
-
 
         that.submitBtnTarget.innerHTML = "Submitting...";
         axios({

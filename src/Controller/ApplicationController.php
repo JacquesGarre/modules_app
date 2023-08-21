@@ -18,35 +18,10 @@ use App\Service\DataService;
 use App\Service\FormService;
 use Exception;
 use stdClass;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ApplicationController extends AbstractController
 {
-    #[Route('/{uri}/{id?}', name: 'app_application_page')]
-    public function index(
-        string $uri,
-        $id = null,
-        PageRepository $pageRepository,
-        DataService $dataService,
-    ): Response
-    {
-        $page = $pageRepository->findOneBy(['uri' => $uri]);
-        $entity = false;
-        if(!empty($id)){
-            $entity = $dataService->getOneBy($page->getModule()->getSqlTable(), [], ['id' => $id]);
-        }
-        return $this->render('_application/page.html.twig', [
-            'page' => $page,
-            'entity' => $entity
-        ]);
-    }
 
-    #[Route('/{table}/{id}', name: 'app_application_show_entity')]
-    public function show(ModalFormService $modal, Request $request, string $table, int $id, ModuleRepository $moduleRepository): Response
-    {
-        $module = $moduleRepository->findOneBy(['sqlTable' => $table]);
-        return $this->render('_application/detailed_page.html.twig', [
-      
-        ]);
-    }
 
     #[Route('/{table}/edit/{id}', name: 'app_application_edit_entity')]
     public function edit(
@@ -75,21 +50,6 @@ class ApplicationController extends AbstractController
             'table' => $table,
             'id' => $id
         ];
-
-        // if($request->query->get('onchange')){
-        //     $formValues = $request->request->all()[$table];
-        //     foreach ($formValues as $key => $value) {
-        //         $setterMethod = 'set' . ucfirst($key);
-        //         if (method_exists($field, $setterMethod)) {
-        //             $field->{$setterMethod}($value);
-        //         }
-        //     }
-        //     $form = $formService->getForm('field', 'app_field_edit', $field, 'POST', $params);
-        //     return $this->render('includes/_form.html.twig', [
-        //         'form' => $form,
-        //     ]);
-
-        // }
 
         return $modal->show(
             $title = 'Edit '.$module->getLabelSingular(),
@@ -148,20 +108,82 @@ class ApplicationController extends AbstractController
     public function formReload(
         int $id,
         FormRepository $formRepository,
-        FormService $formService
+        FormService $formService,
+        Request $request,
+        UrlGeneratorInterface $router,
+        PageRepository $pageRepository,
+        DataService $dataService
     ): Response
     {
+
         $formEntity = $formRepository->findOneBy(['id' => $id]);
         $entity = new stdClass();
+
+
+        $referer = $request->headers->get('referer'); // get the referer, it can be empty!
+        if (!\is_string($referer) || !$referer) {
+            echo 'Referer is invalid or empty.';
+        }
+        $refererPathInfo = Request::create($referer)->getPathInfo();
+
+     
+        // try to match the path with the application routing
+        $routeInfos = $router->match($refererPathInfo);
+        if(
+            !empty($routeInfos['_route'])
+            && $routeInfos['_route'] == 'app_application_page'
+            && $formEntity->getAction() == 'edit'
+            && !empty($routeInfos['id'])
+            && !empty($routeInfos['uri'])
+        ){
+
+
+            $page = $pageRepository->findOneBy(['uri' => $routeInfos['uri']]);
+            $module = $page->getModule();
+            if(!empty($module)){
+                $data = $dataService->getOneBy(
+                    $module->getSqlTable(),
+                    [],
+                    ['id' => $routeInfos['id']]
+                );
+                if(!empty($data)){
+                    foreach($data as $fieldID => $value){
+                        $entity->{$fieldID} = $value;
+                    }
+                }
+            }
+        }
+
+        $mode = $request->query->get('disable') == 1 ? 'read' : 'write';
         $form = $formService->getEntityForm(
             $formEntity->getModule()->getSqlTable(),
             $entity,
-            $formEntity
+            $formEntity,
+            $mode
         );
         $formEntity->setHtml($form->createView());
 
         return $this->render('form/form.html.twig', [
             'form' => $formEntity
+        ]);
+    }
+
+    #[Route('/{uri}/{id?}', name: 'app_application_page')]
+    public function index(
+        string $uri,
+        $id = null,
+        PageRepository $pageRepository,
+        DataService $dataService,
+    ): Response
+    {
+        $page = $pageRepository->findOneBy(['uri' => $uri]);
+        $entity = false;
+        if(!empty($id)){
+            $entity = $dataService->getOneBy($page->getModule()->getSqlTable(), [], ['id' => $id]);
+        }
+        return $this->render('_application/page.html.twig', [
+            'page' => $page,
+            'entity' => $entity
         ]);
     }
 

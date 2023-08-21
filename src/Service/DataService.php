@@ -29,10 +29,8 @@ class DataService
         return [$columns, $values];
     }
 
-    public function get($table, array $selectedColumns = [], array $conditions = [], $limit = null, $page = null)
+    public function getSqlConditions($conditions)
     {
-        $conn = $this->em->getConnection();
-        $selectedColumns = empty($selectedColumns) ? '*' : '`id`, `'.implode('`,`', $selectedColumns).'`';
         $conds = [];
         foreach($conditions as $field => $value){
             if(is_array($value)){
@@ -43,6 +41,15 @@ class DataService
                 $conds[] = $field." LIKE '".$value."'";
             }
         }
+        return $conds;
+    }
+
+    public function get($table, array $selectedColumns = [], array $conditions = [], $limit = null, $page = null)
+    {
+        $conn = $this->em->getConnection();
+        $selectedColumns = empty($selectedColumns) ? '*' : '`id`, `'.implode('`,`', $selectedColumns).'`';
+        $conds = $this->getSqlConditions($conditions);
+
         $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
         $limit = empty($limit) ? '' : "LIMIT $limit";
 
@@ -76,6 +83,25 @@ class DataService
     {
         $conn = $this->em->getConnection();
         $sql = "DELETE FROM $table WHERE `id` = $id";
+        $stmt = $conn->prepare($sql);
+        $stmt->executeQuery();
+    }
+
+    public function update($table, $args, $conditions)
+    {
+        [$columns, $values] = $this->getColumnsAndValues($args);
+        $conn = $this->em->getConnection();
+
+        $fieldValues = array_combine($columns, $values);
+        $values = [];
+        foreach($fieldValues as $column => $value){
+            $values[] = "$column = '$value'";
+        }
+
+        $conds = $this->getSqlConditions($conditions);
+        $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
+
+        $sql = "UPDATE $table SET ".implode(', ',$values)." $where";
         $stmt = $conn->prepare($sql);
         $stmt->executeQuery();
     }

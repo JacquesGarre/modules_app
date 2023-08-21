@@ -44,11 +44,21 @@ class DataController extends AbstractController
     #[Route('/data/edit/{moduleId}/{id}', name: 'app_data_edit')]
     public function edit(ModalFormService $modal, Request $request, int $moduleId, int $id, ModuleRepository $moduleRepository): Response
     {   
-        $module = $moduleRepository->findOneBy(['id' => $moduleId]);
+        $errors = [];
+        try {
+            $module = $moduleRepository->findOneBy(['id' => $moduleId]);
+            $args = $request->request->all()[$module->getSqlTable()];
+            $this->dataService->update($module->getSqlTable(), $args, ['id' => $id]);
+        } catch(Exception $e) {
+            $errors[$module->getSqlTable()][] = $e->getMessage();
+            return new Response(json_encode([
+                'errors' => $errors
+            ]));
+        }
 
-        //$this->dataService->get($module->getSqlTable())
-
-        dd($module);
+        return new Response(json_encode([
+            'success' => 'Entity updated'
+        ]));
     }
 
     #[Route('/data/delete/{moduleId}/{id}', name: 'app_data_delete')]

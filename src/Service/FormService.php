@@ -99,7 +99,8 @@ class FormService
     public function getEntityForm(
         string $class, 
         $entity, 
-        $formEntity
+        $formEntity,
+        $mode = 'write'
     )
     {
 
@@ -124,7 +125,7 @@ class FormService
                 'method' => 'POST',
                 'attr' => [
                     'data-form-keep-mode-value' => false,
-                    'data-mode' => 'write',
+                    'data-mode' => $mode,
                     'data-form-method-value' => 'post',
                     'data-form-name-value' => $class,
                     'data-form-target' => 'form',
@@ -150,7 +151,7 @@ class FormService
 
                     $form->add($field->getName(), TextType::class, [
                         'data' => $entity->{$field->getName()},
-                        'disabled' => $field->isDisabled(),
+                        'disabled' => $mode == 'read' ? $mode : $field->isDisabled(),
                         'required' => $field->isRequired(),
                     ]);
                 break;
@@ -170,7 +171,7 @@ class FormService
 
                     $form->add($field->getName(), ChoiceType::class, [
                         'data' => $entity->{$field->getName()},
-                        'disabled' => $field->isDisabled(),
+                        'disabled' => $mode == 'read' ? $mode : $field->isDisabled(),
                         'required' => $field->isRequired(),
                         'choices' => $field->getChoices(),
                         'multiple'  => $field->isMultiple(),
@@ -186,7 +187,7 @@ class FormService
                     [
                         'label' => 'Create '.$formEntity->getModule()->getLabelSingular(),
                         'attr' => [
-                            'class' => 'btn-success float-end',
+                            'class' => 'btn-primary float-end',
                             'data-action' => 'form#submit',
                             'data-form-target' => 'submitBtn'
                         ]
@@ -194,11 +195,18 @@ class FormService
                 );
             break;
             case 'edit':
+                $label = $mode == 'read'  ? 'Edit' : 'Update';
+                $action = $mode == 'read'  ? 'form#enable' : 'form#submit';
                 $form->add(
-                    'Submit', 
+                    $label, 
                     ButtonType::class, 
                     [
-                        'label' => 'Update '.$formEntity->getModule()->getLabelSingular()
+                        'label' => $label,
+                        'attr' => [
+                            'class' => 'btn-primary float-end',
+                            'data-action' => $action,
+                            'data-form-target' => 'submitBtn'
+                        ]
                     ]
                 );
             break;
