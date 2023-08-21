@@ -15,7 +15,7 @@
         <td>
             {% for action in table.inlineActions %}
             {% if action == 'view' %}
-            <a class="btn btn-sm btn-success" href="{{ path('app_application_show_entity', {'table': table.module.sqlTable, 'id':row.id}) }}">
+            <a class="btn btn-sm btn-success" href="{{ path('app_application_page', {'uri': table.module.page.uri, 'id':row.id}) }}">
                 <i class="fa-solid fa-eye"></i>
             </a>
             {% endif %}
