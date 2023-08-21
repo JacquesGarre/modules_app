@@ -20,7 +20,7 @@ class AdminController extends AbstractController
     {
         $modules = $moduleRepository->findAll();
         $listings = $listingRepository->findAll();
-        $pages = $pageRepository->findAll();
+        $pages = $pageRepository->findBy(['module' => null]);
         return $this->render('admin/index.html.twig', [
             'modules' => $modules,
             'listings' => $listings,

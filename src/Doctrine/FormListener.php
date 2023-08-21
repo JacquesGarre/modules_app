@@ -47,23 +47,24 @@ class FormListener
         if($formEntity->getAction() == 'edit' && $this->request->attributes->get('_controller') == 'App\Controller\ApplicationController::index'){
             $uri = $this->request->attributes->get('uri');
             $id = $this->request->attributes->get('id');
-            $page = $this->pageRepository->findOneBy(['uri' => $uri]);
-            $module = $page->getModule();
-            
-            if(!empty($module)){
-                $data = $this->dataService->getOneBy(
-                    $module->getSqlTable(),
-                    [],
-                    ['id' => $id]
-                );
-                if(!empty($data)){
-                    foreach($data as $fieldID => $value){
-                        $entity->{$fieldID} = $value;
+            if(!empty($id)){
+                $uri .= '/{id}';
+                $page = $this->pageRepository->findOneBy(['uri' => $uri]);
+                $module = $page->getModule();
+                if(!empty($module)){
+                    $data = $this->dataService->getOneBy(
+                        $module->getSqlTable(),
+                        [],
+                        ['id' => $id]
+                    );
+                    if(!empty($data)){
+                        foreach($data as $fieldID => $value){
+                            $entity->{$fieldID} = $value;
+                        }
                     }
+                    $mode = 'read';
                 }
-                $mode = 'read';
             }
-
         }
 
 

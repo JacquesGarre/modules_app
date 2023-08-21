@@ -136,9 +136,11 @@ class ApplicationController extends AbstractController
             && !empty($routeInfos['id'])
             && !empty($routeInfos['uri'])
         ){
-
-
-            $page = $pageRepository->findOneBy(['uri' => $routeInfos['uri']]);
+            $uri = $routeInfos['uri'];
+            if(!empty($routeInfos['id'])){
+                $uri .= '/{id}';
+            }
+            $page = $pageRepository->findOneBy(['uri' => $uri]);
             $module = $page->getModule();
             if(!empty($module)){
                 $data = $dataService->getOneBy(
@@ -176,11 +178,18 @@ class ApplicationController extends AbstractController
         DataService $dataService,
     ): Response
     {
-        $page = $pageRepository->findOneBy(['uri' => $uri]);
+        if(!empty($id)){
+            $uri .= '/{id}';
+        }
+        $page = $pageRepository->findOneBy([
+            'uri' => $uri
+        ]);
         $entity = false;
         if(!empty($id)){
             $entity = $dataService->getOneBy($page->getModule()->getSqlTable(), [], ['id' => $id]);
         }
+
+
         return $this->render('_application/page.html.twig', [
             'page' => $page,
             'entity' => $entity
