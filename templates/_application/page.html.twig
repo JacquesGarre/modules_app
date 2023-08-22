@@ -5,7 +5,7 @@
 {% block body %}
     {% for children in page.htmlElements %}
         {% if children.parent is empty %}
-            {% include 'components/_html_element.html.twig' %}
+            {% include '_application/components/_html_element.html.twig' %}
         {% endif %}
     {% endfor %}
 {% endblock %}

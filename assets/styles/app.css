@@ -112,3 +112,7 @@ form label {
     display: block;
     text-align: center;
 }
+
+.addBtn {
+    width: 180px;
+}

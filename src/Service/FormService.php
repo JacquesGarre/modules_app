@@ -86,6 +86,7 @@ class FormService
                     'data-form-name-value' => $class,
                     'data-form-target' => 'form',
                     'data-controller' => 'form',
+                    'data-form-action-value' => '',
                     'data-form-url-value' => $this->router->generate($route, $routeParams),
                     'data-form-submit-label-value' => 'Save',
                     'data-form-table-value' => $class
@@ -128,6 +129,7 @@ class FormService
                     'data-mode' => $mode,
                     'data-form-method-value' => 'post',
                     'data-form-name-value' => $class,
+                    'data-form-action-value' => $formEntity->getAction(),
                     'data-form-target' => 'form',
                     'data-controller' => 'form',
                     'data-form-url-value' => $this->router->generate('app_application_form_reload', [

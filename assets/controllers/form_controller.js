@@ -11,7 +11,8 @@ export default class extends Controller {
         submitLabel: String,
         method: String,
         table: String,
-        keepMode: Boolean
+        keepMode: Boolean,
+        action: String
     }
 
 
@@ -52,11 +53,12 @@ export default class extends Controller {
             } else {
                 that.submitBtnTarget.innerHTML = 'Submitted <i class="fas fa-check"></i>'
                 that.dispatch("success", {detail: { content: that.tableValue }})
-                
-                if(!that.keepModeValue){
-                    that.disable()
-                }
 
+                if(!that.keepModeValue && that.actionValue != 'add'){
+                    that.disable()
+                } else {
+                    that.enable()
+                }
             }
         })
         .catch(function (response) {

@@ -1,7 +1,10 @@
 
-<a class="btn btn-sm btn-primary w-25" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_application_add_entity', {'table': table.module.sqlTable}) }}">
-    Add a {{table.module.labelSingular}} <i class="fa-solid fa-plus"></i>
-</a>
+<div class="d-flex justify-content-between align-items-center">
+    <h3>{{table.title}}</h3>
+    <a class="btn btn-md btn-primary addBtn" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_application_add_entity', {'table': table.module.sqlTable}) }}">
+        Add a {{table.module.labelSingular|lower}} <i class="fa-solid fa-plus"></i>
+    </a>
+</div>
 <table 
     id="table-{{table.module.sqlTable}}" 
     class="table table-striped"
