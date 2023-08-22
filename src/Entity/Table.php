@@ -51,6 +51,9 @@ class Table
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $actions = null;
 
+    private $total = 0;
+    private $pages = 0;
+
     public function __construct()
     {
         $this->columns = new ArrayCollection();
@@ -196,6 +199,26 @@ class Table
     {
         $this->actions = json_encode($actions);
         return $this;
+    }
+
+    public function setTotal(int $total)
+    {
+        $this->total = $total;
+    }
+
+    public function getTotal(): int
+    {
+        return $this->total;
+    }
+
+    public function setPages(int $pages)
+    {
+        $this->pages = $pages;
+    }
+
+    public function getPages(): int
+    {
+        return $this->pages;
     }
 
 

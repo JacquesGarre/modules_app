@@ -51,11 +51,10 @@ class DataService
         $conds = $this->getSqlConditions($conditions);
 
         $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
+        $offset = $page > 1 ? "OFFSET ".(intval($page) - 1) * intval($limit) : '';
         $limit = empty($limit) ? '' : "LIMIT $limit";
 
-        // Test if column doesn't exist already
-        $sql = "SELECT $selectedColumns FROM $table $where $limit";
- 
+        $sql = "SELECT $selectedColumns FROM $table $where $limit $offset";
         $stmt = $conn->prepare($sql);
         $result = $stmt->executeQuery();
         return $result->fetchAllAssociative();
@@ -63,7 +62,7 @@ class DataService
 
     public function getOneBy($table, array $selectedColumns = [], array $conditions = [])
     {
-        $results = $this->get($table, $selectedColumns, $conditions);
+        $results = $this->get($table, $selectedColumns, $conditions, 1);
         if(!empty($results)){
             return $results[0];
         }
@@ -104,6 +103,22 @@ class DataService
         $sql = "UPDATE $table SET ".implode(', ',$values)." $where";
         $stmt = $conn->prepare($sql);
         $stmt->executeQuery();
+    }
+
+
+    public function getTotal($table, array $conditions = [])
+    {
+        $conn = $this->em->getConnection();
+        $conds = $this->getSqlConditions($conditions);
+        $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
+
+        // Test if column doesn't exist already
+        $sql = "SELECT COUNT(1) AS TOTAL FROM $table $where";
+     
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->executeQuery();
+        $total = $result->fetchAssociative()['TOTAL'] ?? 0;
+        return $total;
     }
 
 }

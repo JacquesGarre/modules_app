@@ -131,7 +131,8 @@ class ApplicationController extends AbstractController
     #[Route('/table_reload/{id}', name: 'app_application_table_reload')]
     public function tableReload(
         int $id,
-        TableRepository $tableRepository
+        TableRepository $tableRepository,
+        DataService $dataService
     ): Response
     {
         $table = $tableRepository->findOneBy(['id' => $id]);

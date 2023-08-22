@@ -3,6 +3,7 @@
         <th>Actions</th>
         <th>Title</th>
         <th>Columns</th>
+        <th>Limit</th>
     </tr>
 </thead>
 <tbody>
@@ -29,6 +30,7 @@
             </td>
             <td>{{ table.title }}</td>
             <td>{{ table.columns | join(',') }}</td>
+            <td>{{ table.defaultLimit }}</td>
         </tr>
     {% endfor %}
 </tbody>
