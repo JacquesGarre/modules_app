@@ -22,14 +22,18 @@ class TableListener
 
     public function postLoad(Table $table)
     {
-        $page = $this->request->query->get('page') ?? null;
+        $page = $this->request->query->get('page') ?? 1;
+        $limit = $this->request->query->get('limit') ?? $table->getDefaultLimit();
+
+        $table->setCurrentLimit($limit);
+        $table->setCurrentPage($page);
 
         // set data
         $data = $this->dataService->get(
             $table->getModule()->getSqlTable(),
             $table->getColumnsNames(),
             [],
-            $table->getDefaultLimit(),
+            $limit,
             $page
         );
         $table->setData($data);
@@ -42,7 +46,7 @@ class TableListener
         $table->setTotal($total);
 
         // set pages = total / limit
-        $table->setPages(round($total / $table->getDefaultLimit()));
+        $table->setPages(round($total / $limit));
 
     }
 }

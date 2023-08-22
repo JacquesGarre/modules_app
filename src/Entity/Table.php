@@ -53,6 +53,8 @@ class Table
 
     private $total = 0;
     private $pages = 0;
+    private $currentLimit = 10;
+    private $currentPage = 1;
 
     public function __construct()
     {
@@ -219,6 +221,27 @@ class Table
     public function getPages(): int
     {
         return $this->pages;
+    }
+
+    
+    public function setCurrentLimit(int $currentLimit)
+    {
+        $this->currentLimit = $currentLimit;
+    }
+
+    public function getCurrentLimit(): int
+    {
+        return $this->currentLimit;
+    }
+
+    public function setCurrentPage(int $currentPage)
+    {
+        $this->currentPage = $currentPage;
+    }
+
+    public function getCurrentPage(): int
+    {
+        return $this->currentPage;
     }
 
 

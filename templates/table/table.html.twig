@@ -17,21 +17,4 @@
     >
         {% include '_application/components/_table.html.twig' %}
     </table>
-    <nav class="nav-pagination">
-        <ul class="pagination pagination-sm">
-            {% for i in range(1, table.pages) %}
-                <li class="page-item">
-                    <a 
-                        class="page-link"
-                        data-controller="table"
-                        data-url="{{ path('app_application_table_reload', {'id':table.id}) }}?page={{i}}"
-                        data-table-page-value="{{i}}"
-                        data-action="click->table#paginate"
-                        data-table="{{table.module.sqlTable}}"
-                        data-table-target="{{table.module.sqlTable}}"
-                    >{{i}}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </nav>
 </div>

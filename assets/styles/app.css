@@ -116,3 +116,11 @@ form label {
 .addBtn {
     width: 180px;
 }
+
+.page-limit {
+    width: 100px;
+}
+
+.pagination a {
+    cursor: pointer;
+}
