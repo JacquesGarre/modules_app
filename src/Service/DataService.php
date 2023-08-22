@@ -49,21 +49,26 @@ class DataService
         $fields = array_combine($fieldNames, $fieldTypes);
         $conds = [];
         foreach($conditions as $field => $value){
-            switch($fields[$field]){
-                case 'text':
-                    $conds[] = $field." LIKE '%".$value."%'";
-                break;
-                case 'listing':
-                    if(is_array($value)){
-                        $conds[] = $field." RLIKE '".implode('|', $value)."'";
-                    } else {
-                        $conds[] = $field." LIKE '".$value."'";
-                    }
-                break;
-                case 'onetomany':
-                    $conds[] = $field." LIKE '%\"".$value."\"%'";
-                break;
+            if(!array_key_exists($field, $fields)){
+                $conds[] = $field." = '".$value."'";
+            } else {
+                switch($fields[$field]){
+                    case 'text':
+                        $conds[] = $field." LIKE '%".$value."%'";
+                    break;
+                    case 'listing':
+                        if(is_array($value)){
+                            $conds[] = $field." RLIKE '".implode('|', $value)."'";
+                        } else {
+                            $conds[] = $field." LIKE '".$value."'";
+                        }
+                    break;
+                    case 'onetomany':
+                        $conds[] = $field." LIKE '%\"".$value."\"%'";
+                    break;
+                }
             }
+
         }
         return $conds;
     }
