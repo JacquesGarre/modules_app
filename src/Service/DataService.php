@@ -10,12 +10,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Exception;
 use App\Entity\Module;
+use App\Repository\ModuleRepository;
 
 class DataService
 {
-    public function __construct(private EntityManagerInterface $em)
+    public function __construct(
+        private EntityManagerInterface $em,
+        private ModuleRepository $moduleRepository
+    )
     {
         $this->em = $em;
+        $this->moduleRepository = $moduleRepository;
     }
 
     public function getColumnsAndValues($args)
@@ -59,7 +64,17 @@ class DataService
         $sql = "SELECT $selectedColumns FROM $table $where $limit $offset";
         $stmt = $conn->prepare($sql);
         $result = $stmt->executeQuery();
-        return $result->fetchAllAssociative();
+
+        $results = $result->fetchAllAssociative();
+
+        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
+        foreach($results as $key => $result){
+            $results[$key]['titlePattern'] = $module->getPattern();
+            foreach($result as $fieldID => $value){
+                $results[$key]['titlePattern'] = str_replace($fieldID, $value, $results[$key]['titlePattern']);
+            }
+        }
+        return $results;
     }
 
     public function getOneBy($table, array $selectedColumns = [], array $conditions = [])

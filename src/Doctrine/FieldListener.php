@@ -19,15 +19,17 @@ class FieldListener
 {
     public function __construct(
         private ListingRepository $listingRepository,
+        private DataService $dataService
     )
     {
+        $this->dataService = $dataService;
         $this->listingRepository = $listingRepository;
     }
 
 
     public function postLoad(Field $fieldEntity)
     {
-        // Set list to field is field type == listing
+        // Set list to field if field type == listing
         if($fieldEntity->getType() == 'listing'){
 
             $list = $fieldEntity->getList();
@@ -50,10 +52,37 @@ class FieldListener
                 ];
             }
             $fieldEntity->setSelectOptions($options);
-
-
         }
 
+        // Set list to field if field type == onetomany
+        if($fieldEntity->getType() == 'onetomany'){
+
+            $externalModule = $fieldEntity->getEntity();
+
+            $items = $this->dataService->get($externalModule->getSqlTable());
+
+
+            $choicesID = array_map(function($item){
+                return $item['id'];
+            }, $items);
+            $choicesLabels = array_map(function($item){
+                return $item['titlePattern'];
+            }, $items);
+
+            $fieldEntity->setChoices(['...' => ''] + array_combine($choicesLabels, $choicesID));
+
+            $options = [];
+            foreach($items as $item){
+                $options[$item['id']] = [
+                    'value' => $item['id'],
+                    'label' => $item['titlePattern'],
+                    'colorClass' => '',
+                    'bgClass' => ''
+                ];
+            }
+            $fieldEntity->setSelectOptions($options);
+        }
+        
 
     }
 }

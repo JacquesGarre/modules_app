@@ -179,6 +179,21 @@ class FormService
                         'multiple'  => $field->isMultiple(),
                     ]);
                 break;
+                case 'onetomany':
+
+                    // default value
+                    if(!isset($entity->{$field->getName()})){                        
+                        $entity->{$field->getName()} = !is_array($field->getValue()) ? [$field->getValue()] : [];
+                    }
+
+                    $form->add($field->getName(), ChoiceType::class, [
+                        'data' => $entity->{$field->getName()},
+                        'disabled' => $mode == 'read' ? $mode : $field->isDisabled(),
+                        'required' => $field->isRequired(),
+                        'choices' => $field->getChoices(),
+                        'multiple'  => true,
+                    ]);
+                break;
             }
         }
         switch($formEntity->getAction()){

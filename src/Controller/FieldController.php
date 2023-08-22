@@ -43,14 +43,8 @@ class FieldController extends AbstractController
         ];
 
         if($request->query->get('onchange')){
-            $formValues = $request->request->all()['field'];
-            foreach ($formValues as $key => $value) {
-                $setterMethod = 'set' . ucfirst($key);
-                if (method_exists($field, $setterMethod)) {
-                    $field->{$setterMethod}($value);
-                }
-            }
             $form = $formService->getForm('field', 'app_field_add', $field, 'POST', $params);
+            $form->handleRequest($request);
             return $this->render('includes/_form.html.twig', [
                 'form' => $form,
             ]);

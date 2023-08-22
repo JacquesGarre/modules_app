@@ -58,6 +58,9 @@ class Field
     
     private array $selectOptions = [];
 
+    #[ORM\ManyToOne]
+    private ?Module $entity = null;
+
     public function __construct()
     {
         $this->forms = new ArrayCollection();
@@ -268,6 +271,18 @@ class Field
     public function setSelectOptions(array $selectOptions): static
     {
         $this->selectOptions = $selectOptions;
+
+        return $this;
+    }
+
+    public function getEntity(): ?Module
+    {
+        return $this->entity;
+    }
+
+    public function setEntity(?Module $entity): static
+    {
+        $this->entity = $entity;
 
         return $this;
     }

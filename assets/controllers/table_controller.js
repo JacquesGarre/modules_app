@@ -11,7 +11,8 @@ export default class extends Controller {
     }
 
     reload({ detail: { content } }) {
-        let table = $('table[data-table="'+content+'"]');
+        let tableSelector = 'div#table-'+content;
+        let table = $(tableSelector);
         if(null !== table && table.length){
             let url = table.data('url')
             axios({

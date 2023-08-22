@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use App\Entity\Listing;
+use App\Entity\Module;
 use App\Repository\ListingRepository;
 use App\Repository\ModuleRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -33,15 +34,6 @@ class FieldType extends AbstractType
         $this->router = $router;
     }
 
-    private function getTables()
-    {
-        $elements = $this->moduleRepository->getTables();
-        $listIDS = array_map(function($element){
-            return $element['sqlTable'];
-        }, $elements);
-        return ['...' => ''] + array_combine($listIDS, $listIDS);
-    }
-
     private function getLists()
     {
         $elements = $this->listingRepository->getListIDS();
@@ -49,112 +41,6 @@ class FieldType extends AbstractType
             return $element['list'];
         }, $elements);
         return ['...' => ''] + array_combine($listIDS, $listIDS);
-    }
-
-    public function getForm($form, $field){
-
-        switch($field->getType()){
-            case 'listing':
-                $form = $this->getListingFieldForm($form);
-            break;
-            case 'text':
-            default:
-                $form = $this->getTextFieldForm($form);
-            break;
-        }
-
-
-        return $form;
-
-    }
-
-    private function getListingFieldForm($form){
-        
-        $form
-        ->add('type', ChoiceType::class, [
-            'choices'  => [
-                'Text' => 'text',
-                'Listing' => 'listing',
-            ],
-            'constraints' => [
-                new NotBlank()
-            ],
-            'attr' => [
-                'data-action' => 'change->form#onchange',
-            ],
-        ])
-        ->add('label', TextType::class, [
-            'constraints' => [
-                new NotBlank()
-            ],
-        ])
-        ->add('name', TextType::class, [
-            'constraints' => [
-                new NotBlank(),
-                new Regex('/^[A-Za-z0-9_]*$/')
-            ],
-        ])
-        ->add('list', ChoiceType::class, array(
-            'label' => 'List',
-            'choices' => $this->getLists(),
-        ))
-        ->add('value', TextType::class, [
-            'label' => 'Default value',
-        ])
-        ->add('multiple')
-        ->add('required')
-        ->add('disabled')
-        ->add('Submit', ButtonType::class, [
-            'attr' => [
-                'class' => 'btn-primary float-end',
-                'data-action' => 'form#submit',
-                'data-form-target' => 'submitBtn'
-            ],
-        ]);
-        return $form;
-    }
-
-    private function getTextFieldForm($form){
-        
-        $form
-        ->add('type', ChoiceType::class, [
-            'choices'  => [
-                'Text' => 'text',
-                'Listing' => 'listing',
-            ],
-            'constraints' => [
-                new NotBlank()
-            ],
-            'attr' => [
-                'data-action' => 'change->form#onchange',
-            ],
-        ])
-        ->add('label', TextType::class, [
-            'constraints' => [
-                new NotBlank()
-            ],
-        ])
-        ->add('name', TextType::class, [
-            'constraints' => [
-                new NotBlank(),
-                new Regex('/^[A-Za-z0-9_]*$/')
-            ],
-        ])
-        ->add('list', HiddenType::class)
-        ->add('value', TextType::class, [
-            'label' => 'Default value',
-        ])
-        ->add('multiple', HiddenType::class)
-        ->add('required')
-        ->add('disabled')
-        ->add('Submit', ButtonType::class, [
-            'attr' => [
-                'class' => 'btn-primary float-end',
-                'data-action' => 'form#submit',
-                'data-form-target' => 'submitBtn'
-            ],
-        ]);
-        return $form;
     }
 
 
@@ -170,7 +56,43 @@ class FieldType extends AbstractType
 
                 if($method !== 'DELETE'){
 
-                    $form = $this->getForm($form, $field);
+                    $form
+                    ->add('type', ChoiceType::class, [
+                        'choices'  => [
+                            'Text' => 'text',
+                            'Listing' => 'listing',
+                            'One To Many' => 'onetomany'
+                        ],
+                        'constraints' => [
+                            new NotBlank()
+                        ],
+                        'attr' => [
+                            'data-action' => 'change->form#onchange',
+                        ],
+                    ])
+                    ->add('label', TextType::class, [
+                        'constraints' => [
+                            new NotBlank()
+                        ],
+                    ])
+                    ->add('name', TextType::class, [
+                        'constraints' => [
+                            new NotBlank(),
+                            new Regex('/^[A-Za-z0-9_]*$/')
+                        ],
+                    ])
+                    ->add('value', TextType::class, [
+                        'label' => 'Default value',
+                    ])
+                    ->add('required')
+                    ->add('disabled')
+                    ->add('Submit', ButtonType::class, [
+                        'attr' => [
+                            'class' => 'btn-primary float-end',
+                            'data-action' => 'form#submit',
+                            'data-form-target' => 'submitBtn'
+                        ],
+                    ]);
                     
                 } else {
 
@@ -189,6 +111,129 @@ class FieldType extends AbstractType
                     
                 }
         });
+
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event): void {
+
+            $field = $event->getData();
+            $form = $event->getForm();
+            $method = $event->getForm()->getConfig()->getMethod();
+            
+            if($method !== 'DELETE'){
+                foreach(array_keys($form->all()) as $fieldID){
+                    $form->remove($fieldID);
+                }
+                
+
+                switch($field['type']){
+                    case 'text':
+                        $form
+                        ->add('type', ChoiceType::class, [
+                            'choices'  => [
+                                'Text' => 'text',
+                                'Listing' => 'listing',
+                                'One To Many' => 'onetomany'
+                            ],
+                            'constraints' => [
+                                new NotBlank()
+                            ],
+                            'attr' => [
+                                'data-action' => 'change->form#onchange',
+                            ],
+                        ])
+                        ->add('label', TextType::class)
+                        ->add('name', TextType::class)
+                        ->add('value', TextType::class, [
+                            'label' => 'Default value',
+                        ])
+                        ->add('required')
+                        ->add('disabled')
+                        ->add('Submit', ButtonType::class, [
+                            'attr' => [
+                                'class' => 'btn-primary float-end',
+                                'data-action' => 'form#submit',
+                                'data-form-target' => 'submitBtn'
+                            ],
+                        ]);
+                    break;
+                    case 'listing':
+                        $form
+                        ->add('type', ChoiceType::class, [
+                            'choices'  => [
+                                'Text' => 'text',
+                                'Listing' => 'listing',
+                                'One To Many' => 'onetomany'
+                            ],
+                            'constraints' => [
+                                new NotBlank()
+                            ],
+                            'attr' => [
+                                'data-action' => 'change->form#onchange',
+                            ],
+                        ])
+                        ->add('label', TextType::class)
+                        ->add('name', TextType::class)
+                        ->add('list', ChoiceType::class, array(
+                            'label' => 'List',
+                            'choices' => $this->getLists(),
+                        ))
+                        ->add('multiple')
+                        ->add('required')
+                        ->add('disabled')
+                        ->add('Submit', ButtonType::class, [
+                            'attr' => [
+                                'class' => 'btn-primary float-end',
+                                'data-action' => 'form#submit',
+                                'data-form-target' => 'submitBtn'
+                            ],
+                        ]);
+                    break;
+                    case 'onetomany':
+                        $form
+                        ->add('type', ChoiceType::class, [
+                            'choices'  => [
+                                'Text' => 'text',
+                                'Listing' => 'listing',
+                                'One To Many' => 'onetomany'
+                            ],
+                            'constraints' => [
+                                new NotBlank()
+                            ],
+                            'attr' => [
+                                'data-action' => 'change->form#onchange',
+                            ],
+                        ])
+                        ->add('label', TextType::class)
+                        ->add('name', TextType::class)
+                        ->add('entity', EntityType::class, [
+                            'label' => 'Entity',
+                            'class' => Module::class
+                        ])
+                        ->add('required')
+                        ->add('disabled')
+                        ->add('Submit', ButtonType::class, [
+                            'attr' => [
+                                'class' => 'btn-primary float-end',
+                                'data-action' => 'form#submit',
+                                'data-form-target' => 'submitBtn'
+                            ],
+                        ]);
+                    break;
+                }
+
+                $form->remove('Submit');
+                $form->add('Submit', ButtonType::class, [
+                    'attr' => [
+                        'class' => 'btn-primary float-end',
+                        'data-action' => 'form#submit',
+                        'data-form-target' => 'submitBtn'
+                    ],
+                ]);
+
+            }
+
+        });
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
