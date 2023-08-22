@@ -49,7 +49,7 @@ class TableListener
         $table->setTotal($total);
 
         // set pages = total / limit
-        $table->setPages(round($total / $limit));
+        $table->setPages(ceil($total / $limit));
 
     }
 }
