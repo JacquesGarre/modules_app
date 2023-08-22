@@ -24,15 +24,18 @@ class TableListener
     {
         $page = $this->request->query->get('page') ?? 1;
         $limit = $this->request->query->get('limit') ?? $table->getDefaultLimit();
+        $filters = $this->request->query->get('filters') ? json_decode($this->request->query->get('filters'), true) : [];
 
+        // Set current values
         $table->setCurrentLimit($limit);
         $table->setCurrentPage($page);
+        $table->setCurrentFilters($filters);
 
         // set data
         $data = $this->dataService->get(
             $table->getModule()->getSqlTable(),
             $table->getColumnsNames(),
-            [],
+            $filters,
             $limit,
             $page
         );
@@ -41,7 +44,7 @@ class TableListener
         // set total
         $total = $this->dataService->getTotal(
             $table->getModule()->getSqlTable(),
-            []
+            $filters
         );
         $table->setTotal($total);
 

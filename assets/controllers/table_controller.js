@@ -25,35 +25,31 @@ export default class extends Controller {
 
     }
 
-    paginate(){
-        let page = this.pageValue;
-        let btn = $(this.element);
-        let tableSelector = 'table#table-'+btn.data('table');
-        let tableFooter = btn.closest('.table-footer');
-        let limit = tableFooter.find('.page-limit select').val()
-        let table = btn.closest(tableSelector);
-        let url = btn.data('url') + '&limit='+limit;
+    applyFilters(){
 
-        if(null !== table && table.length){
-            axios({
-                method: 'GET',
-                url: url
-            })
-            .then(function (response) {
-                table.html(response.data)
-            });
-        }       
-    }
+        let element = $(this.element);
+        let tableSelector = 'table#table-'+element.data('table');
+        let table = element.closest(tableSelector);
+        let tableFooter = table.find('.table-footer');
+        let url = element.data('url');
 
-    changelimit(){
-        let select = $(this.element);
-        let tableSelector = 'table#table-'+select.data('table');
-        let table = select.closest(tableSelector);
-        let newVal = select.val();
-        let url = select.data('url') + '?limit='+newVal;
+        // get filters
+        let filters = {}
+        table.find('.filter-field').each(function(){
+            filters[$(this).attr('name')] = $(this).val()
+        })
 
-        console.log(table)
+        // get page
+        let page = this.pageValue ?? 1;
 
+        // get limit
+        let limit = tableFooter.find('.page-limit select').val();
+        
+
+        // build url
+        url += "?page="+page+"&limit="+limit+"&filters="+JSON.stringify(filters)
+       
+        // reload table html
         if(null !== table && table.length){
             axios({
                 method: 'GET',
@@ -63,7 +59,7 @@ export default class extends Controller {
                 table.html(response.data)
             });
         }     
-     
+
     }
 
 }

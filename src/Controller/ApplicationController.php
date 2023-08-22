@@ -132,7 +132,6 @@ class ApplicationController extends AbstractController
     public function tableReload(
         int $id,
         TableRepository $tableRepository,
-        DataService $dataService
     ): Response
     {
         $table = $tableRepository->findOneBy(['id' => $id]);

@@ -55,6 +55,7 @@ class Table
     private $pages = 0;
     private $currentLimit = 10;
     private $currentPage = 1;
+    private $currentFilters = [];
 
     #[ORM\ManyToMany(targetEntity: Field::class)]
     #[ORM\JoinTable(name: "table_filters")]
@@ -271,6 +272,17 @@ class Table
     {
         $this->filters->removeElement($filter);
 
+        return $this;
+    }
+
+    public function getCurrentFilters(): ?array
+    {
+        return $this->currentFilters;
+    }
+
+    public function setCurrentFilters(?array $currentFilters): static
+    {
+        $this->currentFilters = $currentFilters;
         return $this;
     }
 

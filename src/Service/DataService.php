@@ -31,6 +31,8 @@ class DataService
 
     public function getSqlConditions($conditions)
     {
+        $conditions = array_filter($conditions);
+
         $conds = [];
         foreach($conditions as $field => $value){
             if(is_array($value)){
