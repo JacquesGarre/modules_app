@@ -48,6 +48,18 @@ class TableType extends AbstractType
                             },
                             'multiple' => true
                         ])
+                        ->add('filters', EntityType::class, [
+                            'label'         => 'Filters',
+                            'expanded'      => true,
+                            'class'         => Field::class,
+                            'query_builder' => function (FieldRepository $repository) use($table) {
+                                return $repository
+                                    ->createQueryBuilder('f')
+                                    ->where('f.module = :moduleId')
+                                    ->setParameter('moduleId', $table->getModule()->getId());
+                            },
+                            'multiple' => true
+                        ])
                         ->add('actions', ChoiceType::class, array(
                             'label' => 'Actions',
                             'expanded'  => true,

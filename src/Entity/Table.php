@@ -56,10 +56,16 @@ class Table
     private $currentLimit = 10;
     private $currentPage = 1;
 
+    #[ORM\ManyToMany(targetEntity: Field::class)]
+    #[ORM\JoinTable(name: "table_filters")]
+    private Collection $filters;
+
+
     public function __construct()
     {
         $this->columns = new ArrayCollection();
         $this->htmlElements = new ArrayCollection();
+        $this->filters = new ArrayCollection();
     }
 
     public function __toString()
@@ -243,6 +249,31 @@ class Table
     {
         return $this->currentPage;
     }
+
+    /**
+     * @return Collection<int, Field>
+     */
+    public function getFilters(): Collection
+    {
+        return $this->filters;
+    }
+
+    public function addFilter(Field $filter): static
+    {
+        if (!$this->filters->contains($filter)) {
+            $this->filters->add($filter);
+        }
+
+        return $this;
+    }
+
+    public function removeFilter(Field $filter): static
+    {
+        $this->filters->removeElement($filter);
+
+        return $this;
+    }
+
 
 
 }

@@ -9,6 +9,25 @@
     </tr>
 </thead>
 <tbody>
+    {% if table.filters|length > 0 %}
+        <tr>
+            <td>Filter</td>
+            {% for column in table.columns %}
+                {% if column.name in table.filters|map(f => f.name) %}
+                    {% if column.type == 'text' %}
+                        <td>
+                            <input type="text" name="yo" placeholder="Model">
+                        </td>
+                    {% elseif column.type == 'listing' %}
+                        <td>Filtre select</td>
+                    {% endif %}
+                {% else %}
+                    <td></td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+    {% endif %}
+
     {% for row in table.data %}
     <tr data-id="{{row.id}}">
         {% if table.inlineActions is not empty %}
