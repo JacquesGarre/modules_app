@@ -14,7 +14,8 @@ class ModuleEventListener
     {
         $conn = $args->getObjectManager()->getConnection();
 
-        $table = $module->getSqlTable();
+        $table = 'app_'.$module->getSqlTable();
+        $module->setSqlTable($table);
 
         // Test if table doesn't exist already
         $sql = "SHOW TABLES LIKE '$table'";
