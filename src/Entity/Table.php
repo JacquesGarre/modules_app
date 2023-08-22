@@ -43,6 +43,9 @@ class Table
 
     private $data = [];
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $defaultLimit = null;
+
     public function __construct()
     {
         $this->columns = new ArrayCollection();
@@ -165,6 +168,18 @@ class Table
     public function getData(): array
     {
         return $this->data;
+    }
+
+    public function getDefaultLimit(): ?string
+    {
+        return $this->defaultLimit;
+    }
+
+    public function setDefaultLimit(?string $defaultLimit): static
+    {
+        $this->defaultLimit = $defaultLimit;
+
+        return $this;
     }
 
 }
