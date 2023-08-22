@@ -48,14 +48,33 @@ class TableType extends AbstractType
                             },
                             'multiple' => true
                         ])
-                        ->add('inlineActions', ChoiceType::class, array(
+                        ->add('actions', ChoiceType::class, array(
                             'label' => 'Actions',
+                            'expanded'  => true,
+                            'multiple'  => true,
+                            'choices' => [
+                                'Add' => 'add'
+                            ]
+                        ))
+                        ->add('inlineActions', ChoiceType::class, array(
+                            'label' => 'Inline actions',
                             'expanded'  => true,
                             'multiple'  => true,
                             'choices' => [
                                 'View' => 'view',
                                 'Edit' => 'edit',
                                 'Delete' => 'delete'
+                            ]
+                        ))                        
+                        ->add('defaultLimit', ChoiceType::class, array(
+                            'label' => 'Limit',
+                            'choices' => [
+                                '10' => '10',
+                                '25' => '25',
+                                '50' => '50',
+                                '100' => '100',
+                                '250' => '250',
+                                '500' => '500'
                             ]
                         ))
                         ->add('Submit', ButtonType::class, [

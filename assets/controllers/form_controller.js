@@ -56,7 +56,7 @@ export default class extends Controller {
 
                 if(!that.keepModeValue && that.actionValue != 'add'){
                     that.disable()
-                } else {
+                } else if (that.actionValue == 'add') {
                     that.enable()
                 }
             }

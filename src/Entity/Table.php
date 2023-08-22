@@ -11,12 +11,14 @@ use App\Doctrine\TableListener;
 use App\Validator\TableCanBeEditable;
 use App\Validator\TableCanBeViewable;
 use App\Validator\TableHasOneColumn;
+use App\Validator\TableCanHaveAddAction;
 
 #[ORM\Entity(repositoryClass: TableRepository::class)]
 #[ORM\EntityListeners([TableListener::class])]
 #[ORM\Table(name: '`table`')]
 #[TableCanBeViewable]
 #[TableCanBeEditable]
+#[TableCanHaveAddAction]
 #[TableHasOneColumn]
 class Table
 {
@@ -45,6 +47,9 @@ class Table
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $defaultLimit = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $actions = null;
 
     public function __construct()
     {
@@ -181,5 +186,17 @@ class Table
 
         return $this;
     }
+
+    public function getActions(): ?array
+    {
+        return json_decode($this->actions);
+    }
+
+    public function setActions(?array  $actions): static
+    {
+        $this->actions = json_encode($actions);
+        return $this;
+    }
+
 
 }
