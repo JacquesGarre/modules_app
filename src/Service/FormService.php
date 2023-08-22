@@ -187,7 +187,7 @@ class FormService
                     }
 
                     $form->add($field->getName(), ChoiceType::class, [
-                        'data' => $entity->{$field->getName()},
+                        'data' => is_string($entity->{$field->getName()}) ? json_decode($entity->{$field->getName()}) : [],
                         'disabled' => $mode == 'read' ? $mode : $field->isDisabled(),
                         'required' => $field->isRequired(),
                         'choices' => $field->getChoices(),

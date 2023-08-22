@@ -44,6 +44,15 @@
                                     {% endfor %}
                                 </select>                  
                             </td>
+                        {% elseif column.type == 'onetomany' %}
+                            <td>
+                                <select class="form-control filter-field" name="{{column.name}}">
+                                    {% for label, value in column.choices %}
+                                        <option value="{{value}}" {{ currentValue == value ? 'selected' : '' }}>{{label}}</option>
+                                    {% endfor %}
+                                </select>                  
+                            </td>
+                            
                         {% endif %}
                     {% else %}
                         <td></td>
@@ -101,6 +110,14 @@
                             {% endif %}
                         </td>
                     {% endif %}
+                {% elseif column.type == 'onetomany' %}
+                    <td>
+                        {% for value in row[column.name]|json_decode() %}
+                            {% if value in column.selectOptions|keys %}
+                                <a href="{{ column.selectOptions[value]['detailedViewPath'] }}">{{ column.selectOptions[value]['label'] }}</a>,
+                            {% endif %}
+                        {% endfor %}
+                    </td>
                 {% endif %}
             {% endfor %}
         </tr>

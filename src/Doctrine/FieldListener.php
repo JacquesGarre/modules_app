@@ -73,11 +73,13 @@ class FieldListener
 
             $options = [];
             foreach($items as $item){
+                $url = !empty($externalModule->getPage()) ? '/'.str_replace('/{id}', '/'.$item['id'], $externalModule->getPage()->getUri()) : false;
                 $options[$item['id']] = [
                     'value' => $item['id'],
                     'label' => $item['titlePattern'],
                     'colorClass' => '',
-                    'bgClass' => ''
+                    'bgClass' => '',
+                    'detailedViewPath' => $url
                 ];
             }
             $fieldEntity->setSelectOptions($options);

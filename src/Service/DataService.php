@@ -34,18 +34,35 @@ class DataService
         return [$columns, $values];
     }
 
-    public function getSqlConditions($conditions)
+    public function getSqlConditions($conditions, $module)
     {
         $conditions = array_filter($conditions);
 
+        $fieldNames = array_map(function($field){
+            return $field->getName();
+        }, $module->getFields()->toArray()); 
+
+        $fieldTypes = array_map(function($field){
+            return $field->getType();
+        }, $module->getFields()->toArray()); 
+
+        $fields = array_combine($fieldNames, $fieldTypes);
         $conds = [];
         foreach($conditions as $field => $value){
-            if(is_array($value)){
-                $conds[] = $field." RLIKE '".implode('|', $value)."'";
-            } else if(is_int($value)){
-                $conds[] = $field." = ".$value;
-            } else {
-                $conds[] = $field." LIKE '".$value."'";
+            switch($fields[$field]){
+                case 'text':
+                    $conds[] = $field." LIKE '%".$value."%'";
+                break;
+                case 'listing':
+                    if(is_array($value)){
+                        $conds[] = $field." RLIKE '".implode('|', $value)."'";
+                    } else {
+                        $conds[] = $field." LIKE '".$value."'";
+                    }
+                break;
+                case 'onetomany':
+                    $conds[] = $field." LIKE '%\"".$value."\"%'";
+                break;
             }
         }
         return $conds;
@@ -53,21 +70,24 @@ class DataService
 
     public function get($table, array $selectedColumns = [], array $conditions = [], $limit = null, $page = null)
     {
+        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
+
         $conn = $this->em->getConnection();
         $selectedColumns = empty($selectedColumns) ? '*' : '`id`, `'.implode('`,`', $selectedColumns).'`';
-        $conds = $this->getSqlConditions($conditions);
+        $conds = $this->getSqlConditions($conditions, $module);
 
         $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
         $offset = $page > 1 ? "OFFSET ".(intval($page) - 1) * intval($limit) : '';
         $limit = empty($limit) ? '' : "LIMIT $limit";
 
         $sql = "SELECT $selectedColumns FROM $table $where $limit $offset";
+
         $stmt = $conn->prepare($sql);
         $result = $stmt->executeQuery();
 
         $results = $result->fetchAllAssociative();
 
-        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
+ 
         foreach($results as $key => $result){
             $results[$key]['titlePattern'] = $module->getPattern();
             foreach($result as $fieldID => $value){
@@ -104,7 +124,8 @@ class DataService
     }
 
     public function update($table, $args, $conditions)
-    {
+    {   
+        
         [$columns, $values] = $this->getColumnsAndValues($args);
         $conn = $this->em->getConnection();
 
@@ -113,8 +134,8 @@ class DataService
         foreach($fieldValues as $column => $value){
             $values[] = "$column = '$value'";
         }
-
-        $conds = $this->getSqlConditions($conditions);
+        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
+        $conds = $this->getSqlConditions($conditions, $module);
         $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
 
         $sql = "UPDATE $table SET ".implode(', ',$values)." $where";
@@ -126,7 +147,8 @@ class DataService
     public function getTotal($table, array $conditions = [])
     {
         $conn = $this->em->getConnection();
-        $conds = $this->getSqlConditions($conditions);
+        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
+        $conds = $this->getSqlConditions($conditions, $module);
         $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
 
         // Test if column doesn't exist already
