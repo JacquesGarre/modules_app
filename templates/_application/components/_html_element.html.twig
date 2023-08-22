@@ -1,13 +1,4 @@
-
-{% if children.type != 'moduleForm' and children.type != 'moduleTable' %}
-
-    <div class="{{children.type}}{{children.sizeClass}} {{children.additionnalClasses}}">
-        {% for children in children.children %}
-            {% include 'page/html_element_view.html.twig' %}
-        {% endfor %}
-    </div>
-
-{% elseif children.type == 'moduleForm' %}
+{% if children.type == 'moduleForm' %}
 
     <div class="{{ children.additionnalClasses }}">
         {% set form = children.moduleForm %}
@@ -19,6 +10,14 @@
     <div class="{{ children.additionnalClasses }}">
         {% set table = children.moduleTable %}
         {% include 'table/table.html.twig' %}
+    </div>
+
+{% else %}
+
+    <div class="{{children.type}}{{children.sizeClass}} {{children.additionnalClasses}}">
+        {% for children in children.children %}
+            {% include 'components/_html_element.html.twig' %}
+        {% endfor %}
     </div>
 
 {% endif %}

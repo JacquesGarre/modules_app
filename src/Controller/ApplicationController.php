@@ -21,7 +21,43 @@ use stdClass;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class ApplicationController extends AbstractController
 {
+    #[Route('/{table}/add', name: 'app_application_add_entity')]
+    public function add(
+        ModalFormService $modal, 
+        Request $request, 
+        string $table, 
+        ModuleRepository $moduleRepository, 
+        DataService $dataService,
+        FormRepository $formRepository
+    ): Response
+    {
+        $module = $moduleRepository->findOneBy(['sqlTable' => $table]);
+        $entity = new stdClass();
 
+        $formEntity = $formRepository->findOneBy([
+            'action' => 'add',
+            'module' => $module
+        ]);
+
+        if(empty($formEntity)){
+            throw new Exception('Please create a form with action "add" on entity '.$module->getLabelSingular());
+        }
+
+        $params = [
+            'table' => $table,
+        ];
+
+        return $modal->show(
+            $title = 'Add '.$module->getLabelSingular(),
+            $class = $table,
+            $route = 'app_application_add_entity',
+            $request,
+            $entity,
+            'POST',
+            $params, 
+            $formEntity
+        );
+    }
 
     #[Route('/{table}/edit/{id}', name: 'app_application_edit_entity')]
     public function edit(
