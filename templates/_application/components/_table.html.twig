@@ -1,140 +1,147 @@
-<thead>
-    <tr>
-        {% if table.inlineActions is not empty %}
-            <th>Actions</th>
-        {% endif %}
-        {% for column in table.columns %}
-            <th>{{ column.label }}</th>
-        {% endfor %}
-    </tr>
-</thead>
-<tbody>
-
-    {% if table.filters|length > 0 %}
-        
+<div class="d-flex justify-content-between align-items-center">
+    <h3>{{table.title}} ({{table.total}})</h3>
+    <a class="btn btn-md btn-primary addBtn" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_application_add_entity', {'table': table.module.sqlTable}) }}">
+        Add a {{table.module.labelSingular|lower}} <i class="fa-solid fa-plus"></i>
+    </a>
+</div>
+<table class="table table-striped">
+    <thead>
         <tr>
-            <td>
-                <a class="btn btn-sm btn-primary"         
-                    data-controller="table"
-                    data-url="{{ path('app_application_table_reload', {'id':table.id}) }}"
-                    data-action="click->table#applyFilters"
-                    data-table-page-value="{{table.currentPage}}"
-                    data-table="{{table.module.sqlTable}}"
-                >Filtrer</a>
-            </td>
+            {% if table.inlineActions is not empty %}
+                <th>Actions</th>
+            {% endif %}
             {% for column in table.columns %}
-                {% if column.name in table.filters|map(f => f.name) %}
-                    {% set currentValue = column.name in table.currentFilters|keys ? table.currentFilters[column.name] : '' %}
-                    {% if column.type == 'text' %}
-                        <td>
-                            <input type="text" class="form-control filter-field" name="{{column.name}}" placeholder="{{column.label}}" value="{{currentValue}}">
-                        </td>
-                    {% elseif column.type == 'listing' %}
-                        <td>
-                            <select class="form-control filter-field" name="{{column.name}}">
-                                {% for label, value in column.choices %}
-                                    <option value="{{value}}" {{ currentValue == value ? 'selected' : '' }}>{{label}}</option>
-                                {% endfor %}
-                            </select>                  
-                        </td>
-                    {% endif %}
-                {% else %}
-                    <td></td>
-                {% endif %}
+                <th>{{ column.label }}</th>
             {% endfor %}
         </tr>
-        </form>
-    {% endif %}
+    </thead>
+    <tbody>
 
-    {% for row in table.data %}
-    <tr data-id="{{row.id}}">
-        {% if table.inlineActions is not empty %}
-        <td>
-            {% for action in table.inlineActions %}
-            {% if action == 'view' and table.module.page.uri is defined %}
-                <a class="btn btn-sm btn-success" href="{{ path('app_application_page', {'uri': table.module.page.uri|replace({'/{id}': ''}), 'id':row.id}) }}">
-                    <i class="fa-solid fa-eye"></i>
-                </a>
-            {% endif %}
-            {% if action == 'edit' %}
-            <a class="btn btn-sm btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_application_edit_entity', {'table': table.module.sqlTable, 'id':row.id}) }}">
-                <i class="fa-solid fa-pen"></i>
-            </a>
-            {% endif %}
-            {% if action == 'delete' %}
-            <a class="btn btn-sm btn-danger" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_application_delete_entity', {'table': table.module.sqlTable, 'id':row.id}) }}">
-                <i class="fa-solid fa-trash"></i>
-            </a>
-            {% endif %}
-            {% endfor %}
-        </td>
+        {% if table.filters|length > 0 %}
+            
+            <tr>
+                <td>
+                    <a class="btn btn-sm btn-primary"         
+                        data-controller="table"
+                        data-url="{{ path('app_application_table_reload', {'id':table.id}) }}"
+                        data-action="click->table#applyFilters"
+                        data-table-page-value="{{table.currentPage}}"
+                        data-table="{{table.module.sqlTable}}"
+                    >Filtrer</a>
+                </td>
+                {% for column in table.columns %}
+                    {% if column.name in table.filters|map(f => f.name) %}
+                        {% set currentValue = column.name in table.currentFilters|keys ? table.currentFilters[column.name] : '' %}
+                        {% if column.type == 'text' %}
+                            <td>
+                                <input type="text" class="form-control filter-field" name="{{column.name}}" placeholder="{{column.label}}" value="{{currentValue}}">
+                            </td>
+                        {% elseif column.type == 'listing' %}
+                            <td>
+                                <select class="form-control filter-field" name="{{column.name}}">
+                                    {% for label, value in column.choices %}
+                                        <option value="{{value}}" {{ currentValue == value ? 'selected' : '' }}>{{label}}</option>
+                                    {% endfor %}
+                                </select>                  
+                            </td>
+                        {% endif %}
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            </form>
         {% endif %}
-        {% for column in table.columns %}
-            {% if column.type == 'text' %}
-                <td>{{ row[column.name] }}</td>
-            {% elseif column.type == 'listing' %}
-                {% if column.multiple %}
-                    <td>
-                        {% for value in row[column.name]|json_decode() %}
+
+        {% for row in table.data %}
+        <tr data-id="{{row.id}}">
+            {% if table.inlineActions is not empty %}
+            <td>
+                {% for action in table.inlineActions %}
+                {% if action == 'view' and table.module.page.uri is defined %}
+                    <a class="btn btn-sm btn-success" href="{{ path('app_application_page', {'uri': table.module.page.uri|replace({'/{id}': ''}), 'id':row.id}) }}">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+                {% endif %}
+                {% if action == 'edit' %}
+                <a class="btn btn-sm btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_application_edit_entity', {'table': table.module.sqlTable, 'id':row.id}) }}">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                {% endif %}
+                {% if action == 'delete' %}
+                <a class="btn btn-sm btn-danger" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_application_delete_entity', {'table': table.module.sqlTable, 'id':row.id}) }}">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+                {% endif %}
+                {% endfor %}
+            </td>
+            {% endif %}
+            {% for column in table.columns %}
+                {% if column.type == 'text' %}
+                    <td>{{ row[column.name] }}</td>
+                {% elseif column.type == 'listing' %}
+                    {% if column.multiple %}
+                        <td>
+                            {% for value in row[column.name]|json_decode() %}
+                                {% if value in column.selectOptions|keys %}
+                                    <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
+                                        {{ column.selectOptions[value]['label'] }}
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% else %}
+                        {% set values = row[column.name]|json_decode() %}
+                        {% set value = values|length > 0 ? values[0] : '' %}
+                        <td>
                             {% if value in column.selectOptions|keys %}
                                 <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
                                     {{ column.selectOptions[value]['label'] }}
                                 </span>
                             {% endif %}
-                        {% endfor %}
-                    </td>
-                {% else %}
-                    {% set values = row[column.name]|json_decode() %}
-                    {% set value = values|length > 0 ? values[0] : '' %}
-                    <td>
-                        {% if value in column.selectOptions|keys %}
-                            <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
-                                {{ column.selectOptions[value]['label'] }}
-                            </span>
-                        {% endif %}
-                    </td>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-    </tr>
-    {% endfor %}
-
-    <tr>
-        <td colspan="{{table.columns|length + 1}}">
-           <nav class="nav-pagination d-flex justify-content-between table-footer">
-                <ul class="pagination pagination-sm">
-                    {% if table.pages > 1 %}
-                        {% for i in range(1, table.pages) %}
-                            <li class="page-item {{ i == table.currentPage ? 'active' : '' }}">
-                                <a 
-                                    class="page-link"
-                                    data-controller="table"
-                                    data-url="{{ path('app_application_table_reload', {'id':table.id}) }}"
-                                    data-table-page-value="{{i}}"
-                                    data-action="click->table#applyFilters"
-                                    data-table="{{table.module.sqlTable}}"
-                                    data-table-target="{{table.module.sqlTable}}"
-                                >{{i}}</a>
-                            </li>
-                        {% endfor %}
+                        </td>
                     {% endif %}
-                </ul>
-                <div class="page-limit">
-                    <select class="form-select"
-                        data-controller="table"
-                        data-url="{{ path('app_application_table_reload', {'id':table.id}) }}"
-                        data-action="change->table#applyFilters"
-                        data-table-page-value="{{table.currentPage}}"
-                        data-table="{{table.module.sqlTable}}"
-                        data-table-target="{{table.module.sqlTable}}"
-                    >
-                        {% for val in [10,25,50,100,250,500] %}
-                            <option value="{{ val }}" {{ table.currentLimit == val ? 'selected' : '' }}>{{ val }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </nav>
-        </td>
-    </tr>
- 
-</tbody>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <td colspan="{{table.columns|length + 1}}">
+            <nav class="nav-pagination d-flex justify-content-between table-footer">
+                    <ul class="pagination pagination-sm">
+                        {% if table.pages > 1 %}
+                            {% for i in range(1, table.pages) %}
+                                <li class="page-item {{ i == table.currentPage ? 'active' : '' }}">
+                                    <a 
+                                        class="page-link"
+                                        data-controller="table"
+                                        data-url="{{ path('app_application_table_reload', {'id':table.id}) }}"
+                                        data-table-page-value="{{i}}"
+                                        data-action="click->table#applyFilters"
+                                        data-table="{{table.module.sqlTable}}"
+                                        data-table-target="{{table.module.sqlTable}}"
+                                    >{{i}}</a>
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+                    <div class="page-limit">
+                        <select class="form-select"
+                            data-controller="table"
+                            data-url="{{ path('app_application_table_reload', {'id':table.id}) }}"
+                            data-action="change->table#applyFilters"
+                            data-table-page-value="{{table.currentPage}}"
+                            data-table="{{table.module.sqlTable}}"
+                            data-table-target="{{table.module.sqlTable}}"
+                        >
+                            {% for val in [10,25,50,100,250,500] %}
+                                <option value="{{ val }}" {{ table.currentLimit == val ? 'selected' : '' }}>{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </nav>
+            </td>
+        </tr>
+    </tbody>
+</table>

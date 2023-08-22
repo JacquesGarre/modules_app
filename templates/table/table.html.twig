@@ -1,20 +1,9 @@
 
-<div>
-    <div class="d-flex justify-content-between align-items-center">
-        <h3>{{table.title}} ({{table.total}})</h3>
-        <a class="btn btn-md btn-primary addBtn" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_application_add_entity', {'table': table.module.sqlTable}) }}">
-            Add a {{table.module.labelSingular|lower}} <i class="fa-solid fa-plus"></i>
-        </a>
-    </div>
-    <table 
-        id="table-{{table.module.sqlTable}}" 
-        class="table table-striped"
+<div id="table-{{table.module.sqlTable}}" 
         data-controller="table"
         data-url="{{ path('app_application_table_reload', {'id':table.id}) }}"
         data-action="modal:success->table#reload"
         data-table="{{table.module.sqlTable}}"
-        data-table-target="{{table.module.sqlTable}}"
-    >
+        data-table-target="{{table.module.sqlTable}}">
         {% include '_application/components/_table.html.twig' %}
-    </table>
 </div>

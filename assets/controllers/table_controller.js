@@ -28,7 +28,7 @@ export default class extends Controller {
     applyFilters(){
 
         let element = $(this.element);
-        let tableSelector = 'table#table-'+element.data('table');
+        let tableSelector = 'div#table-'+element.data('table');
         let table = element.closest(tableSelector);
         let tableFooter = table.find('.table-footer');
         let url = element.data('url');
