@@ -18,7 +18,6 @@ export default class extends Controller {
             tableSelector = 'table#'+content+'-table';
             table = $(tableSelector);
         }
-
         if(null !== table && table.length){
             let url = table.data('url')
             axios({
