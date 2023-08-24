@@ -1,43 +1,22 @@
+{% if htmlelement.type in ['h1','h2','h3','h4','h5','h6'] %}
 
-{% if children.type != 'moduleForm' and children.type != 'moduleTable' %}
+    <{{htmlelement.type}} class="{{htmlelement.additionnalClasses}}">
+        {{htmlelement.content}}
+        <br>
+        {% include 'layout/edit_html_element_btn.html.twig' %}
+        {% include 'layout/delete_html_element_btn.html.twig' %}
+    </{{htmlelement.type}}>
 
-    <div class="{{children.type}}{{children.sizeClass}} {{children.additionnalClasses}}">
-        <span class="div-info">
-            div.{{children.type}}{{children.sizeClass}}{{ children.additionnalClasses is not empty ? '.'~ (children.additionnalClasses|replace({' ':'.'})) : '' }}
-            {% include 'layout/edit_html_element_btn.html.twig' %}
-            {% include 'layout/delete_html_element_btn.html.twig' %}
-        </span>
-        
-        {% for children in children.children %}
-            {% include 'layout/html_element_preview.html.twig' %}
-        {% endfor %}
+{% elseif htmlelement.type == 'SidebarMenu' %}
 
-        {% include 'layout/new_html_element_btn.html.twig' %}
-
-    </div>
-
-{% elseif children.type == 'moduleForm' %}
-
-    <div class="module-form {{ children.additionnalClasses }}">
-        {% set form = children.moduleForm %}
-        <span class="div-info">
-            Form {{ children.additionnalClasses is not empty ? '.'~ (children.additionnalClasses|replace({' ':'.'})) : '' }} {{form.title}} 
-            {% include 'layout/edit_html_element_btn.html.twig' %}
-            {% include 'layout/delete_html_element_btn.html.twig' %}
-        </span>
-        {% include 'form/form.html.twig' %}
-    </div>
-
-{% elseif children.type == 'moduleTable' %}
-
-    <div class="module-table {{ children.additionnalClasses }}">
-        {% set table = children.moduleTable %}
-        <span class="div-info">
-            Table {{ children.additionnalClasses is not empty ? '.'~ (children.additionnalClasses|replace({' ':'.'})) : '' }} {{table.title}} 
-            {% include 'layout/edit_html_element_btn.html.twig' %}
-            {% include 'layout/delete_html_element_btn.html.twig' %}
-        </span>
-        {% include 'table/table.html.twig' %}
-    </div>
-
+        <li class="nav-item d-flex justify-content-between">
+            <a class="nav-link {{htmlelement.additionnalClasses}}" href="/{{htmlelement.pagelink.uri}}">
+                <span class="nav-link-text ms-1">{{htmlelement.content}}</span>
+            </a>
+            <span>
+                {% include 'layout/edit_html_element_btn.html.twig' %}
+                {% include 'layout/delete_html_element_btn.html.twig' %}
+            </span>
+        </li>
+    
 {% endif %}

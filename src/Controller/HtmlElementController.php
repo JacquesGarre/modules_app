@@ -17,7 +17,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class HtmlElementController extends AbstractController
 {
 
-    #[Route('/administration/htmlelements/add/{layoutId}/{parentId?}', name: 'app_htmlelement_add_to_layout')]
+    #[Route('/administration/htmlelements/add/{layoutId}/{part?}', name: 'app_htmlelement_add_to_layout')]
     public function addToLayout(
         int $layoutId,
         ModalFormService $modal,
@@ -25,13 +25,14 @@ class HtmlElementController extends AbstractController
         LayoutRepository $layoutRepository,
         HtmlElementRepository $htmlElementRepository,
         FormService $formService,
-        $parentId = null,
+        $part = null,
     ): Response
     {
         $layout = $layoutRepository->findOneBy(['id' => $layoutId]);
 
         $htmlelement = new HtmlElement();
         $htmlelement->setLayout($layout);
+        $htmlelement->setLayoutPart($part);
 
         $params = [
             'layoutId' => $layoutId

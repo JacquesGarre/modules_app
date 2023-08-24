@@ -23260,9 +23260,9 @@ html {
   padding: 1.5rem 2rem;
 }
 
-.sidenav-header {
+/* .sidenav-header {
   height: 4.875rem;
-}
+} */
 
 .sidenav-footer .card.card-background:after {
   opacity: 0.65;

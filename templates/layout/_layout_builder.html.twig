@@ -1,20 +1,21 @@
-
-{% for children in layout.htmlelements %}
-    {% if children.parent is empty %}
-        {% include 'layout/html_element_preview.html.twig' %}
-    {% endif %}
-{% endfor %}
-
 <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 d-inline-block float-start" id="sidenav-main" style="position:inherit;">
     <div class="sidenav-header">
-        <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
-            <i class="fas fa-plus me-3"></i>Add sidebar header
-        </button>
+        {% if layout.htmlelements|filter(h => h.layoutPart == 'SidebarHeader')|length > 0 %}
+            {% set htmlelement = layout.htmlelements|filter(h => h.layoutPart == 'SidebarHeader')|first %}
+            {% include 'layout/html_element_preview.html.twig' %}
+        {% else %}
+            <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id, 'part':'SidebarHeader'}) }}">
+                <i class="fas fa-plus me-3"></i>Add sidebar header
+            </button>
+        {% endif %}
     </div>
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
         <ul class="navbar-nav">
+            {% for htmlelement in layout.htmlelements|filter(h => h.layoutPart == 'SidebarMenu') %}
+                {% include 'layout/html_element_preview.html.twig' %}
+            {% endfor %}
             <li class="nav-item">
-                <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+                <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id, 'part':'SidebarMenu'}) }}">
                     <i class="fas fa-plus me-3"></i>Add sidebar menu
                 </button>
             </li>

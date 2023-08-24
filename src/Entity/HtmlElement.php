@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\HtmlElementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HtmlElementRepository::class)]
@@ -41,6 +42,15 @@ class HtmlElement
 
     #[ORM\ManyToOne(inversedBy: 'htmlElements')]
     private ?Layout $layout = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $layoutPart = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $content = null;
+
+    #[ORM\ManyToOne]
+    private ?Page $pagelink = null;
 
     public function __construct()
     {
@@ -174,6 +184,42 @@ class HtmlElement
     public function setLayout(?Layout $layout): static
     {
         $this->layout = $layout;
+
+        return $this;
+    }
+
+    public function getLayoutPart(): ?string
+    {
+        return $this->layoutPart;
+    }
+
+    public function setLayoutPart(?string $layoutPart): static
+    {
+        $this->layoutPart = $layoutPart;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(?string $content): static
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    public function getPagelink(): ?Page
+    {
+        return $this->pagelink;
+    }
+
+    public function setPagelink(?Page $pagelink): static
+    {
+        $this->pagelink = $pagelink;
 
         return $this;
     }

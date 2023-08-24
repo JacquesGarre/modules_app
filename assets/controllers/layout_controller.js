@@ -10,7 +10,12 @@ export default class extends Controller {
     }
 
     reload({ detail: { content } }) {
+        
         let layout = $('.page-builder[data-table="'+content+'"]');
+        if(layout.length < 1){
+            layout = $('.layout-builder[data-table="'+content+'"]');
+        }
+
         if(null !== layout && layout.length){
             let url = layout.data('url') + '?ajax=1';
             axios({

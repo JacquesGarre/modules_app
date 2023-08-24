@@ -100,9 +100,8 @@ class LayoutController extends AbstractController
             ]);
         }
         
-        
         if($request->query->get('ajax')){
-            return $this->render('layout/_page_builder.html.twig', [
+            return $this->render('layout/_layout_builder.html.twig', [
                 'layout' => $layout,
             ]);
         }

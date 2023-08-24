@@ -118,6 +118,21 @@ form label {
     text-align: center;
 }
 
+.div-info .btn {
+    box-shadow:none;
+}
+
+.layout-builder span.div-info {
+    position: relative;
+    top: -38px;
+    background: white;
+    padding: 0px;
+    width: 100%;
+    border: 1px solid black;
+    display: block;
+    text-align: center;
+}
+
 .addBtn {
     width: 180px;
 }
@@ -214,4 +229,14 @@ form label {
 .layout-builder footer {
     border: 3px solid #65b817 !important;
     color:#65b817;
+}
+
+.layout-builder .sidebarheader {
+    border: 3px solid #ffc108 !important;
+    color:#ffc108;
+}
+
+.layout-builder div[class='sidebarheader'] > .div-info {
+    border: 3px solid #ffc108;
+    color:#ffc108;
 }
