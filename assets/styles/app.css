@@ -165,6 +165,7 @@ form label {
     height: 94vh !important;
 }
 
+
 .navbar.navbar-main {
     padding-top: 0;
     height: 60px;
@@ -226,7 +227,7 @@ form label {
 .layout-builder .page-content {
     border: 3px solid #17a2b8 !important;
     color:#17a2b8;
-    height: calc(100vh - 395px);
+    height: calc(100vh - 207px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -245,4 +246,33 @@ form label {
 .layout-builder div[class='sidebarheader'] > .div-info {
     border: 3px solid #ffc108;
     color:#ffc108;
+}
+
+.layout-builder .main-content {
+    width: 57rem;
+    float: right;
+    height: 94vh !important;
+}
+
+
+.layout-builder .navbar-vertical.navbar-expand-xs {
+    max-width: 20rem;
+}
+
+.layout-builder aside {
+    margin-top: 0!important;
+}
+
+.layout-builder nav#navbarBlur {
+    height: 130px;
+}
+
+.layout-builder {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+#sidenav-collapse-main .nav-link.active i {
+    color: #fff!important;
 }

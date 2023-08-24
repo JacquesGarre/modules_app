@@ -85,7 +85,7 @@ class DataService
         $offset = $page > 1 ? "OFFSET ".(intval($page) - 1) * intval($limit) : '';
         $limit = empty($limit) ? '' : "LIMIT $limit";
 
-        $sql = "SELECT $selectedColumns FROM $table $where $limit $offset";
+        $sql = "SELECT $selectedColumns FROM $table $where ORDER BY `id` DESC $limit $offset";
 
         $stmt = $conn->prepare($sql);
         $result = $stmt->executeQuery();

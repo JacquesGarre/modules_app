@@ -23235,9 +23235,6 @@ html {
 }
 
 @media (min-width: 1200px) {
-  .sidenav:hover {
-    max-width: 15.625rem;
-  }
 
   .sidenav .sidenav-toggler {
     padding: 1.5rem;

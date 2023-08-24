@@ -21,7 +21,7 @@
 {% elseif children.type == 'SidebarMenu' %}
 
         <li class="nav-item d-flex justify-content-between align-items-center">
-            <a class="nav-link {{children.additionnalClasses}}" href="/{{children.pagelink.uri}}">
+            <a class="nav-link w-100 {{children.additionnalClasses}} {{ children.pagelink.uri in page.uri ? 'active' : '' }}" href="/{{children.pagelink.uri}}">
                 {% if children.icon|length > 0 %}
                     <div class="icon icon-sm shadow border-radius-md bg-white text-center m-0 me-2 d-flex align-items-center justify-content-center">
                         <i class="{{children.icon}}"></i>

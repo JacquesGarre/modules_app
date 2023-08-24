@@ -27,7 +27,7 @@
 {% elseif htmlelement.type == 'NavbarMenu' %}
 
         <li class="nav-item d-flex align-items-center {{htmlelement.additionnalClasses}} px-2">
-            <a href="/{{htmlelement.pagelink.uri}}" class="nav-link text-body font-weight-bold px-0">
+            <a href="/{{htmlelement.pagelink.uri}}" class="nav-link text-body font-weight-bold px-0 me-2">
                 <i class="{{htmlelement.icon}} me-sm-1"></i>
                 <span class="d-sm-inline d-none">{{htmlelement.content}}</span>
             </a>
@@ -52,7 +52,7 @@
 {% elseif htmlelement.type == 'FooterMenu' %}
 
         <li class="nav-item d-flex align-items-center {{htmlelement.additionnalClasses}} px-2">
-            <a href="/{{htmlelement.pagelink.uri}}" class="nav-link text-body font-weight-bold px-0">
+            <a href="/{{htmlelement.pagelink.uri}}" class="nav-link text-body font-weight-bold px-0 me-2">
                 <i class="{{htmlelement.icon}} me-sm-1"></i>
                 <span class="d-sm-inline d-none">{{htmlelement.content}}</span>
             </a>
