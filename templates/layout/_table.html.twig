@@ -1,0 +1,32 @@
+<thead>
+    <tr>
+        <th>Actions</th>
+        <th>Title</th>
+    </tr>
+</thead>
+<tbody>
+    {% for layout in layouts %}
+        <tr data-id="{{ layout.id }}">
+            <td>
+                <a class="btn btn-sm btn-success"
+                    href="{{ path('app_layout_show', {'id': layout.id }) }}">
+                    <i class="fa-solid fa-eye"></i>
+                </a>
+                <a class="btn btn-sm btn-primary"
+                    data-controller="modal"
+                    data-action="modal#open"
+                    data-modal-url-value="{{ path('app_layout_edit', {'id': layout.id }) }}">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                <a class="btn btn-sm btn-danger"
+                    data-controller="modal"
+                    data-action="modal#open"
+                    data-modal-url-value="{{ path('app_layout_delete', {'id': layout.id }) }}"
+                >
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </td>
+            <td>{{ layout.title }}</td>
+        </tr>
+    {% endfor %}
+</tbody>

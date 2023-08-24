@@ -1,0 +1,16 @@
+<h3>
+    Layouts
+    <button type="button" class="btn btn-primary" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_layout_add') }}">
+        New layout
+    </button>
+</h3>    
+<table
+    id="layout-table" 
+    class="table table-striped"
+    data-controller="table"
+    data-url="{{ path('app_layout_index') }}"
+    data-action="modal:success->table#reload"
+    data-table="layout"
+>
+    {% include 'layout/_table.html.twig' %}
+</table>

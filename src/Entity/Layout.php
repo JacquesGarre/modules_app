@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\PageRepository;
+use App\Repository\LayoutRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PageRepository::class)]
-class Page
+#[ORM\Entity(repositoryClass: LayoutRepository::class)]
+class Layout
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,21 +18,16 @@ class Page
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $uri = null;
-
-    #[ORM\OneToMany(mappedBy: 'Page', targetEntity: HtmlElement::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'layout', targetEntity: HtmlElement::class)]
     private Collection $htmlElements;
 
-    #[ORM\OneToOne(inversedBy: 'page', cascade: ['persist', 'remove'])]
-    private ?Module $module = null;
-
-    #[ORM\ManyToOne(inversedBy: 'pages')]
-    private ?Layout $layout = null;
+    #[ORM\OneToMany(mappedBy: 'layout', targetEntity: Page::class)]
+    private Collection $pages;
 
     public function __construct()
     {
         $this->htmlElements = new ArrayCollection();
+        $this->pages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -52,18 +47,6 @@ class Page
         return $this;
     }
 
-    public function getUri(): ?string
-    {
-        return $this->uri;
-    }
-
-    public function setUri(string $uri): static
-    {
-        $this->uri = $uri;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, HtmlElement>
      */
@@ -76,7 +59,7 @@ class Page
     {
         if (!$this->htmlElements->contains($htmlElement)) {
             $this->htmlElements->add($htmlElement);
-            $htmlElement->setPage($this);
+            $htmlElement->setLayout($this);
         }
 
         return $this;
@@ -86,37 +69,41 @@ class Page
     {
         if ($this->htmlElements->removeElement($htmlElement)) {
             // set the owning side to null (unless already changed)
-            if ($htmlElement->getPage() === $this) {
-                $htmlElement->setPage(null);
+            if ($htmlElement->getLayout() === $this) {
+                $htmlElement->setLayout(null);
             }
         }
 
         return $this;
     }
 
-    public function getModule(): ?Module
+    /**
+     * @return Collection<int, Page>
+     */
+    public function getPages(): Collection
     {
-        return $this->module;
+        return $this->pages;
     }
 
-    public function setModule(?Module $module): static
+    public function addPage(Page $page): static
     {
-        $this->module = $module;
+        if (!$this->pages->contains($page)) {
+            $this->pages->add($page);
+            $page->setLayout($this);
+        }
 
         return $this;
     }
 
-    public function getLayout(): ?Layout
+    public function removePage(Page $page): static
     {
-        return $this->layout;
-    }
-
-    public function setLayout(?Layout $layout): static
-    {
-        $this->layout = $layout;
+        if ($this->pages->removeElement($page)) {
+            // set the owning side to null (unless already changed)
+            if ($page->getLayout() === $this) {
+                $page->setLayout(null);
+            }
+        }
 
         return $this;
     }
-
-
 }

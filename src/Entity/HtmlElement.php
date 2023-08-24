@@ -39,6 +39,9 @@ class HtmlElement
     #[ORM\ManyToOne(inversedBy: 'htmlElements')]
     private ?Form $ModuleForm = null;
 
+    #[ORM\ManyToOne(inversedBy: 'htmlElements')]
+    private ?Layout $layout = null;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -159,6 +162,18 @@ class HtmlElement
     public function setModuleForm(?Form $ModuleForm): static
     {
         $this->ModuleForm = $ModuleForm;
+
+        return $this;
+    }
+
+    public function getLayout(): ?Layout
+    {
+        return $this->layout;
+    }
+
+    public function setLayout(?Layout $layout): static
+    {
+        $this->layout = $layout;
 
         return $this;
     }
