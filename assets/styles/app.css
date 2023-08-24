@@ -276,3 +276,7 @@ form label {
 #sidenav-collapse-main .nav-link.active i {
     color: #fff!important;
 }
+
+.pagination .page-item.active a {
+    color: #fff;
+}
