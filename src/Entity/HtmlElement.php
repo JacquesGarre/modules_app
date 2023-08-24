@@ -52,6 +52,9 @@ class HtmlElement
     #[ORM\ManyToOne]
     private ?Page $pagelink = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $icon = null;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -220,6 +223,18 @@ class HtmlElement
     public function setPagelink(?Page $pagelink): static
     {
         $this->pagelink = $pagelink;
+
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon): static
+    {
+        $this->icon = $icon;
 
         return $this;
     }

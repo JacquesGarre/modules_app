@@ -45,6 +45,7 @@ class HtmlelementType extends AbstractType
                             'data' => 'SidebarMenu',
                         ]);
                         $form->add('layoutPart', HiddenType::class);
+                        $form->add('icon', TextType::class);
                         $form->add('content', TextType::class);
                         $form->add('pagelink', EntityType::class, [
                             'class' => Page::class,
@@ -202,12 +203,14 @@ class HtmlelementType extends AbstractType
                         $form->remove('additionnalClasses');
                         $form->remove('type');
                         $form->remove('content');
+                        $form->remove('icon');
                         $form->remove('pagelink');
                         $form->remove('layoutPart');
                         $form->add('sizeClass', HiddenType::class);
                         $form->add('additionnalClasses', HiddenType::class);
                         $form->add('layoutPart', HiddenType::class);
                         $form->add('type', HiddenType::class);
+                        $form->add('icon', TextType::class);
                         $form->add('content', TextType::class);
                         $form->add('pagelink', EntityType::class, [
                             'class' => Page::class,

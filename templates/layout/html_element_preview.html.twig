@@ -9,8 +9,13 @@
 
 {% elseif htmlelement.type == 'SidebarMenu' %}
 
-        <li class="nav-item d-flex justify-content-between">
+        <li class="nav-item d-flex justify-content-between align-items-center">
             <a class="nav-link {{htmlelement.additionnalClasses}}" href="/{{htmlelement.pagelink.uri}}">
+                {% if htmlelement.icon|length > 0 %}
+                    <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center m-0 me-2 d-flex align-items-center justify-content-center">
+                        <i class="{{htmlelement.icon}}"></i>
+                    </div>
+                {% endif %}
                 <span class="nav-link-text ms-1">{{htmlelement.content}}</span>
             </a>
             <span>
