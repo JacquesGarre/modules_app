@@ -6,6 +6,7 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
+import './styles/soft-ui-dashboard.css';
 import './styles/app.css';
 
 // start the Stimulus application

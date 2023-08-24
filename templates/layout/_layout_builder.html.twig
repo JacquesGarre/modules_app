@@ -1,0 +1,76 @@
+
+{% for children in layout.htmlelements %}
+    {% if children.parent is empty %}
+        {% include 'layout/html_element_preview.html.twig' %}
+    {% endif %}
+{% endfor %}
+
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 d-inline-block float-start" id="sidenav-main" style="position:inherit;">
+    <div class="sidenav-header">
+        <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+            <i class="fas fa-plus me-3"></i>Add sidebar header
+        </button>
+    </div>
+    <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+                    <i class="fas fa-plus me-3"></i>Add sidebar menu
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="sidenav-footer">
+        <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+            <i class="fas fa-plus me-3"></i>Add sidebar footer
+        </button>
+    </div>
+</aside>
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg d-inline-block">
+    <!-- Navbar -->
+    <nav class="navbar navbar-main navbar-expand-lg px-0 shadow-none border-radius-xl pb-0" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid pt-2 pb-0 px-3">
+        <nav aria-label="breadcrumb">
+            <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+                <i class="fas fa-plus me-3"></i>Add breadrcrumb
+            </button>
+        </nav>
+        <div class="collapse navbar-collapse m-0 p-0" id="navbar">
+            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+            </div>
+            <ul class="navbar-nav  justify-content-end">
+                <li class="nav-item d-flex align-items-center">
+                    <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+                        <i class="fas fa-plus me-3"></i>Add navbar menu
+                    </button>
+                </li>
+            </ul>
+        </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="container-fluid p-0">
+        <div class="page-content mt-3 border-radius-xl mb-0 pb-0">
+            <p class="text-center">Page content</p>
+        </div>
+        
+        <footer class="footer border-radius-xl mt-3">
+            <div class="row p-0 m-0 border-0">
+                <div class="col-lg-3 mb-0 border-0">
+                    <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+                        <i class="fas fa-plus me-3"></i>Add footer text
+                    </button>
+                </div>
+                <div class="col-lg-9 mb-0 border-0">
+                    <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+                                <i class="fas fa-plus me-3"></i>Add footer menu
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+    </div>
+</main>

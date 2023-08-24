@@ -1,0 +1,15 @@
+<div class="row">
+    {{ form(form) }}
+</div>
+<hr class="mt-5 mb-5">
+{% if layout is not empty %}
+    <div 
+        class="layout-builder"
+        data-controller="layout"
+        data-url="{{ path('app_layout_show', {'id':layout.id}) }}"
+        data-action="modal:success->layout#reload"
+        data-table="htmlelement"
+    >
+        {% include 'layout/_layout_builder.html.twig' %}
+    </div>
+{% endif %}
