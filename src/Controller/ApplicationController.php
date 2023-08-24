@@ -214,21 +214,39 @@ class ApplicationController extends AbstractController
         DataService $dataService,
     ): Response
     {
-        if(!empty($id)){
-            $uri .= '/{id}';
-        }
+
+        $breadcrumbs = [];
         $page = $pageRepository->findOneBy([
             'uri' => $uri
         ]);
-        $entity = false;
-        if(!empty($id)){
-            $entity = $dataService->getOneBy($page->getModule()->getSqlTable(), [], ['id' => $id]);
+        
+        if($page){
+            $title = $page->getTitle();
+            $breadcrumbs[] = [
+                'link' => '/'.$page->getUri(),
+                'label' => $page->getTitle()
+            ];
         }
 
-
+        $entity = false;
+        if(!empty($id)){
+            $uri .= '/{id}';
+            $page = $pageRepository->findOneBy([
+                'uri' => $uri
+            ]);
+            $entity = $dataService->getOneBy($page->getModule()->getSqlTable(), [], ['id' => $id]);
+            $title = $entity['titlePattern'];
+            $breadcrumbs[] = [
+                'link' => false,
+                'label' => $entity['titlePattern']
+            ];
+        }
+       
         return $this->render('_application/page.html.twig', [
             'page' => $page,
-            'entity' => $entity
+            'entity' => $entity,
+            'title' => $title,
+            'breadcrumbs' => $breadcrumbs
         ]);
     }
 
