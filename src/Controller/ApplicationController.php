@@ -19,6 +19,8 @@ use App\Service\FormService;
 use Exception;
 use stdClass;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use App\Repository\LayoutRepository;
+
 class ApplicationController extends AbstractController
 {
     #[Route('/{table}/add', name: 'app_application_add_entity')]
@@ -206,12 +208,15 @@ class ApplicationController extends AbstractController
         ]);
     }
 
-    #[Route('/{uri}/{id?}', name: 'app_application_page')]
+    #[Route('/{uri?}/{id?}', name: 'app_application_page')]
     public function index(
-        string $uri,
+        $uri = null,
         $id = null,
         PageRepository $pageRepository,
         DataService $dataService,
+        ModuleRepository $moduleRepository,
+        ListingRepository $listingRepository,
+        LayoutRepository $layoutRepository
     ): Response
     {
 
@@ -241,12 +246,24 @@ class ApplicationController extends AbstractController
                 'label' => $entity['titlePattern']
             ];
         }
+
+
+        $modules = $moduleRepository->findAll();
+        $listings = $listingRepository->findAll();
+        $pages = $pageRepository->findBy(['module' => null]);
+        $layouts = $layoutRepository->findAll();
        
         return $this->render('_application/page.html.twig', [
             'page' => $page,
             'entity' => $entity,
-            'title' => $title,
-            'breadcrumbs' => $breadcrumbs
+            'title' => $title ?? 'Application',
+            'breadcrumbs' => $breadcrumbs,
+
+            // admin stuff
+            'modules' => $modules,
+            'listings' => $listings,
+            'pages' => $pages,
+            'layouts' => $layouts
         ]);
     }
 

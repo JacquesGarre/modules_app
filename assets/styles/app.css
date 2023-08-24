@@ -280,3 +280,23 @@ form label {
 .pagination .page-item.active a {
     color: #fff;
 }
+
+.fixed-plugin a.btn.btn-sm {
+    box-shadow: none;
+    padding: 5px;
+    background: transparent;
+    color: darkgray;
+    float: left;
+}
+
+.fixed-plugin h3 {
+    font-size: 20px;
+    font-weight: normal;
+}
+
+.fixed-plugin .btn.btn-primary {
+    padding: 8px;
+    text-transform: none;
+    font-weight: normal;
+    float: right;
+}

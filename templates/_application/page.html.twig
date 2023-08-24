@@ -1,32 +1,23 @@
 {% extends 'application_base.html.twig' %}
 
-{% block title %}{{ page.title }}{% endblock %}
+{% block title %}{{ page|length > 0 ? page.title : 'Start building your app!' }}{% endblock %}
 
 {% block body %}
 
-    {% if page.pageLayout|length > 0 %}
-
-        {% set layout = page.pageLayout %}
-        {% include '_application/page_layout.html.twig' %}
-
+    {% if page|length > 0%}
+        {% if page.pageLayout|length > 0 %}
+            {% set layout = page.pageLayout %}
+            {% include '_application/page_layout.html.twig' %}
+        {% else %}
+            {% for children in page.htmlElements %}
+                {% if children.parent is empty %}
+                    {% include '_application/components/_html_element.html.twig' %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     {% else %}
 
-        {% for children in page.htmlElements %}
-            {% if children.parent is empty %}
-                {% include '_application/components/_html_element.html.twig' %}
-            {% endif %}
-        {% endfor %}
-
     {% endif %}
-
-
-
-
-
-
-
-
-
-
-
 {% endblock %}
+
+
