@@ -4,8 +4,8 @@
 <hr class="mt-5 mb-5">
 <h3 class="mb-5">Content
     {% if page is not empty and '{id}' not in page.uri %}
-        <a class="ms-3 btn btn-primary" href="{{ path('app_application_page', {'uri': page.uri}) }}">
-            <i class="fa-solid fa-eye"></i> Go to page
+        <a class="ms-3 btn btn-warning" href="{{ path('app_application_page', {'uri': page.uri}) }}">
+            <i class="fas fa-external-link-alt"></i> Go to page
         </a>
     {% endif %}
 </h3>  

@@ -21,12 +21,3 @@ import { Modal } from 'bootstrap';
 
 const modal = new Modal('#modal');
 
-
-$(function(){
-    $('.fixed-plugin-button').unbind().bind('click', function(){
-        $('.fixed-plugin').addClass('show')
-    })
-    $('.fixed-plugin-close-button').unbind().bind('click', function(){
-        $('.fixed-plugin').removeClass('show')
-    })
-});
