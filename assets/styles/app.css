@@ -160,15 +160,19 @@ form label {
 }
 
 .main-content {
-    margin-top: 1rem;
-    width: 59.5rem;
+    width: 85%;
     float: right;
+    height: 94vh !important;
 }
 
 .navbar.navbar-main {
     padding-top: 0;
+    height: 60px;
 }
 
+.page-content {
+    height: calc(100% - 60px);
+}
 
 .layout-builder div {
 

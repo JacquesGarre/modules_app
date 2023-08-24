@@ -1,0 +1,68 @@
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 d-inline-block float-start" id="sidenav-main" style="position:inherit;">
+    <div class="sidenav-header">
+        {% if layout.htmlelements|filter(h => h.layoutPart == 'SidebarHeader')|length > 0 %}
+            {% set children = layout.htmlelements|filter(h => h.layoutPart == 'SidebarHeader')|first %}
+            {% include '_application/components/_html_element.html.twig' %}
+        {% endif %}
+    </div>
+    <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
+        <ul class="navbar-nav">
+            {% for children in layout.htmlelements|filter(h => h.layoutPart == 'SidebarMenu') %}
+                {% include '_application/components/_html_element.html.twig' %}
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="sidenav-footer">
+        {% if layout.htmlelements|filter(h => h.layoutPart == 'SidebarFooter')|length > 0 %}
+            {% set children = layout.htmlelements|filter(h => h.layoutPart == 'SidebarFooter')|first %}
+            {% include '_application/components/_html_element.html.twig' %}
+        {% endif %}
+    </div>
+</aside>
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg d-inline-block">
+    <!-- Navbar -->
+    <nav class="navbar navbar-main navbar-expand-lg px-0 shadow-none border-radius-xl pb-0" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid pt-2 pb-0 px-3">
+        {% if layout.htmlelements|filter(h => h.layoutPart == 'Breadcrumb')|length > 0 %}
+            {% set children = layout.htmlelements|filter(h => h.layoutPart == 'Breadcrumb')|first %}
+            {% include '_application/components/_html_element.html.twig' %}
+        {% endif %}
+        <div class="collapse navbar-collapse m-0 p-0" id="navbar">
+            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+            </div>
+            <ul class="navbar-nav  justify-content-end">
+                {% for children in layout.htmlelements|filter(h => h.layoutPart == 'NavbarMenu') %}
+                    {% include '_application/components/_html_element.html.twig' %}
+                {% endfor %}
+            </ul>
+        </div>
+        </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="container-fluid p-0 page-content">
+        <div class="page-content mt-3 border-radius-xl mb-0 pb-0">
+            {% for children in page.htmlElements %}
+                {% if children.parent is empty %}
+                    {% include '_application/components/_html_element.html.twig' %}
+                {% endif %}
+            {% endfor %}
+        </div>
+        <footer class="footer border-radius-xl mt-3">
+            <div class="row p-0 m-0 border-0">
+                <div class="col-lg-3 mb-0 border-0">
+                    {% if layout.htmlelements|filter(h => h.layoutPart == 'FooterText')|length > 0 %}
+                        {% set children = layout.htmlelements|filter(h => h.layoutPart == 'FooterText')|first %}
+                        {% include '_application/components/_html_element.html.twig' %}
+                    {% endif %}
+                </div>
+                <div class="col-lg-9 mb-0 border-0">
+                    <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                        {% for children in layout.htmlelements|filter(h => h.layoutPart == 'FooterMenu') %}
+                            {% include '_application/components/_html_element.html.twig' %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </footer>
+    </div>
+</main>

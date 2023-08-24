@@ -12,6 +12,53 @@
         {% include 'table/table.html.twig' %}
     </div>
 
+{% elseif children.type in ['h1','h2','h3','h4','h5','h6'] %}
+
+    <{{children.type}} class="{{children.additionnalClasses}}">
+        {{children.content}}
+    </{{children.type}}>
+
+{% elseif children.type == 'SidebarMenu' %}
+
+        <li class="nav-item d-flex justify-content-between align-items-center">
+            <a class="nav-link {{children.additionnalClasses}}" href="/{{children.pagelink.uri}}">
+                {% if children.icon|length > 0 %}
+                    <div class="icon icon-sm shadow border-radius-md bg-white text-center m-0 me-2 d-flex align-items-center justify-content-center">
+                        <i class="{{children.icon}}"></i>
+                    </div>
+                {% endif %}
+                <span class="nav-link-text ms-1">{{children.content}}</span>
+            </a>
+        </li>
+
+{% elseif children.type == 'NavbarMenu' %}
+
+        <li class="nav-item d-flex align-items-center {{children.additionnalClasses}} px-2">
+            <a href="/{{children.pagelink.uri}}" class="nav-link text-body font-weight-bold px-0">
+                <i class="{{children.icon}} me-sm-1"></i>
+                <span class="d-sm-inline d-none">{{children.content}}</span>
+            </a>
+        </li>
+
+{% elseif children.type == 'Breadcrumb' %}
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5 {{children.additionnalClasses}}">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Page title</li>
+        </ol>
+        <h6 class="font-weight-bolder mb-0">Page title</h6>
+    </nav>
+
+{% elseif children.type == 'FooterMenu' %}
+
+        <li class="nav-item d-flex align-items-center {{children.additionnalClasses}} px-2">
+            <a href="/{{children.pagelink.uri}}" class="nav-link text-body font-weight-bold px-0">
+                <i class="{{children.icon}} me-sm-1"></i>
+                <span class="d-sm-inline d-none">{{children.content}}</span>
+            </a>
+        </li>
+
 {% else %}
 
     <div class="{{children.type}}{{children.sizeClass}} {{children.additionnalClasses}}">

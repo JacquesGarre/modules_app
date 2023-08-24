@@ -30,6 +30,9 @@ class Page
     #[ORM\ManyToOne(inversedBy: 'pages')]
     private ?Layout $layout = null;
 
+    #[ORM\ManyToOne]
+    private ?Layout $pageLayout = null;
+
     public function __construct()
     {
         $this->htmlElements = new ArrayCollection();
@@ -119,6 +122,18 @@ class Page
     public function setLayout(?Layout $layout): static
     {
         $this->layout = $layout;
+
+        return $this;
+    }
+
+    public function getPageLayout(): ?Layout
+    {
+        return $this->pageLayout;
+    }
+
+    public function setPageLayout(?Layout $pageLayout): static
+    {
+        $this->pageLayout = $pageLayout;
 
         return $this;
     }

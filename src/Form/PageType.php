@@ -14,6 +14,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\PercentType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Layout;
+
+
 class PageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -43,6 +47,12 @@ class PageType extends AbstractType
                             'disabled' => $options['attr']['data-mode'] == 'read'   
                         ]);
                     }
+
+                    $form->add('pageLayout', EntityType::class, [
+                        'class'         => Layout::class,
+                        'disabled' => $options['attr']['data-mode'] == 'read',
+                        'placeholder' => '...',
+                    ]);
 
 
                     $label = $options['attr']['data-mode'] == 'read'  ? 'Edit' : 'Submit';
