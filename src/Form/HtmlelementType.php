@@ -40,9 +40,17 @@ class HtmlelementType extends AbstractType
 
 
                 switch($htmlElement->getLayoutPart()){
-                    case 'SidebarMenu':
+                    case 'Breadcrumb':
                         $form->add('type', HiddenType::class, [
-                            'data' => 'SidebarMenu',
+                            'data' => 'Breadcrumb',
+                        ]);
+                        $form->add('layoutPart', HiddenType::class);
+                    break;
+                    case 'NavbarMenu':
+                    case 'SidebarMenu':
+                    case 'FooterMenu':
+                        $form->add('type', HiddenType::class, [
+                            'data' => $htmlElement->getLayoutPart(),
                         ]);
                         $form->add('layoutPart', HiddenType::class);
                         $form->add('icon', TextType::class);
@@ -57,6 +65,8 @@ class HtmlelementType extends AbstractType
                             },
                         ]);
                     break;
+                    case 'FooterText':
+                    case 'SidebarFooter':
                     case 'SidebarHeader':
                         $form->add('layoutPart', HiddenType::class);
                         $form->add('type', ChoiceType::class, [
@@ -195,8 +205,23 @@ class HtmlelementType extends AbstractType
                             'class'     => Form::class,
                         ]);
                     break;
+                    case 'Breadcrumb':
+                        $form->remove('moduleTable');
+                        $form->remove('moduleForm');
+                        $form->remove('sizeClass');
+                        $form->remove('additionnalClasses');
+                        $form->remove('type');
+                        $form->remove('content');
+                        $form->remove('icon');
+                        $form->remove('pagelink');
+                        $form->remove('layoutPart');
+                        $form->add('type', HiddenType::class);
+                        $form->add('layoutPart', HiddenType::class);
+                        $form->add('additionnalClasses', HiddenType::class);
+                    break;
+                    case 'NavbarMenu':
                     case 'SidebarMenu':
-    
+                    case 'FooterMenu':
                         $form->remove('moduleTable');
                         $form->remove('moduleForm');
                         $form->remove('sizeClass');

@@ -12,7 +12,7 @@
         <li class="nav-item d-flex justify-content-between align-items-center">
             <a class="nav-link {{htmlelement.additionnalClasses}}" href="/{{htmlelement.pagelink.uri}}">
                 {% if htmlelement.icon|length > 0 %}
-                    <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center m-0 me-2 d-flex align-items-center justify-content-center">
+                    <div class="icon icon-sm shadow border-radius-md bg-white text-center m-0 me-2 d-flex align-items-center justify-content-center">
                         <i class="{{htmlelement.icon}}"></i>
                     </div>
                 {% endif %}
@@ -22,6 +22,43 @@
                 {% include 'layout/edit_html_element_btn.html.twig' %}
                 {% include 'layout/delete_html_element_btn.html.twig' %}
             </span>
+        </li>
+
+{% elseif htmlelement.type == 'NavbarMenu' %}
+
+        <li class="nav-item d-flex align-items-center {{htmlelement.additionnalClasses}} px-2">
+            <a href="/{{htmlelement.pagelink.uri}}" class="nav-link text-body font-weight-bold px-0">
+                <i class="{{htmlelement.icon}} me-sm-1"></i>
+                <span class="d-sm-inline d-none">{{htmlelement.content}}</span>
+            </a>
+            <br>
+            {% include 'layout/edit_html_element_btn.html.twig' %}
+            {% include 'layout/delete_html_element_btn.html.twig' %}
+        </li>
+
+
+{% elseif htmlelement.type == 'Breadcrumb' %}
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5 {{htmlelement.additionnalClasses}}">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Page title</li>
+        </ol>
+        <h6 class="font-weight-bolder mb-0">Page title</h6>
+        {% include 'layout/edit_html_element_btn.html.twig' %}
+        {% include 'layout/delete_html_element_btn.html.twig' %}
+    </nav>
+
+{% elseif htmlelement.type == 'FooterMenu' %}
+
+        <li class="nav-item d-flex align-items-center {{htmlelement.additionnalClasses}} px-2">
+            <a href="/{{htmlelement.pagelink.uri}}" class="nav-link text-body font-weight-bold px-0">
+                <i class="{{htmlelement.icon}} me-sm-1"></i>
+                <span class="d-sm-inline d-none">{{htmlelement.content}}</span>
+            </a>
+            <br>
+            {% include 'layout/edit_html_element_btn.html.twig' %}
+            {% include 'layout/delete_html_element_btn.html.twig' %}
         </li>
     
 {% endif %}

@@ -18,7 +18,7 @@ class Layout
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\OneToMany(mappedBy: 'layout', targetEntity: HtmlElement::class)]
+    #[ORM\OneToMany(mappedBy: 'layout', targetEntity: HtmlElement::class, orphanRemoval: true)]
     private Collection $htmlElements;
 
     #[ORM\OneToMany(mappedBy: 'layout', targetEntity: Page::class)]

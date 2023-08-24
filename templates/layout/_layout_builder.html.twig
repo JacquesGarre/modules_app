@@ -22,26 +22,39 @@
         </ul>
     </div>
     <div class="sidenav-footer">
-        <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
-            <i class="fas fa-plus me-3"></i>Add sidebar footer
-        </button>
+        {% if layout.htmlelements|filter(h => h.layoutPart == 'SidebarFooter')|length > 0 %}
+            {% set htmlelement = layout.htmlelements|filter(h => h.layoutPart == 'SidebarFooter')|first %}
+            {% include 'layout/html_element_preview.html.twig' %}
+        {% else %}
+            <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id, 'part':'SidebarFooter'}) }}">
+                <i class="fas fa-plus me-3"></i>Add sidebar footer
+            </button>
+        {% endif %}
     </div>
 </aside>
 <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg d-inline-block">
     <!-- Navbar -->
     <nav class="navbar navbar-main navbar-expand-lg px-0 shadow-none border-radius-xl pb-0" id="navbarBlur" navbar-scroll="true">
         <div class="container-fluid pt-2 pb-0 px-3">
-        <nav aria-label="breadcrumb">
-            <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
-                <i class="fas fa-plus me-3"></i>Add breadrcrumb
-            </button>
-        </nav>
+        {% if layout.htmlelements|filter(h => h.layoutPart == 'Breadcrumb')|length > 0 %}
+            {% set htmlelement = layout.htmlelements|filter(h => h.layoutPart == 'Breadcrumb')|first %}
+            {% include 'layout/html_element_preview.html.twig' %}
+        {% else %}
+            <nav aria-label="breadcrumb">
+                <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id, 'part':'Breadcrumb'}) }}">
+                    <i class="fas fa-plus me-3"></i>Add breadrcrumb
+                </button>
+            </nav>
+        {% endif %}
         <div class="collapse navbar-collapse m-0 p-0" id="navbar">
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
             </div>
             <ul class="navbar-nav  justify-content-end">
+                {% for htmlelement in layout.htmlelements|filter(h => h.layoutPart == 'NavbarMenu') %}
+                    {% include 'layout/html_element_preview.html.twig' %}
+                {% endfor %}
                 <li class="nav-item d-flex align-items-center">
-                    <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+                    <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id, 'part':'NavbarMenu'}) }}">
                         <i class="fas fa-plus me-3"></i>Add navbar menu
                     </button>
                 </li>
@@ -58,14 +71,24 @@
         <footer class="footer border-radius-xl mt-3">
             <div class="row p-0 m-0 border-0">
                 <div class="col-lg-3 mb-0 border-0">
-                    <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
-                        <i class="fas fa-plus me-3"></i>Add footer text
-                    </button>
+                    {% if layout.htmlelements|filter(h => h.layoutPart == 'FooterText')|length > 0 %}
+                        {% set htmlelement = layout.htmlelements|filter(h => h.layoutPart == 'FooterText')|first %}
+                        {% include 'layout/html_element_preview.html.twig' %}
+                    {% else %}
+                        <nav aria-label="breadcrumb">
+                            <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id, 'part':'FooterText'}) }}">
+                                <i class="fas fa-plus me-3"></i>Add footer text
+                            </button>
+                        </nav>
+                    {% endif %}
                 </div>
                 <div class="col-lg-9 mb-0 border-0">
                     <ul class="nav nav-footer justify-content-center justify-content-lg-end">
+                        {% for htmlelement in layout.htmlelements|filter(h => h.layoutPart == 'FooterMenu') %}
+                            {% include 'layout/html_element_preview.html.twig' %}
+                        {% endfor %}
                         <li class="nav-item">
-                            <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id}) }}">
+                            <button type="button" class="btn btn-primary btn-bootstrap-block" data-controller="modal" data-action="modal#open" data-modal-url-value="{{ path('app_htmlelement_add_to_layout', {'layoutId': layout.id, 'part':'FooterMenu'}) }}">
                                 <i class="fas fa-plus me-3"></i>Add footer menu
                             </button>
                         </li>
