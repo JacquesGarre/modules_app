@@ -25,6 +25,7 @@ class TableListener
         $page = $this->request->query->get('page') ?? 1;
         $limit = $this->request->query->get('limit') ?? $table->getDefaultLimit();
         $filters = $this->request->query->get('filters') ? json_decode($this->request->query->get('filters'), true) : [];
+        $filters = array_filter($filters);
 
         // Set current values
         $table->setCurrentLimit($limit);

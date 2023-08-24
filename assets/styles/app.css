@@ -124,3 +124,15 @@ form label {
 .pagination a {
     cursor: pointer;
 }
+
+.btns-3 {
+    min-width: 125px;
+}
+
+.btns-2 {
+    min-width: 84px;
+}
+
+.btns-1 {
+    min-width: 42px;
+}

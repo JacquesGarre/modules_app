@@ -63,4 +63,37 @@ export default class extends Controller {
 
     }
 
+    resetFilters(){
+
+        let element = $(this.element);
+        let tableSelector = 'div#table-'+element.data('table');
+        let table = element.closest(tableSelector);
+        let tableFooter = table.find('.table-footer');
+        let url = element.data('url');
+
+        // reset filters
+        let filters = {}
+
+        // get page
+        let page = this.pageValue ?? 1;
+
+        // get limit
+        let limit = tableFooter.find('.page-limit select').val();
+
+        // build url
+        url += "?page="+page+"&limit="+limit+"&filters="+JSON.stringify(filters)
+       
+        // reload table html
+        if(null !== table && table.length){
+            axios({
+                method: 'GET',
+                url: url
+            })
+            .then(function (response) {
+                table.html(response.data)
+            });
+        }     
+
+    }
+
 }

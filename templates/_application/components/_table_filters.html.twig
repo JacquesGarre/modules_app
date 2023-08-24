@@ -1,0 +1,50 @@
+{% if table.filters|length > 0 %}
+    <tr>
+        <td>
+            <a class="btn btn-sm btn-primary"         
+                data-controller="table"
+                data-url="{{ path('app_application_table_reload', {'id':table.id}) }}"
+                data-action="click->table#applyFilters"
+                data-table-page-value="{{table.currentPage}}"
+                data-table="{{table.module.sqlTable}}"
+            >Filter</a>
+            {% if table.currentFilters|length > 0 %}
+                <a class="btn btn-sm btn-danger"         
+                    data-controller="table"
+                    data-url="{{ path('app_application_table_reload', {'id':table.id}) }}"
+                    data-action="click->table#resetFilters"
+                    data-table-page-value="{{table.currentPage}}"
+                    data-table="{{table.module.sqlTable}}"
+                >Clear</a>
+            {% endif %}
+        </td>
+        {% for column in table.columns %}
+            {% if column.name in table.filters|map(f => f.name) %}
+                {% set currentValue = column.name in table.currentFilters|keys ? table.currentFilters[column.name] : '' %}
+                {% if column.type == 'text' %}
+                    <td>
+                        <input type="text" class="form-control filter-field" name="{{column.name}}" placeholder="{{column.label}}" value="{{currentValue}}">
+                    </td>
+                {% elseif column.type == 'listing' %}
+                    <td>
+                        <select class="form-control filter-field" name="{{column.name}}">
+                            {% for label, value in column.choices %}
+                                <option value="{{value}}" {{ currentValue == value ? 'selected' : '' }}>{{label}}</option>
+                            {% endfor %}
+                        </select>                  
+                    </td>
+                {% elseif column.type == 'onetomany' %}
+                    <td>
+                        <select class="form-control filter-field" name="{{column.name}}">
+                            {% for label, value in column.choices %}
+                                <option value="{{value}}" {{ currentValue == value ? 'selected' : '' }}>{{label}}</option>
+                            {% endfor %}
+                        </select>                  
+                    </td>
+                {% endif %}
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
+    </tr>
+{% endif %}
