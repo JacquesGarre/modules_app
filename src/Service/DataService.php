@@ -79,9 +79,7 @@ class DataService
                 }
             }
 
-        }
-   
-        
+        }        
         return $conds;
     }
 
