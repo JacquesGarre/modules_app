@@ -108,10 +108,11 @@ form[data-mode="read"] [disabled="disabled"] {
     cursor: default;
 }
 .select2-selection__rendered {
-    font-size: 0.875rem;
+    font-size: 18px;
     font-weight: 400;
     line-height: 1.4rem;
-    color: #495057;
+
+    color: #67748e !important;
 }
 .select2-container--bootstrap-5.select2-container--disabled .select2-selection, .select2-container--bootstrap-5.select2-container--disabled.select2-container--focus .select2-selection {
     cursor: default!important;
@@ -345,4 +346,14 @@ span.select2-selection {
 .select2-container--bootstrap-5 .select2-selection--single {
     background-image: none!important;
     padding: 10px!important;
+}
+
+label, .form-label {
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+.form-control {
+    font-size: 18px;
+    color: #67748e !important;
 }
