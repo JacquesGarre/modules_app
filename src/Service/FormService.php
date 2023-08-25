@@ -152,6 +152,7 @@ class FormService
                     }
 
                     $form->add($field->getName(), TextType::class, [
+                        'label' => $field->getLabel(),
                         'data' => $entity->{$field->getName()},
                         'disabled' => $mode == 'read' ? $mode : $field->isDisabled(),
                         'required' => $field->isRequired(),
@@ -172,6 +173,7 @@ class FormService
                     }
 
                     $form->add($field->getName(), ChoiceType::class, [
+                        'label' => $field->getLabel(),
                         'data' => $entity->{$field->getName()},
                         'disabled' => $mode == 'read' ? $mode : $field->isDisabled(),
                         'required' => $field->isRequired(),
@@ -179,19 +181,19 @@ class FormService
                         'multiple'  => $field->isMultiple(),
                     ]);
                 break;
-                case 'onetomany':
+                case 'manytoone':
 
                     // default value
                     if(!isset($entity->{$field->getName()})){                        
-                        $entity->{$field->getName()} = !is_array($field->getValue()) ? [$field->getValue()] : [];
+                        $entity->{$field->getName()} = $field->getValue() ?? null;
                     }
 
                     $form->add($field->getName(), ChoiceType::class, [
-                        'data' => is_string($entity->{$field->getName()}) ? json_decode($entity->{$field->getName()}) : [],
+                        'label' => $field->getLabel(),
+                        'data' => $entity->{$field->getName()},
                         'disabled' => $mode == 'read' ? $mode : $field->isDisabled(),
                         'required' => $field->isRequired(),
                         'choices' => $field->getChoices(),
-                        'multiple'  => true,
                     ]);
                 break;
             }

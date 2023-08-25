@@ -54,8 +54,8 @@ class FieldListener
             $fieldEntity->setSelectOptions($options);
         }
 
-        // Set list to field if field type == onetomany
-        if($fieldEntity->getType() == 'onetomany'){
+        // Set list to field if field type == manytoone
+        if($fieldEntity->getType() == 'manytoone'){
 
             $externalModule = $fieldEntity->getEntity();
 

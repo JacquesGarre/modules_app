@@ -40,42 +40,50 @@ class DataService
 
         $fieldNames = array_map(function($field){
             return $field->getName();
-        }, $module->getFields()->toArray()); 
+        }, $module->getFields()->toArray());
 
-        $fieldTypes = array_map(function($field){
-            return $field->getType();
-        }, $module->getFields()->toArray()); 
-
-        $fields = array_combine($fieldNames, $fieldTypes);
+        $fields = array_combine($fieldNames, $module->getFields()->toArray());
         $conds = [];
+
         foreach($conditions as $field => $value){
             if(!array_key_exists($field, $fields)){
                 $conds[] = $field." = '".$value."'";
             } else {
-                switch($fields[$field]){
+                switch($fields[$field]->getType()){
                     case 'text':
                         $conds[] = $field." LIKE '%".$value."%'";
                     break;
                     case 'listing':
-                        if(is_array($value)){
-                            $conds[] = $field." RLIKE '".implode('|', $value)."'";
+                        if($fields[$field]->isMultiple()){
+                            if(is_array($value)){
+                                $conds[] = $field." RLIKE '".implode('|', $value)."'";
+                            } else {
+                                $conds[] = $field." LIKE '%".$value."%'";
+                            }
                         } else {
-                            $conds[] = $field." LIKE '".$value."'";
+                            if(is_array($value)){
+                                $conds[] = $field." RLIKE '".implode('|', $value)."'";
+                            } else {
+                                $conds[] = $field." LIKE '".$value."'";
+                            }
                         }
+
                     break;
-                    case 'onetomany':
-                        $conds[] = $field." LIKE '%\"".$value."\"%'";
+                    case 'manytoone':
+                        $conds[] = $field." = '".$value."'";
                     break;
                 }
             }
 
         }
+  
         return $conds;
     }
 
     public function get($table, array $selectedColumns = [], array $conditions = [], $limit = null, $page = null)
     {
         $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
+
 
         $conn = $this->em->getConnection();
         $selectedColumns = empty($selectedColumns) ? '*' : '`id`, `'.implode('`,`', $selectedColumns).'`';
@@ -86,6 +94,9 @@ class DataService
         $limit = empty($limit) ? '' : "LIMIT $limit";
 
         $sql = "SELECT $selectedColumns FROM $table $where ORDER BY `id` DESC $limit $offset";
+
+
+        
 
         $stmt = $conn->prepare($sql);
         $result = $stmt->executeQuery();

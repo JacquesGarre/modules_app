@@ -61,7 +61,7 @@ class FieldType extends AbstractType
                         'choices'  => [
                             'Text' => 'text',
                             'Listing' => 'listing',
-                            'One To Many' => 'onetomany'
+                            'Many To One' => 'manytoone'
                         ],
                         'constraints' => [
                             new NotBlank()
@@ -132,7 +132,7 @@ class FieldType extends AbstractType
                             'choices'  => [
                                 'Text' => 'text',
                                 'Listing' => 'listing',
-                                'One To Many' => 'onetomany'
+                                'Many To One' => 'manytoone'
                             ],
                             'constraints' => [
                                 new NotBlank()
@@ -162,7 +162,7 @@ class FieldType extends AbstractType
                             'choices'  => [
                                 'Text' => 'text',
                                 'Listing' => 'listing',
-                                'One To Many' => 'onetomany'
+                                'Many To One' => 'manytoone'
                             ],
                             'constraints' => [
                                 new NotBlank()
@@ -188,13 +188,13 @@ class FieldType extends AbstractType
                             ],
                         ]);
                     break;
-                    case 'onetomany':
+                    case 'manytoone':
                         $form
                         ->add('type', ChoiceType::class, [
                             'choices'  => [
                                 'Text' => 'text',
                                 'Listing' => 'listing',
-                                'One To Many' => 'onetomany'
+                                'Many To One' => 'manytoone'
                             ],
                             'constraints' => [
                                 new NotBlank()

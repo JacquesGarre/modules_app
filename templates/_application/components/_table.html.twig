@@ -5,7 +5,7 @@
     </a>
 </div>
 <div class="table-responsive">
-    <table class="table table-striped">
+    <table class="table">
         <thead>
             <tr>
                 {% if table.inlineActions is not empty %}
@@ -50,13 +50,12 @@
                                 {% endif %}
                             </td>
                         {% endif %}
-                    {% elseif column.type == 'onetomany' %}
+                    {% elseif column.type == 'manytoone' %}
                         <td>
-                            {% for value in row[column.name]|json_decode() %}
-                                {% if value in column.selectOptions|keys %}
-                                    <a href="{{ column.selectOptions[value]['detailedViewPath'] }}">{{ column.selectOptions[value]['label'] }}</a>,
-                                {% endif %}
-                            {% endfor %}
+                            {% set value = row[column.name] %}
+                            {% if value in column.selectOptions|keys %}
+                                <a href="{{ column.selectOptions[value]['detailedViewPath'] }}">{{ column.selectOptions[value]['label'] }}</a>
+                            {% endif %}
                         </td>
                     {% endif %}
                 {% endfor %}

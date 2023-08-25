@@ -33,7 +33,7 @@
                             {% endfor %}
                         </select>                  
                     </td>
-                {% elseif column.type == 'onetomany' %}
+                {% elseif column.type == 'manytoone' %}
                     <td>
                         <select class="form-control filter-field" name="{{column.name}}">
                             {% for label, value in column.choices %}

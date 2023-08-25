@@ -22,10 +22,6 @@
     </div>
     <hr class="mt-5 mb-5">
     <div class="row">
-        {% include 'table/index.html.twig' %}
-    </div>
-    <hr class="mt-5 mb-5">
-    <div class="row">
         {% set page = module.page %}
         {% set form = pageForm %}
         <h3>
@@ -41,5 +37,10 @@
         {% endif %}
     </div>
     <hr class="mt-5 mb-5">
+    <div class="row">
+        {% include 'table/index.html.twig' %}
+    </div>
+    <hr class="mt-5 mb-5">
+
 
 {% endblock %}
