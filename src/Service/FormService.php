@@ -160,7 +160,6 @@ class FormService
                 break;
                 case 'listing':
                   
-
                     // default value
                     if(!isset($entity->{$field->getName()})){
 
@@ -168,6 +167,12 @@ class FormService
                             $entity->{$field->getName()} = !is_array($field->getValue()) ? [$field->getValue()] : [];
                         } else {
                             $entity->{$field->getName()} = $field->getValue() ?? null;
+                        }
+
+                    } else {
+
+                        if($field->isMultiple() && !is_array($entity->{$field->getName()})){
+                            $entity->{$field->getName()} = json_decode($entity->{$field->getName()});
                         }
 
                     }
@@ -180,6 +185,7 @@ class FormService
                         'choices' => $field->getChoices(),
                         'multiple'  => $field->isMultiple(),
                     ]);
+                    
                 break;
                 case 'manytoone':
 

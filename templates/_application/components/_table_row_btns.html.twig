@@ -1,6 +1,6 @@
 {% if table.inlineActions is not empty %}
     {% set class = 'btns-' ~ table.inlineActions|length %}
-    <td class="{{class}}">
+    <td class="{{class}} ps-3">
         {% for action in table.inlineActions %}
             {% if action == 'view' and table.module.page.uri is defined %}
                 <a class="btn btn-sm btn-success" href="{{ path('app_application_page', {'uri': table.module.page.uri|replace({'/{id}': ''}), 'id':row.id}) }}">

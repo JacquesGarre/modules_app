@@ -1,8 +1,12 @@
 {% if children.type == 'moduleForm' %}
 
-    <div class="{{ children.additionnalClasses }}">
-        {% set form = children.moduleForm %}
-        {% include 'form/form.html.twig' %}
+    <div class="card mb-4">
+        <div class="card-body p-4">
+            <div class="{{ children.additionnalClasses }}">
+                {% set form = children.moduleForm %}
+                {% include 'form/form.html.twig' %}
+            </div>
+        </div>
     </div>
 
 {% elseif children.type == 'moduleTable' %}
@@ -67,7 +71,7 @@
 
 {% else %}
 
-    <div class="{{children.type}}{{children.sizeClass}} {{children.additionnalClasses}}">
+    <div class="{{children.type == 'container' ? 'ps-2' : '' }} {{children.type}}{{children.sizeClass}} {{children.additionnalClasses}}">
         {% for children in children.children %}
             {% include '_application/components/_html_element.html.twig' %}
         {% endfor %}
