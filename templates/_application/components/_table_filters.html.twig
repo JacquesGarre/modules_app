@@ -25,13 +25,20 @@
                 {% if column.type == 'text' %}
                     <input type="text" class="form-control filter-field" name="{{column.name}}" placeholder="{{column.label}}" value="{{currentValue}}">
                 {% elseif column.type == 'listing' %}
-                    <select class="form-control filter-field" name="{{column.name}}">
+                    <select class="form-control form-select filter-field" data-placeholder="" name="{{column.name}}" {{column.multiple ? 'multiple' : ''}}>
                         {% for label, value in column.choices %}
-                            <option value="{{value}}" {{ currentValue == value ? 'selected' : '' }}>{{label}}</option>
+ 
+                            {% if value|length > 0 %}
+                                 {% if currentValue is iterable %}
+                                    <option value="{{value}}" {{ value in currentValue ? 'selected' : '' }}>{{label}}</option>
+                                {% else %}
+                                    <option value="{{value}}" {{ currentValue == value ? 'selected' : '' }}>{{label}}</option>
+                                {% endif %}
+                            {% endif %}
                         {% endfor %}
                     </select>                  
                 {% elseif column.type == 'manytoone' %}
-                    <select class="form-control filter-field" name="{{column.name}}">
+                    <select class="form-control form-select filter-field" name="{{column.name}}">
                         {% for label, value in column.choices %}
                             <option value="{{value}}" {{ currentValue == value ? 'selected' : '' }}>{{label}}</option>
                         {% endfor %}
@@ -42,3 +49,15 @@
         {% endfor %}
     </tr>
 {% endif %}
+<script>
+    $(function(){
+            
+        $('.form-select.filter-field').select2( {
+            theme: "bootstrap-5",
+            width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $(this).hasClass( 'w-100') ? '100%' : 'style',
+            minimumResultsForSearch: Infinity,
+            selectionCssClass : 'no-search'
+        });
+
+    })
+</script>
