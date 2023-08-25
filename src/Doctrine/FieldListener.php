@@ -55,12 +55,10 @@ class FieldListener
         }
 
         // Set list to field if field type == manytoone
-        if($fieldEntity->getType() == 'manytoone'){
+        if($fieldEntity->getType() == 'manytoone' || $fieldEntity->getType() == 'manytomany' ){
 
             $externalModule = $fieldEntity->getEntity();
-
             $items = $this->dataService->get($externalModule->getSqlTable());
-
 
             $choicesID = array_map(function($item){
                 return $item['id'];

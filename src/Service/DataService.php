@@ -38,6 +38,8 @@ class DataService
     {
         $conditions = array_filter($conditions);
 
+        $table = $module->getSqlTable();
+
         $fieldNames = array_map(function($field){
             return $field->getName();
         }, $module->getFields()->toArray());
@@ -51,26 +53,26 @@ class DataService
             } else {
                 switch($fields[$field]->getType()){
                     case 'text':
-                        $conds[] = $field." LIKE '%".$value."%'";
+                        $conds[] = "`$table`.`$field` LIKE '%".$value."%'";
                     break;
                     case 'listing':
                         if($fields[$field]->isMultiple()){
                             if(is_array($value)){
-                                $conds[] = $field." RLIKE '".implode('|', $value)."'";
+                                $conds[] = "`$table`.`$field` RLIKE '".implode('|', $value)."'";
                             } else {
-                                $conds[] = $field." LIKE '%".$value."%'";
+                                $conds[] = "`$table`.`$field` LIKE '%".$value."%'";
                             }
                         } else {
                             if(is_array($value)){
-                                $conds[] = $field." RLIKE '".implode('|', $value)."'";
+                                $conds[] = "`$table`.`$field` RLIKE '".implode('|', $value)."'";
                             } else {
-                                $conds[] = $field." LIKE '".$value."'";
+                                $conds[] = "`$table`.`$field` LIKE '".$value."'";
                             }
                         }
 
                     break;
                     case 'manytoone':
-                        $conds[] = $field." = '".$value."'";
+                        $conds[] = "`$table`.`$field` = '".$value."'";
                     break;
                 }
             }
@@ -83,20 +85,49 @@ class DataService
     public function get($table, array $selectedColumns = [], array $conditions = [], $limit = null, $page = null)
     {
         $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
-
+        $moduleFieldIDS = [];
+        foreach($module->getFields() as $field){
+            $moduleFieldIDS[$field->getName()] = $field;
+        }
 
         $conn = $this->em->getConnection();
-        $selectedColumns = empty($selectedColumns) ? '*' : '`id`, `'.implode('`,`', $selectedColumns).'`';
         $conds = $this->getSqlConditions($conditions, $module);
-
         $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
         $offset = $page > 1 ? "OFFSET ".(intval($page) - 1) * intval($limit) : '';
         $limit = empty($limit) ? '' : "LIMIT $limit";
 
-        $sql = "SELECT $selectedColumns FROM $table $where ORDER BY `id` DESC $limit $offset";
+        $currentTableColumns = [];
+        $externalTableColumns = [];
+        foreach($selectedColumns as $fieldID){
+            $field = $moduleFieldIDS[$fieldID];
+            if($field->getType() !== 'manytomany'){
+                $currentTableColumns[] = "$table.`$fieldID` as $fieldID";
+            } else {
+                $externalTableColumns[$fieldID] = $field;
+            }
+        }
 
+        $currentTableColumns = empty($currentTableColumns) ? '*' : "`$table`.`id` as id, ".implode(',', $currentTableColumns);
 
-        
+        $groupConcats = [];
+        $leftJoins = [];
+        foreach($externalTableColumns as $fieldID => $field){
+            $currentTable = $table;
+            $currentTableKey = $currentTable.'ID';
+            $foreignTable = $field->getEntity()->getSqlTable();
+            $foreignTableKey = $foreignTable.'ID';
+            $externalTable = $currentTable.'_to_'.$foreignTable;
+            $groupConcats[] = "CONCAT('[\"', GROUP_CONCAT($externalTable.$foreignTableKey SEPARATOR '\",\"'),'\"]') as $fieldID ";
+            $leftJoins[] = "LEFT JOIN $externalTable ON $externalTable.$currentTableKey = $table.id";
+        }
+
+        $sql = "SELECT $currentTableColumns ".(!empty($groupConcats) ? ','.implode(",", $groupConcats) : '');
+        $sql .= " FROM $table ".(!empty($leftJoins) ? implode(",", $leftJoins) : '')." ";
+        $sql .= $where;
+        $sql .= " GROUP BY $table.`id` ";
+        $sql .= "ORDER BY $table.`id` DESC $limit $offset";
+
+   
 
         $stmt = $conn->prepare($sql);
         $result = $stmt->executeQuery();
@@ -125,10 +156,47 @@ class DataService
     public function insert($table, $args)
     {
         [$columns, $values] = $this->getColumnsAndValues($args);
+
+        // Get many to many relationships
+        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
+        $manyToMany = [];
+        foreach($module->getFields() as $field){
+            if($field->getType() == 'manytomany' && in_array($field->getName(), $columns)){
+                $index = array_search($field->getName(), $columns);
+                $value = $values[$index];
+                unset($columns[$index]);
+                unset($values[$index]);
+                $manyToMany[$field->getName()] = [
+                    'field' => $field,
+                    'ids' => json_decode($value)
+                ];
+            }
+        }
+
+        // Insert normal entity
         $conn = $this->em->getConnection();
         $sql = "INSERT INTO $table (".implode(',',$columns).") VALUES ('".implode("','",$values)."')";
         $stmt = $conn->prepare($sql);
         $stmt->executeQuery();
+
+        // Insert many to many relations
+        $id = $conn->lastInsertId();
+        foreach($manyToMany as $fieldID => $data){
+            $externalIDS = $data['ids'];
+            $field = $data['field'];
+            $currentTable = $field->getModule()->getSqlTable();
+            $currentTableKey = $currentTable.'ID';
+            $foreignTable = $field->getEntity()->getSqlTable();
+            $foreignTableKey = $foreignTable.'ID';
+            $table = $currentTable.'_to_'.$foreignTable;
+            foreach($externalIDS as $externalID){
+                $sql = "INSERT INTO $table (`id`, $currentTableKey, $foreignTableKey) VALUES (NULL, '$id', '$externalID')";
+                $stmt = $conn->prepare($sql);
+                $stmt->executeQuery();
+            }
+        }
+
+
     }
 
     public function delete($table, $id)
@@ -140,9 +208,13 @@ class DataService
     }
 
     public function update($table, $args, $conditions)
-    {   
+    {
         
         [$columns, $values] = $this->getColumnsAndValues($args);
+
+ 
+
+
         $conn = $this->em->getConnection();
 
         $fieldValues = array_combine($columns, $values);

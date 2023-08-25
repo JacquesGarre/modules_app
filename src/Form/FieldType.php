@@ -61,7 +61,8 @@ class FieldType extends AbstractType
                         'choices'  => [
                             'Text' => 'text',
                             'Listing' => 'listing',
-                            'Many To One' => 'manytoone'
+                            'Many To One' => 'manytoone',
+                            'Many To Many' => 'manytomany',
                         ],
                         'constraints' => [
                             new NotBlank()
@@ -132,7 +133,8 @@ class FieldType extends AbstractType
                             'choices'  => [
                                 'Text' => 'text',
                                 'Listing' => 'listing',
-                                'Many To One' => 'manytoone'
+                                'Many To One' => 'manytoone',
+                                'Many To Many' => 'manytomany',
                             ],
                             'constraints' => [
                                 new NotBlank()
@@ -162,7 +164,8 @@ class FieldType extends AbstractType
                             'choices'  => [
                                 'Text' => 'text',
                                 'Listing' => 'listing',
-                                'Many To One' => 'manytoone'
+                                'Many To One' => 'manytoone',
+                                'Many To Many' => 'manytomany',
                             ],
                             'constraints' => [
                                 new NotBlank()
@@ -194,7 +197,40 @@ class FieldType extends AbstractType
                             'choices'  => [
                                 'Text' => 'text',
                                 'Listing' => 'listing',
-                                'Many To One' => 'manytoone'
+                                'Many To One' => 'manytoone',
+                                'Many To Many' => 'manytomany',
+                            ],
+                            'constraints' => [
+                                new NotBlank()
+                            ],
+                            'attr' => [
+                                'data-action' => 'change->form#onchange',
+                            ],
+                        ])
+                        ->add('label', TextType::class)
+                        ->add('name', TextType::class)
+                        ->add('entity', EntityType::class, [
+                            'label' => 'Entity',
+                            'class' => Module::class
+                        ])
+                        ->add('required')
+                        ->add('disabled')
+                        ->add('Submit', ButtonType::class, [
+                            'attr' => [
+                                'class' => 'btn-primary float-end',
+                                'data-action' => 'form#submit',
+                                'data-form-target' => 'submitBtn'
+                            ],
+                        ]);
+                    break;
+                    case 'manytomany':
+                        $form
+                        ->add('type', ChoiceType::class, [
+                            'choices'  => [
+                                'Text' => 'text',
+                                'Listing' => 'listing',
+                                'Many To One' => 'manytoone',
+                                'Many To Many' => 'manytomany',
                             ],
                             'constraints' => [
                                 new NotBlank()
