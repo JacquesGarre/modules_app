@@ -32,9 +32,13 @@
 
                                 {% for column in table.columns %}
                                     <td class="ps-3">
+
                                         {% if column.type == 'text' %}
+
                                             {{ row[column.name] }}
+
                                         {% elseif column.type == 'listing' %}
+
                                             {% if column.multiple %}
                                                 {% for value in row[column.name]|json_decode() %}
                                                     {% if value in column.selectOptions|keys %}
@@ -52,11 +56,22 @@
                                                     </span>
                                                 {% endif %}
                                             {% endif %}
+
                                         {% elseif column.type == 'manytoone' %}
+
                                             {% set value = row[column.name] %}
                                             {% if value in column.selectOptions|keys %}
                                                 <a href="{{ column.selectOptions[value]['detailedViewPath'] }}">{{ column.selectOptions[value]['label'] }}</a>
                                             {% endif %}
+
+                                        {% elseif column.type == 'manytomany' %}
+
+                                            {% for key, value in row[column.name]|json_decode() %}
+                                                {% if value in column.selectOptions|keys %}
+                                                    <a href="{{ column.selectOptions[value]['detailedViewPath'] }}">{{ column.selectOptions[value]['label'] }}</a>{% if key < row[column.name]|json_decode()|length - 1 %}, {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+
                                         {% endif %}
                                     </td>
                                 {% endfor %}

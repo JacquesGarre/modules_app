@@ -35,10 +35,9 @@ class DataService
     }
 
     public function getSqlConditions($conditions, $module)
-    {
-        $conditions = array_filter($conditions);
+    {   
 
-        $table = $module->getSqlTable();
+        $conditions = array_filter($conditions);
 
         $fieldNames = array_map(function($field){
             return $field->getName();
@@ -53,52 +52,60 @@ class DataService
             } else {
                 switch($fields[$field]->getType()){
                     case 'text':
-                        $conds[] = "`$table`.`$field` LIKE '%".$value."%'";
+                        $conds[] = "`t`.`$field` LIKE '%".$value."%'";
                     break;
                     case 'listing':
                         if($fields[$field]->isMultiple()){
                             if(is_array($value)){
-                                $conds[] = "`$table`.`$field` RLIKE '".implode('|', $value)."'";
+                                $conds[] = "`t`.`$field` RLIKE '".implode('|', $value)."'";
                             } else {
-                                $conds[] = "`$table`.`$field` LIKE '%".$value."%'";
+                                $conds[] = "`t`.`$field` LIKE '%".$value."%'";
                             }
                         } else {
                             if(is_array($value)){
-                                $conds[] = "`$table`.`$field` RLIKE '".implode('|', $value)."'";
+                                $conds[] = "`t`.`$field` RLIKE '".implode('|', $value)."'";
                             } else {
-                                $conds[] = "`$table`.`$field` LIKE '".$value."'";
+                                $conds[] = "`t`.`$field` LIKE '".$value."'";
                             }
                         }
 
                     break;
                     case 'manytoone':
-                        $conds[] = "`$table`.`$field` = '".$value."'";
+                        $conds[] = "`t`.`$field` = '".$value."'";
+                    break;
+                    case 'manytomany':
+                        $conds[] = "`t`.`$field` LIKE '%".$value."%'";
                     break;
                 }
             }
 
         }
-  
+   
+        
         return $conds;
     }
 
-    public function get($table, array $selectedColumns = [], array $conditions = [], $limit = null, $page = null)
+    public function getTotal($table, array $conditions = [])
     {
+
         $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
         $moduleFieldIDS = [];
+        $selectedColumns = [];
         foreach($module->getFields() as $field){
+            $selectedColumns[] = $field->getName();
             $moduleFieldIDS[$field->getName()] = $field;
         }
 
         $conn = $this->em->getConnection();
         $conds = $this->getSqlConditions($conditions, $module);
         $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
-        $offset = $page > 1 ? "OFFSET ".(intval($page) - 1) * intval($limit) : '';
-        $limit = empty($limit) ? '' : "LIMIT $limit";
 
+
+        $allColumns = [];
         $currentTableColumns = [];
         $externalTableColumns = [];
         foreach($selectedColumns as $fieldID){
+            $allColumns[] = $fieldID;
             $field = $moduleFieldIDS[$fieldID];
             if($field->getType() !== 'manytomany'){
                 $currentTableColumns[] = "$table.`$fieldID` as $fieldID";
@@ -121,20 +128,80 @@ class DataService
             $leftJoins[] = "LEFT JOIN $externalTable ON $externalTable.$currentTableKey = $table.id";
         }
 
-        $sql = "SELECT $currentTableColumns ".(!empty($groupConcats) ? ','.implode(",", $groupConcats) : '');
-        $sql .= " FROM $table ".(!empty($leftJoins) ? implode(",", $leftJoins) : '')." ";
-        $sql .= $where;
-        $sql .= " GROUP BY $table.`id` ";
-        $sql .= "ORDER BY $table.`id` DESC $limit $offset";
+        $columns = !empty($allColumns) ? "`id`, `".implode("`,`", $allColumns)."`" : "*";
 
-   
+        $sql = "SELECT $columns, COUNT(1) AS TOTAL FROM (";
+        $sql .= "SELECT $currentTableColumns ".(!empty($groupConcats) ? ','.implode(",", $groupConcats) : '');
+        $sql .= " FROM $table ".(!empty($leftJoins) ? implode(",", $leftJoins) : '')." ";
+        $sql .= " GROUP BY $table.`id` ";
+        $sql .= ") t ";
+        $sql .= $where;
+
 
         $stmt = $conn->prepare($sql);
         $result = $stmt->executeQuery();
+        $total = $result->fetchAssociative()['TOTAL'] ?? 0;
 
+        return $total;
+    }
+
+    public function get($table, array $selectedColumns = [], array $conditions = [], $limit = null, $page = null)
+    {
+
+        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
+        $moduleFieldIDS = [];
+        foreach($module->getFields() as $field){
+            $moduleFieldIDS[$field->getName()] = $field;
+        }
+
+        $conn = $this->em->getConnection();
+        $conds = $this->getSqlConditions($conditions, $module);
+        $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
+        $offset = $page > 1 ? "OFFSET ".(intval($page) - 1) * intval($limit) : '';
+        $limit = empty($limit) ? '' : "LIMIT $limit";
+
+        $allColumns = [];
+        $currentTableColumns = [];
+        $externalTableColumns = [];
+        foreach($selectedColumns as $fieldID){
+            $allColumns[] = $fieldID;
+            $field = $moduleFieldIDS[$fieldID];
+            if($field->getType() !== 'manytomany'){
+                $currentTableColumns[] = "$table.`$fieldID` as $fieldID";
+            } else {
+                $externalTableColumns[$fieldID] = $field;
+            }
+        }
+
+        $currentTableColumns = empty($currentTableColumns) ? '*' : "`$table`.`id` as id, ".implode(',', $currentTableColumns);
+
+        $groupConcats = [];
+        $leftJoins = [];
+        foreach($externalTableColumns as $fieldID => $field){
+            $currentTable = $table;
+            $currentTableKey = $currentTable.'ID';
+            $foreignTable = $field->getEntity()->getSqlTable();
+            $foreignTableKey = $foreignTable.'ID';
+            $externalTable = $currentTable.'_to_'.$foreignTable;
+            $groupConcats[] = "CONCAT('[\"', GROUP_CONCAT($externalTable.$foreignTableKey SEPARATOR '\",\"'),'\"]') as $fieldID ";
+            $leftJoins[] = "LEFT JOIN $externalTable ON $externalTable.$currentTableKey = $table.id";
+        }
+
+        $columns = !empty($allColumns) ? "`id`, `".implode("`,`", $allColumns)."`" : "*";
+
+        $sql = "SELECT $columns FROM (";
+        $sql .= "SELECT $currentTableColumns ".(!empty($groupConcats) ? ','.implode(",", $groupConcats) : '');
+        $sql .= " FROM $table ".(!empty($leftJoins) ? implode(",", $leftJoins) : '')." ";
+        $sql .= " GROUP BY $table.`id` ";
+        $sql .= ") t ";
+        $sql .= $where;
+        $sql .= "ORDER BY t.`id` DESC $limit $offset";
+
+
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->executeQuery();
         $results = $result->fetchAllAssociative();
 
- 
         foreach($results as $key => $result){
             $results[$key]['titlePattern'] = $module->getPattern();
             foreach($result as $fieldID => $value){
@@ -232,20 +299,6 @@ class DataService
     }
 
 
-    public function getTotal($table, array $conditions = [])
-    {
-        $conn = $this->em->getConnection();
-        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
-        $conds = $this->getSqlConditions($conditions, $module);
-        $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
-
-        // Test if column doesn't exist already
-        $sql = "SELECT COUNT(1) AS TOTAL FROM $table $where";
-     
-        $stmt = $conn->prepare($sql);
-        $result = $stmt->executeQuery();
-        $total = $result->fetchAssociative()['TOTAL'] ?? 0;
-        return $total;
-    }
+ 
 
 }

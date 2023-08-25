@@ -38,12 +38,12 @@
                             {% endif %}
                         {% endfor %}
                     </select>                  
-                {% elseif column.type == 'manytoone' %}
+                {% elseif column.type == 'manytoone' or column.type == 'manytomany' %}
                     <select class="form-control form-select filter-field" name="{{column.name}}">
                         {% for label, value in column.choices %}
                             <option value="{{value}}" {{ currentValue == value ? 'selected' : '' }}>{{label}}</option>
                         {% endfor %}
-                    </select>                  
+                    </select>               
                 {% endif %}
             {% endif %}
             </td>
