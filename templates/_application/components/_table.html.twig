@@ -24,43 +24,52 @@
 
                     {% include '_application/components/_table_filters.html.twig' %}
 
-                    {% for row in table.data %}
-                    <tr data-id="{{row.id}}">
+                    {% if table.data|length > 0%}
+                        {% for row in table.data %}
+                            <tr data-id="{{row.id}}">
 
-                        {% include '_application/components/_table_row_btns.html.twig' %}
+                                {% include '_application/components/_table_row_btns.html.twig' %}
 
-                        {% for column in table.columns %}
-                            <td class="ps-3">
-                                {% if column.type == 'text' %}
-                                    {{ row[column.name] }}
-                                {% elseif column.type == 'listing' %}
-                                    {% if column.multiple %}
-                                        {% for value in row[column.name]|json_decode() %}
-                                            {% if value in column.selectOptions|keys %}
-                                                <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
-                                                    {{ column.selectOptions[value]['label'] }}
-                                                </span>
+                                {% for column in table.columns %}
+                                    <td class="ps-3">
+                                        {% if column.type == 'text' %}
+                                            {{ row[column.name] }}
+                                        {% elseif column.type == 'listing' %}
+                                            {% if column.multiple %}
+                                                {% for value in row[column.name]|json_decode() %}
+                                                    {% if value in column.selectOptions|keys %}
+                                                        <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
+                                                            {{ column.selectOptions[value]['label'] }}
+                                                        </span>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                {% set values = row[column.name]|json_decode() %}
+                                                {% set value = values|length > 0 ? values[0] : '' %}
+                                                {% if value in column.selectOptions|keys %}
+                                                    <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
+                                                        {{ column.selectOptions[value]['label'] }}
+                                                    </span>
+                                                {% endif %}
                                             {% endif %}
-                                        {% endfor %}
-                                    {% else %}
-                                        {% set values = row[column.name]|json_decode() %}
-                                        {% set value = values|length > 0 ? values[0] : '' %}
-                                        {% if value in column.selectOptions|keys %}
-                                            <span class="badge badge-pill {{ column.selectOptions[value]['colorClass'] }} {{ column.selectOptions[value]['bgClass'] }}">
-                                                {{ column.selectOptions[value]['label'] }}
-                                            </span>
+                                        {% elseif column.type == 'manytoone' %}
+                                            {% set value = row[column.name] %}
+                                            {% if value in column.selectOptions|keys %}
+                                                <a href="{{ column.selectOptions[value]['detailedViewPath'] }}">{{ column.selectOptions[value]['label'] }}</a>
+                                            {% endif %}
                                         {% endif %}
-                                    {% endif %}
-                                {% elseif column.type == 'manytoone' %}
-                                    {% set value = row[column.name] %}
-                                    {% if value in column.selectOptions|keys %}
-                                        <a href="{{ column.selectOptions[value]['detailedViewPath'] }}">{{ column.selectOptions[value]['label'] }}</a>
-                                    {% endif %}
-                                {% endif %}
-                            </td>
+                                    </td>
+                                {% endfor %}
+                            </tr>
                         {% endfor %}
-                    </tr>
-                    {% endfor %}
+
+                    {% else %}
+                        <tr>
+                            <td class="ps-3 text-center font-italic" colspan="{{table.columns|length + 1}}">
+                                No {{table.module.labelPlural}} found
+                            </td>
+                        </tr>
+                    {% endif %}
 
                     {% include '_application/components/_table_footer.html.twig' %}
 

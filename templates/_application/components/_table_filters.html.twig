@@ -25,7 +25,8 @@
                 {% if column.type == 'text' %}
                     <input type="text" class="form-control filter-field" name="{{column.name}}" placeholder="{{column.label}}" value="{{currentValue}}">
                 {% elseif column.type == 'listing' %}
-                    <select class="form-control form-select filter-field" data-placeholder="" name="{{column.name}}" {{column.multiple ? 'multiple' : ''}}>
+                    <select class="form-control form-select filter-field" data-placeholder="..." name="{{column.name}}" {{column.multiple ? 'multiple' : ''}}>
+                        <option value="">...</option>
                         {% for label, value in column.choices %}
  
                             {% if value|length > 0 %}

@@ -21,7 +21,7 @@ class Layout
     #[ORM\OneToMany(mappedBy: 'layout', targetEntity: HtmlElement::class, orphanRemoval: true)]
     private Collection $htmlElements;
 
-    #[ORM\OneToMany(mappedBy: 'layout', targetEntity: Page::class)]
+    #[ORM\OneToMany(mappedBy: 'layout', targetEntity: Page::class, orphanRemoval: true)]
     private Collection $pages;
 
     public function __construct()
