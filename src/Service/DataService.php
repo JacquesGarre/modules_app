@@ -275,28 +275,61 @@ class DataService
         $stmt->executeQuery();
     }
 
-    public function update($table, $args, $conditions)
+    public function update($table, $args, $id)
     {
         
         [$columns, $values] = $this->getColumnsAndValues($args);
 
- 
+        // Get many to many relationships
+        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
+        $manyToMany = [];
+        foreach($module->getFields() as $field){
+            if($field->getType() == 'manytomany' && in_array($field->getName(), $columns)){
+                $index = array_search($field->getName(), $columns);
+                $value = $values[$index];
+                unset($columns[$index]);
+                unset($values[$index]);
+                $manyToMany[$field->getName()] = [
+                    'field' => $field,
+                    'ids' => json_decode($value)
+                ];
+            }
+        }
 
-
+        // Update normal entity
         $conn = $this->em->getConnection();
-
         $fieldValues = array_combine($columns, $values);
         $values = [];
         foreach($fieldValues as $column => $value){
             $values[] = "$column = '$value'";
         }
-        $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
-        $conds = $this->getSqlConditions($conditions, $module);
-        $where = empty($conds) ? '' : 'WHERE '.implode(' AND ', $conds);
-
-        $sql = "UPDATE $table SET ".implode(', ',$values)." $where";
+        $sql = "UPDATE $table SET ".implode(', ',$values)." WHERE `id` = $id";
         $stmt = $conn->prepare($sql);
         $stmt->executeQuery();
+
+        // Update many to many relationships
+        foreach($manyToMany as $fieldID => $data){
+            $externalIDS = $data['ids'];
+            $field = $data['field'];
+            $currentTable = $field->getModule()->getSqlTable();
+            $currentTableKey = $currentTable.'ID';
+            $foreignTable = $field->getEntity()->getSqlTable();
+            $foreignTableKey = $foreignTable.'ID';
+            $table = $currentTable.'_to_'.$foreignTable;
+
+            // Delete old relations
+            $sql = "DELETE FROM $table WHERE $currentTableKey = $id";
+            $stmt = $conn->prepare($sql);
+            $stmt->executeQuery();
+
+            // Insert new ones
+            foreach($externalIDS as $externalID){
+                $sql = "INSERT INTO $table (`id`, $currentTableKey, $foreignTableKey) VALUES (NULL, '$id', '$externalID')";
+                $stmt = $conn->prepare($sql);
+                $stmt->executeQuery();
+            }
+        }
+
     }
 
 

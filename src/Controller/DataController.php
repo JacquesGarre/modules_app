@@ -48,7 +48,7 @@ class DataController extends AbstractController
         try {
             $module = $moduleRepository->findOneBy(['id' => $moduleId]);
             $args = $request->request->all()[$module->getSqlTable()];
-            $this->dataService->update($module->getSqlTable(), $args, ['id' => $id]);
+            $this->dataService->update($module->getSqlTable(), $args, $id);
         } catch(Exception $e) {
             $errors[$module->getSqlTable()][] = $e->getMessage();
             return new Response(json_encode([
