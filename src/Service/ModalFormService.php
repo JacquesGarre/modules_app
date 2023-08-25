@@ -60,8 +60,7 @@ class ModalFormService
             $form = $this->formService->getForm($class, $route, $entity, $method, $routeParams, 'write', true);
         } else {
             $form = $this->formService->getEntityForm($class, $entity, $formEntity);
-        }
-        
+        }       
 
 
         if(empty($request->query->get('onchange'))){

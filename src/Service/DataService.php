@@ -149,8 +149,10 @@ class DataService
         $module = $this->moduleRepository->findOneBy(['sqlTable' => $table]);
         $moduleFieldIDS = [];
         foreach($module->getFields() as $field){
-            $moduleFieldIDS[$field->getName()] = $field;
+            $moduleFieldIDS[$field->getName()] = $field;           
         }
+
+        $selectedColumns = $selectedColumns ?: array_keys($moduleFieldIDS);
 
         $conn = $this->em->getConnection();
         $conds = $this->getSqlConditions($conditions, $module);
@@ -194,6 +196,7 @@ class DataService
         $sql .= ") t ";
         $sql .= $where;
         $sql .= "ORDER BY t.`id` DESC $limit $offset";
+
 
 
         $stmt = $conn->prepare($sql);

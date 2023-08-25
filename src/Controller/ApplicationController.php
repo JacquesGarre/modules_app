@@ -75,6 +75,7 @@ class ApplicationController extends AbstractController
         $module = $moduleRepository->findOneBy(['sqlTable' => $table]);
         $entity = $dataService->get($table, [], ['id' => $id])[0];
 
+
         $formEntity = $formRepository->findOneBy([
             'action' => 'edit',
             'module' => $module
